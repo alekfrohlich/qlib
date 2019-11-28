@@ -1,11 +1,9 @@
-.PHONY: all brae image clean
-
 all: brae image
 
 brae:
-	i686-elf-as boot.S -o boot.o
-	i686-elf-g++ -c kernel.cpp -o kernel.o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti
-	i686-elf-g++ -T linker.ld -o brae.bin -ffreestanding -O2 -nostdlib boot.o kernel.o -lgcc
+	$(AS) boot.S -o boot.o
+	$(CXX) $(CFLAGS) -c kernel.cpp -o kernel.o
+	$(CXX) $(CFLAGS) -T linker.ld -o brae.bin boot.o kernel.o -lgcc
 
 image:
 	cp brae.bin isodir/boot/brae.bin

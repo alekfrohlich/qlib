@@ -1,16 +1,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-
-/* Check if the compiler thinks you are targeting the wrong operating system. */
-#if defined(__linux__)
-    #error "You are not using a cross-compiler, you will most certainly run into trouble"
-#endif
-
-/* This tutorial will only work for the 32-bit ix86 targets. */
-#if !defined(__i386__)
-    #error "This tutorial needs to be compiled with a ix86-elf compiler"
-#endif
+#include <staticstack.hpp>
 
 /* Hardware text mode color constants. */
 enum vga_color {
@@ -85,6 +76,13 @@ void terminal_putentryat(char c, uint8_t color, size_t x, size_t y)
 
 void terminal_putchar(char c)
 {
+
+	if (c == '\n') {
+		terminal_column = 0;
+		terminal_row++;
+		return;
+	}
+
 	terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
 	if (++terminal_column == VGA_WIDTH) {
 		terminal_column = 0;
@@ -108,10 +106,19 @@ extern "C"
 {
 void kernel_main(void)
 {
+	using namespace structures;
+
 	/* Initialize terminal interface */
 	terminal_initialize();
 
-	/* Newline support is left as an exercise. */
-	terminal_writestring("Hello, kernel World!\n");
+	terminal_writestring("Welcome to brae!\n" \
+						 "Developed by Alek Frohlich & Nicolas Goeldner");
+
+	StaticStack<char> buffer;
+	for (auto ch = '0'; ch < '0'+10; ch++)
+		buffer.push(ch);
+
+	while (!buffer.empty())
+		terminal_putchar(buffer.pop());
 }
 }
