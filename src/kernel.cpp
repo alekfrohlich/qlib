@@ -1,7 +1,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <staticstack.hpp>
 
 /* Hardware text mode color constants. */
 enum vga_color {
@@ -76,7 +75,6 @@ void terminal_putentryat(char c, uint8_t color, size_t x, size_t y)
 
 void terminal_putchar(char c)
 {
-
 	if (c == '\n') {
 		terminal_column = 0;
 		terminal_row++;
@@ -106,19 +104,10 @@ extern "C"
 {
 void kernel_main(void)
 {
-	using namespace structures;
-
 	/* Initialize terminal interface */
 	terminal_initialize();
 
 	terminal_writestring("Welcome to brae!\n" \
 						 "Developed by Alek Frohlich & Nicolas Goeldner");
-
-	StaticStack<char> buffer;
-	for (auto ch = '0'; ch < '0'+10; ch++)
-		buffer.push(ch);
-
-	while (!buffer.empty())
-		terminal_putchar(buffer.pop());
 }
 }
