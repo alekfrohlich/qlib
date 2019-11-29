@@ -1,0 +1,19 @@
+# architecture
+TARGET = i686-elf
+
+# C++ compiler, linker
+CXX := $(TARGET)-g++
+AS  := $(TARGET)-as
+
+# directories
+TOP  := $(abspath $(dir $(filter %makeinc, $(MAKEFILE_LIST))))
+SRC  := $(TOP)/src
+INC  := $(TOP)/include
+IMG  := $(TOP)/img
+BOOT := $(IMG)/boot
+
+# toolchain configuration
+CFLAGS := -g -I $(INC)
+CFLAGS += -O2 -Wall -Wextra
+CFLAGS += -ffreestanding -fno-exceptions
+CFLAGS += -fno-rtti -nostdlib

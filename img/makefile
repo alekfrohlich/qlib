@@ -1,3 +1,5 @@
+include $(MAKEINC)
+
 all: image
 
 image:
