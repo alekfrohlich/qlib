@@ -1,6 +1,13 @@
-#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <staticstack.hpp>
+structures::StaticStack<int> ss;
+
+// ignore dumb gcc
+extern "C" {
+	// void * __dso_handle = 0;
+	void * __cxa_atexit = 0;
+}
 
 /* Hardware text mode color constants. */
 enum vga_color {

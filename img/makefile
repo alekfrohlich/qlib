@@ -6,4 +6,4 @@ image:
 	grub-mkrescue -o brae.iso .
 
 clean:
-	@rm -f *.iso *.bin
+	@rm -f *.iso boot/*.bin

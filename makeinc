@@ -1,19 +1,32 @@
-# architecture
-TARGET = i686-elf
+# target architecture
+TARGET := i686-elf
 
-# C++ compiler, linker
-CXX := $(TARGET)-g++
+# shall be generalized
+MACH := i686
+
+# assembler, C++ compiler, linker
 AS  := $(TARGET)-as
+CXX := $(TARGET)-g++
+LD  := $(TARGET)-ld
 
 # directories
-TOP  := $(abspath $(dir $(filter %makeinc, $(MAKEFILE_LIST))))
-SRC  := $(TOP)/src
-INC  := $(TOP)/include
-IMG  := $(TOP)/img
-BOOT := $(IMG)/boot
+TOP   := $(abspath $(dir $(filter %makeinc, $(MAKEFILE_LIST))))
+SRC   := $(TOP)/src
+ARCH  := $(SRC)/architecture
+MACHD := $(ARCH)/$(MACH)
+COMP  := $(SRC)/components
+INC   := $(TOP)/include
+IMG   := $(TOP)/img
+BOOT  := $(IMG)/boot
 
-# toolchain configuration
-CFLAGS := -g -I $(INC)
-CFLAGS += -O2 -Wall -Wextra
-CFLAGS += -ffreestanding -fno-exceptions
-CFLAGS += -fno-rtti -nostdlib
+# fat binary
+MAIN := $(BOOT)/brae.bin
+
+# C++ compiler flags
+CXXFLAGS := -g -I $(INC)
+CXXFLAGS += -O2 -Wall -Wextra
+CXXFLAGS += -ffreestanding -fno-exceptions
+CXXFLAGS += -fno-rtti -nostdlib -lgcc
+
+# a cross without libc is needed to uncoment this
+# CXXFLAGS += -nostdinc -nostdlib

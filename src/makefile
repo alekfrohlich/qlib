@@ -1,13 +1,15 @@
 include $(MAKEINC)
 
-all: brae
+.PHONY: architecture boot component
 
-brae:
-	$(AS) boot.S -o boot.o
-	$(CXX) $(CFLAGS) -c kernel.cpp -o kernel.o
-	$(CXX) $(CFLAGS) -T linker.ld -o $@.bin boot.o kernel.o -lgcc
-	@echo $(IMG)
-	mv $@.bin $(IMG)/boot
+all: architecture boot component
+
+architecture:
+	cd $(ARCH) && $(MAKE) all
+
+boot:
+
+component:
 
 clean:
-	@rm -f *.o *.iso
+	cd $(ARCH) && $(MAKE) clean
