@@ -7,7 +7,7 @@ OBJS := crtend.o kmain.o crtbegin.o
 OBJ_LINK_LIST := crt0.o $(OBJS)
 
 # linker flags
-LDFLAGS := -Bstatic -T linker.ld
+LDFLAGS := -Bstatic -nostdlib -T linker.ld
 
 crt0.o:
 	$(AS) crt0.S -o $@

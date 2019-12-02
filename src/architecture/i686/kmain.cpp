@@ -1,10 +1,6 @@
 #include <list.hpp>
 #include <display.hpp>
 
-using namespace brae;
-List<char> l1;
-List<char> l2;
-
 // ignore dumb g++
 extern "C" {
 	void * __dso_handle = 0;
@@ -27,17 +23,51 @@ int ptoa(const void * p, char * s)
     return j + 2;
 }
 
+int utoa(unsigned int v, char * s, unsigned int i);
+int itoa(int v, char * s)
+{
+    unsigned int i = 0;
+
+    if(v < 0) {
+        v = -v;
+        s[i++] = '-';
+    }
+
+    return utoa(static_cast<unsigned int>(v), s, i);
+}
+
+
+int utoa(unsigned int v, char * s, unsigned int i)
+{
+    unsigned int j;
+
+    if(!v) {
+        s[i++] = '0';
+        return i;
+    }
+
+    for(j = v; j != 0; i++, j /= 10);
+    for(j = 0; v != 0; j++, v /= 10)
+        s[i - 1 - j] = _digits[v % 10];
+
+    return i;
+}
+
 extern "C"
 {
 void kernel_main(void)
 {
-	List<char> l3;
 
+	using namespace brae;
+	Display cout(QEMU_TEXT_BUFFER);
+
+	List<char> l1;
+	List<char> l2;
+	List<char> l3;
 	l1.push('a');
 	l2.push('b');
 	l3.push('c');
 
-	Display cout(QEMU_TEXT_BUFFER);
 	// cout.print("Welcome to brae!\n" \
 	// 					 "Developed by Alek Frohlich & Nicolas Goeldner\n");
 
@@ -64,6 +94,9 @@ void kernel_main(void)
 	cout.putChar(ch2);
 
 	cout.print("END\n");
+	itoa(l1.head, pointer);
+	cout.print(pointer);
+
 
 	// if (ch1 == ch2 == ch3 == 0)
 	// 	cout.putChar('A');

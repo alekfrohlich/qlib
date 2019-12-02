@@ -1,14 +1,10 @@
 #ifndef BRAE_DISPLAY_H
 #define BRAE_DISPLAY_H
 
-#include <stddef.h>
-#include <stdint.h>
-
 namespace brae {
 
 //@FIX-ME: properly handle CTOR_LIST and DTOR_LIST
-// Display cout(QEMU_TEXT_BUFFER);
-uint16_t * QEMU_TEXT_BUFFER = (uint16_t*) 0xB8000;
+unsigned short * QEMU_TEXT_BUFFER = (unsigned short*) 0xB8000;
 
 // hardware text mode color constants
 enum VGAColor {
@@ -30,20 +26,20 @@ enum VGAColor {
     WHITE = 15,
 };
 
-static inline uint8_t vga_entry_color(enum VGAColor fg, enum VGAColor bg)
+static inline unsigned char vga_entry_color(enum VGAColor fg, enum VGAColor bg)
 {
 	return fg | bg << 4;
 }
 
-static inline uint16_t vga_entry(unsigned char uc, uint8_t color)
+static inline unsigned short vga_entry(unsigned char uc, unsigned char color)
 {
-	return (uint16_t) uc | (uint16_t) color << 8;
+	return (unsigned short) uc | (unsigned short) color << 8;
 }
 
 //@TODO: add pixelmap and other template parameters
 class Display {
   public:
-    Display(uint16_t * address);
+    Display(unsigned short * address);
     ~Display();
 
     void setColor(enum VGAColor color);
@@ -51,26 +47,26 @@ class Display {
     void putChar(char ch);
 
   private:
-    static const size_t VGA_WIDTH = 80;
-    static const size_t VGA_HEIGHT = 25;
+    static const unsigned VGA_WIDTH = 80;
+    static const unsigned VGA_HEIGHT = 25;
 
-    size_t row;
-    size_t column;
-    uint8_t color;
-    uint16_t * address;
+    unsigned row;
+    unsigned column;
+    unsigned char color;
+    unsigned short * address;
 };
 
 }; // namespace brae
 
-brae::Display::Display(uint16_t * address) {
+brae::Display::Display(unsigned short * address) {
 	this->row = 0;
 	this->column = 0;
 	this->color = vga_entry_color(LIGHT_GREY, BLACK);
 	this->address = address;
 
-	for (size_t y = 0; y < VGA_HEIGHT; y++) {
-		for (size_t x = 0; x < VGA_WIDTH; x++) {
-			const size_t index = y * VGA_WIDTH + x;
+	for (unsigned y = 0; y < VGA_HEIGHT; y++) {
+		for (unsigned x = 0; x < VGA_WIDTH; x++) {
+			const unsigned index = y * VGA_WIDTH + x;
 			address[index] = vga_entry(' ', color);
 		}
 	}
@@ -81,7 +77,7 @@ brae::Display::~Display() {}
 
 //@TODO: create brea::string, remove putChar?
 void brae::Display::print(const char * string) {
-	for (size_t i = 0; string[i]; i++)
+	for (unsigned i = 0; string[i]; i++)
         putChar(string[i]);
 }
 
@@ -96,7 +92,7 @@ if (ch == '\n') {
 		return;
 	}
 
-	size_t index = row * VGA_WIDTH + column;
+	unsigned index = row * VGA_WIDTH + column;
 	this->address[index] = vga_entry(ch, color);
 
 	if (++column == VGA_WIDTH) {
