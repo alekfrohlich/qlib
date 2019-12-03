@@ -5,13 +5,9 @@ SECTIONS
 {
 	. = 1M;
 
-	.multiboot ALIGN(4) :
-	{
-		*(.multiboot)
-	}
-
 	.text ALIGN(4K) :
 	{
+		*(.multiboot)
 		*(.text)
 	}
 
@@ -25,7 +21,7 @@ SECTIONS
 		*(.bss)
 	}
 
-	edata = .;
+	__edata = .;
 
 	/DISCARD/ : {
 		*(.comment)

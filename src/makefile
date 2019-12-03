@@ -1,6 +1,7 @@
 include $(MAKEINC)
 
-.PHONY: architecture boot component
+.PHONY: all \
+		architecture boot component
 
 all: architecture boot component
 
@@ -8,7 +9,6 @@ architecture:
 	cd $(ARCH) && $(MAKE) all
 
 boot:
-
 component:
 
 clean:

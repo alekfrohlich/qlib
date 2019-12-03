@@ -1,5 +1,7 @@
 include $(MAKEINC)
 
+.PHONY: all clean
+
 # object files
 OBJ_LINK_LIST := crt0.o crtend.o kmain.o crtbegin.o
 
@@ -15,7 +17,5 @@ crt0.o: crt0.S
 all: $(OBJ_LINK_LIST)
 	$(LD) $(LDFLAGS) $(OBJ_LINK_LIST) -o $(FATBIN)
 
-.PHONY: clean
-
 clean:
-	@rm -f *.o
+	@rm -f *.o crtbegin.S crtend.S kmain.S

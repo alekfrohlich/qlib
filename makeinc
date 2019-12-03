@@ -24,7 +24,7 @@ FATBIN := $(BOOT)/brae.bin
 
 # C++ compiler flags
 CXXFLAGS := -I $(INC)
-CXXFLAGS += -O2 -Wall -Wextra
 CXXFLAGS += -ffreestanding -fno-exceptions
 CXXFLAGS += -fno-rtti -nostdinc -fno-asynchronous-unwind-tables
 CXXFLAGS += --no-use-cxa-atexit -std=c++0x
+CXXFLAGS += -O2 -Wall -Wextra

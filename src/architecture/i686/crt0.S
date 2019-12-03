@@ -17,13 +17,13 @@
 .global _start
 .type _start, @function
 _start:
-	mov $edata+16384, %esp
+	mov $__edata+16384, %esp
 
 	# call the global constructors
 	call _init
 
 	# transfer control to operating system
-	call kernel_main
+	call _kmain
 
 	# hang if kernel_main unexpectedly returns
 	cli

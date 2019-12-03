@@ -55,15 +55,12 @@ extern "C" {
 
 extern "C"
 {
-void kernel_main(void)
+void _kmain(void)
 {
 
 	using namespace brae;
 	Display cout(TEXT_BUFFER);
 
-	List<char> l1;
-
-	l1.push('a');
-	cout.putChar(l1.pop());
+	cout.putChar('a');
 }
 }
