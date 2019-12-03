@@ -1,8 +1,6 @@
 #ifndef BRAE_LIST_H
 #define BRAE_LIST_H
 
-#include<display.hpp>
-
 namespace brae {
 
 //@TODO: add additional methods for queues, linkedlists...
@@ -28,7 +26,6 @@ brae::List<T>::List() {
   head = 0;
   for (int i = 0; i < 10; i++)
       vector[i] = 0;
-  // brae::cout.print("ALALAL");
 }
 
 template<typename T>

@@ -12,19 +12,12 @@
 .long FLAGS
 .long CHECKSUM
 
-# reserve a stack for the initial thread
-.section .stack
-.align 16
-__stack_bottom:
-.skip 16384 # 16 KiB
-__stack_top:
-
 # entry point
 .section .text
 .global _start
 .type _start, @function
 _start:
-	mov $__stack_top, %esp
+	mov $edata+16384, %esp
 
 	# call the global constructors
 	call _init

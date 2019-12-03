@@ -5,31 +5,15 @@ SECTIONS
 {
 	. = 1M;
 
-	.text ALIGN(4K) :
+	.multiboot ALIGN(4) :
 	{
 		*(.multiboot)
+	}
+
+	.text ALIGN(4K) :
+	{
 		*(.text)
-
-		/*
-        *(SORT(.ctors.*))
-        *(.ctors)
-
-        *(SORT(.dtors.*))
-        *(.dtors)
-		*/
 	}
-
-	/*
-	.init ALIGN(4K) :
-	{
-		*(.init)
-	}
-
-	.fini ALIGN(4k) :
-	{
-		*(.fini)
-	}
-	*/
 
 	.data ALIGN(4K) :
 	{
@@ -39,8 +23,11 @@ SECTIONS
 	.bss :
 	{
 		*(.bss)
-		*(.stack)
 	}
 
-	/* other sections */
+	edata = .;
+
+	/DISCARD/ : {
+		*(.comment)
+	}
 }

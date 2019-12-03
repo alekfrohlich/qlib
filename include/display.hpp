@@ -4,7 +4,7 @@
 namespace brae {
 
 //@FIX-ME: properly handle CTOR_LIST and DTOR_LIST
-unsigned short * QEMU_TEXT_BUFFER = (unsigned short*) 0xB8000;
+unsigned short * TEXT_BUFFER = (unsigned short*) 0xB8000;
 
 // hardware text mode color constants
 enum VGAColor {

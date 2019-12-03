@@ -1,15 +1,12 @@
 include $(MAKEINC)
 
 # object files
-OBJS := crtend.o kmain.o crtbegin.o
-
-# global constructor/destructor call
-OBJ_LINK_LIST := crt0.o $(OBJS)
+OBJ_LINK_LIST := crt0.o crtend.o kmain.o crtbegin.o
 
 # linker flags
 LDFLAGS := -Bstatic -nostdlib -T linker.ld
 
-crt0.o:
+crt0.o: crt0.S
 	$(AS) crt0.S -o $@
 
 %.o: %.cpp
