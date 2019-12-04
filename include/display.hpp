@@ -73,7 +73,9 @@ brae::Display::Display(unsigned short * address) {
 }
 
 //@TODO: delete buffer
-brae::Display::~Display() {}
+brae::Display::~Display() {
+  putChar('B');
+}
 
 //@TODO: create brea::string, remove putChar?
 void brae::Display::print(const char * string) {

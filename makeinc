@@ -1,11 +1,12 @@
 # target architecture
-TARGET := i686-elf
+TARGET := ia32
 
 # shall be generalized
 MACH := i686
 
-# assembler, C++ compiler, linker
+# assembler, C/C++ compiler, linker
 AS  := $(TARGET)-as
+CC  := $(TARGET)-gcc
 CXX := $(TARGET)-g++
 LD  := $(TARGET)-ld
 
@@ -21,6 +22,9 @@ BOOT  := $(IMG)/boot
 
 # fat binary
 FATBIN := $(BOOT)/brae.bin
+
+# C compiler flags
+CFLAGS := -I $(INC)
 
 # C++ compiler flags
 CXXFLAGS := -I $(INC)

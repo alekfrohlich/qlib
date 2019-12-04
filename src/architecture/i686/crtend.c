@@ -1,10 +1,10 @@
-extern "C" {
 void _init() __attribute__ ((section(".init")));
 
 typedef void (*fptr)(void);
 
 static fptr __CTOR_END__[1] __attribute__((section(".init_array"))) = { (fptr)0 };
 static fptr __DTOR_END__[1] __attribute__((used, section(".fini_array"))) = { (fptr)0 };
+// extern fptr * __CTOR_END__;
 
 static void __do_global_ctors_aux()
 {
@@ -16,5 +16,4 @@ static void __do_global_ctors_aux()
 void _init()
 {
     __do_global_ctors_aux();
-}
 }

@@ -17,7 +17,11 @@
 .global _start
 .type _start, @function
 _start:
-	mov $__edata+16384, %esp
+	# set-up stack pointer
+	mov $_edata+16384, %esp
+
+	# set-up components
+	call _pre_kmain
 
 	# call the global constructors
 	call _init
@@ -25,9 +29,11 @@ _start:
 	# transfer control to operating system
 	call _kmain
 
-	# hang if kernel_main unexpectedly returns
+	# call global destructors
+	call _fini
+
+	# hang if _kmain unexpectedly returns
 	cli
-1:	hlt
-	jmp 1b
+	hlt
 
 .size _start, . - _start

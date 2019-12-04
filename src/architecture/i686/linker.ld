@@ -5,13 +5,41 @@ SECTIONS
 {
 	. = 1M;
 
-	.text ALIGN(4K) :
+	.multiboot ALIGN(4):
 	{
 		*(.multiboot)
+	}
+
+	.init :
+  	{
+    	KEEP(*(SORT_NONE(.init)))
+  	}
+
+	.text :
+	{
 		*(.text)
 	}
 
-	.data ALIGN(4K) :
+	.fini :
+	{
+		KEEP(*(SORT_NONE(.fini)))
+	}
+
+	.init_array :
+	{
+	  KEEP(crtbegin.o(.init_array))
+      KEEP(*(.ctors))
+	  KEEP(crtend.o(.init_array))
+	}
+
+	.fini_array     :
+	{
+	  KEEP(crtbegin.o(.fini_array))
+      KEEP(*(.dtors))
+	  KEEP(crtend.o(.fini_array))
+	}
+
+	.data :
 	{
 		*(.data)
 	}
@@ -21,9 +49,11 @@ SECTIONS
 		*(.bss)
 	}
 
-	__edata = .;
+	. = ALIGN(16);
+	PROVIDE(_edata = .);
 
 	/DISCARD/ : {
 		*(.comment)
+		*(.eh_frame)
 	}
 }

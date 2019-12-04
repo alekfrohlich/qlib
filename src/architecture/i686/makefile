@@ -14,8 +14,11 @@ crt0.o: crt0.S
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
 all: $(OBJ_LINK_LIST)
 	$(LD) $(LDFLAGS) $(OBJ_LINK_LIST) -o $(FATBIN)
 
 clean:
-	@rm -f *.o crtbegin.S crtend.S kmain.S
+	@rm -f *.o
