@@ -46,6 +46,8 @@ class Display {
     void print(const char * string);
     void putChar(char ch);
 
+    void skipChar();
+
   private:
     static const unsigned VGA_WIDTH = 80;
     static const unsigned VGA_HEIGHT = 25;
@@ -55,6 +57,8 @@ class Display {
     unsigned char color;
     unsigned short * address;
 };
+
+Display cout(TEXT_BUFFER);
 
 }; // namespace brae
 
@@ -73,9 +77,7 @@ brae::Display::Display(unsigned short * address) {
 }
 
 //@TODO: delete buffer
-brae::Display::~Display() {
-  putChar('B');
-}
+brae::Display::~Display() {}
 
 //@TODO: create brea::string, remove putChar?
 void brae::Display::print(const char * string) {
@@ -85,6 +87,10 @@ void brae::Display::print(const char * string) {
 
 void brae::Display::setColor(enum VGAColor color) {
     this->color = color;
+}
+
+void brae::Display::skipChar() {
+  column++;
 }
 
 void brae::Display::putChar(char ch) {
