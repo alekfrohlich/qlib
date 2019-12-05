@@ -2,15 +2,19 @@ include $(MAKEINC)
 
 .PHONY: all clean
 
-CXX_SRC := display.cc $(wildcard $(LIB)/*.cc)
+CXX_SRC := display.cc \
+		   $(wildcard $(LIB)/*.cc) \
+		   $(wildcard $(APP)/*.cc)
 
 OBJS  	:= $(CXX_SRC:.cc=.o)
 
 # object files
-OBJ_LINK_LIST := crt0.o crtend.o $(OBJS) kmain.o crtbegin.o
+OBJ_LINK_LIST := crt0.o crtend.o $(OBJS) lib_init.o crtbegin.o
 
 # linker flags
-LDFLAGS := -Bstatic -nostdlib -T linker.ld
+LDFLAGS  := -static -nostdlib \
+			-L $(patsubst %/libgcc.a,%/,$(shell $(CXX) -print-libgcc-file-name)) \
+			-T linker.ld
 
 crt0.o: crt0.S
 	$(AS) crt0.S -o $@
@@ -22,7 +26,7 @@ crt0.o: crt0.S
 	$(CC) $(CFLAGS) -c $< -o $@
 
 all: $(OBJ_LINK_LIST)
-	$(LD) $(LDFLAGS) $(OBJ_LINK_LIST) -o $(FATBIN)
+	$(LD) $(LDFLAGS) $(OBJ_LINK_LIST) -lgcc -o $(FATBIN)
 
 clean:
 	@rm -f *.o

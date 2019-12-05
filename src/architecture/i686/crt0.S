@@ -21,13 +21,13 @@ _start:
 	mov $_edata+16384, %esp
 
 	# set-up components
-	call _pre_kmain
+	call _pre_lib_init
 
 	# call the global constructors
 	call _init
 
 	# transfer control to operating system
-	call _kmain
+	call _lib_init
 
 	# call global destructors
 	call _fini

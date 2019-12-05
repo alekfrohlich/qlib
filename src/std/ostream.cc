@@ -5,10 +5,10 @@ using namespace std;
 OStream std::cout;
 
 OStream::Endl std::endl;
-OStream::Hex std::hex;
-OStream::Dec std::dec;
-OStream::Oct std::oct;
-OStream::Bin bin;
+OStream::Hex  std::hex;
+OStream::Dec  std::dec;
+OStream::Oct  std::oct;
+OStream::Bin  std::bin;
 
 const char OStream::_digits[] = "0123456789abcdef";
 
@@ -48,40 +48,40 @@ int OStream::utoa(unsigned int v, char * s, unsigned int i)
 }
 
 
-// int OStream::llitoa(long long int v, char * s)
-// {
-//     unsigned int i = 0;
+int OStream::llitoa(long long int v, char * s)
+{
+    unsigned int i = 0;
 
-//     if(v < 0) {
-//         v = -v;
-//         s[i++] = '-';
-//     }
+    if(v < 0) {
+        v = -v;
+        s[i++] = '-';
+    }
 
-//     return llutoa(static_cast<unsigned long long int>(v), s, i);
-// }
+    return llutoa(static_cast<unsigned long long int>(v), s, i);
+}
 
-// int OStream::llutoa(unsigned long long int v, char * s, unsigned int i)
-// {
-//     unsigned long long int j;
+int OStream::llutoa(unsigned long long int v, char * s, unsigned int i)
+{
+    unsigned long long int j;
 
-//     if(!v) {
-//         s[i++] = '0';
-//         return i;
-//     }
+    if(!v) {
+        s[i++] = '0';
+        return i;
+    }
 
-//     if(v > 256) {
-//         if(_base == 8 || _base == 16)
-//             s[i++] = '0';
-//         if(_base == 16)
-//             s[i++] = 'x';
-//     }
+    if(v > 256) {
+        if(_base == 8 || _base == 16)
+            s[i++] = '0';
+        if(_base == 16)
+            s[i++] = 'x';
+    }
 
-//     for(j = v; j != 0; i++, j /= _base);
-//     for(j = 0; v != 0; j++, v /= _base)
-//         s[i - 1 - j] = _digits[v % _base];
+    for(j = v; j != 0; i++, j /= _base);
+    for(j = 0; v != 0; j++, v /= _base)
+        s[i - 1 - j] = _digits[v % _base];
 
-//     return i;
-// }
+    return i;
+}
 
 int OStream::ptoa(const void * p, char * s)
 {

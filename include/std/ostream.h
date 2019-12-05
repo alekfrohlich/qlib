@@ -17,7 +17,7 @@ class OStream {
     struct Bin {};
     struct Err {};
 
-	OStream() : _error(false) {}
+	OStream() : _error(false), _base(10) {}
 
     OStream & operator<<(const Endl & endl) {
         _print("\n");
@@ -51,10 +51,7 @@ class OStream {
     }
 
     OStream & operator<<(char c) {
-        char buf[2];
-        buf[0] = c;
-        buf[1] = '\0';
-        _print(buf);
+        _putc(c);
         return *this;
     }
 
@@ -63,14 +60,16 @@ class OStream {
     }
 
     OStream & operator<<(int i) {
-        char buf[64];
+        char buf[16];
         buf[itoa(i, buf)] = '\0';
         _print(buf);
         return *this;
     }
+
     OStream & operator<<(short s) {
         return operator<<(static_cast<int>(s));
     }
+
     OStream & operator<<(long l) {
         return operator<<(static_cast<int>(l));
     }
@@ -81,26 +80,28 @@ class OStream {
         _print(buf);
         return *this;
     }
+
     OStream & operator<<(unsigned short s) {
         return operator<<(static_cast<unsigned int>(s));
     }
+
     OStream & operator<<(unsigned long l) {
         return operator<<(static_cast<unsigned int>(l));
     }
 
-    // OStream & operator<<(long long int u) {
-    //     char buf[64];
-    //     buf[llitoa(u, buf)] = '\0';
-    //     _print(buf);
-    //     return *this;
-    // }
+    OStream & operator<<(long long int u) {
+        char buf[64];
+        buf[llitoa(u, buf)] = '\0';
+        _print(buf);
+        return *this;
+    }
 
-    // OStream & operator<<(unsigned long long int u) {
-    //     char buf[64];
-    //     buf[llutoa(u, buf)] = '\0';
-    //     _print(buf);
-    //     return *this;
-    // }
+    OStream & operator<<(unsigned long long int u) {
+        char buf[64];
+        buf[llutoa(u, buf)] = '\0';
+        _print(buf);
+        return *this;
+    }
 
     OStream & operator<<(const void * p) {
         char buf[64];
@@ -117,8 +118,8 @@ class OStream {
   private:
 	int itoa(int v, char * s);
 	int utoa(unsigned int v, char * s, unsigned int i = 0);
-	// int llitoa(long long int v, char * s);
-	// int llutoa(unsigned long long int v, char * s, unsigned int i = 0);
+	int llitoa(long long int v, char * s);
+	int llutoa(unsigned long long int v, char * s, unsigned int i = 0);
 	int ptoa(const void * p, char * s);
 
 	int _base;
