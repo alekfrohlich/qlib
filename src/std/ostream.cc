@@ -10,7 +10,6 @@ OStream::Dec std::dec;
 OStream::Oct std::oct;
 OStream::Bin bin;
 
-
 const char OStream::_digits[] = "0123456789abcdef";
 
 int OStream::itoa(int v, char * s)
