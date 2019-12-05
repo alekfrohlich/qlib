@@ -2,8 +2,12 @@ include $(MAKEINC)
 
 .PHONY: all clean
 
+CXX_SRC := display.cpp $(wildcard $(LIB)/*.cpp)
+
+OBJS  	:= $(CXX_SRC:.cpp=.o)
+
 # object files
-OBJ_LINK_LIST := crt0.o crtend.o kmain.o crtbegin.o
+OBJ_LINK_LIST := crt0.o crtend.o $(OBJS) kmain.o crtbegin.o
 
 # linker flags
 LDFLAGS := -Bstatic -nostdlib -T linker.ld

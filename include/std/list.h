@@ -1,9 +1,7 @@
-#ifndef BRAE_LIST_H
-#define BRAE_LIST_H
+#ifndef LIST_H
+#define LIST_H
 
-#include <display.hpp>
-
-namespace brae {
+namespace std {
 
 //@TODO: add additional methods for queues, linkedlists...
 template<typename T>
@@ -21,31 +19,28 @@ class List {
     T vector[10];
 };
 
-}; // namespace brae
+}; // namespace std
 
 template<typename T>
-brae::List<T>::List() {
+std::List<T>::List() {
   head = 0;
   for (int i = 0; i < 10; i++)
       vector[i] = 0;
 }
 
 template<typename T>
-brae::List<T>::~List() {}
+std::List<T>::~List() {}
 
 template<typename T>
-void brae::List<T>::push(T arg0) {
-  cout.putChar((char) arg0);
-  vector[head++] = arg0;
-}
+void std::List<T>::push(T arg0) { vector[head++] = arg0; }
 
 template<typename T>
-T brae::List<T>::pop() { return vector[--head]; }
+T std::List<T>::pop() { return vector[--head]; }
 
 template<typename T>
-T brae::List<T>::top() const { return vector[head]; }
+T std::List<T>::top() const { return vector[head]; }
 
 template<typename T>
-bool brae::List<T>::empty() const { return head == 0; }
+bool std::List<T>::empty() const { return head == 0; }
 
-#endif // BRAE_LIST_H
+#endif // LIST_H
