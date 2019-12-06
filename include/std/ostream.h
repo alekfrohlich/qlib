@@ -1,10 +1,7 @@
 #ifndef OSTREAM_H
 #define OSTREAM_H
 
-extern "C" {
-	void _putc(const char c);
-	void _print(const char * s);
-}
+#include <std/printer.h>
 
 namespace std {
 
@@ -17,105 +14,34 @@ class OStream {
     struct Bin {};
     struct Err {};
 
-	OStream() : _error(false), _base(10) {}
+    //@TODO: instantiate cout
+	OStream(Printer & printer) : _base(10), _printer(printer) {}
 
-    OStream & operator<<(const Endl & endl) {
-        _print("\n");
-        _base = 10;
-        return *this;
-    }
+    // control overloads
+    OStream & operator<<(const Endl & endl);
+    OStream & operator<<(const Hex & hex);
+    OStream & operator<<(const Dec & dec);
+    OStream & operator<<(const Oct & oct);
+    OStream & operator<<(const Bin & bin);
+    OStream & operator<<(const Err & err);
 
-    OStream & operator<<(const Hex & hex) {
-        _base = 16;
-        return *this;
-    }
-
-    OStream & operator<<(const Dec & dec) {
-        _base = 10;
-        return *this;
-    }
-
-    OStream & operator<<(const Oct & oct) {
-        _base = 8;
-        return *this;
-    }
-
-    OStream & operator<<(const Bin & bin) {
-        _base = 2;
-        return *this;
-    }
-
-    OStream & operator<<(const Err & err) {
-        _error = true;
-        return *this;
-    }
-
-    OStream & operator<<(char c) {
-        _putc(c);
-        return *this;
-    }
-
-    OStream & operator<<(unsigned char c) {
-        return operator<<(static_cast<unsigned int>(c));
-    }
-
-    OStream & operator<<(int i) {
-        char buf[16];
-        buf[itoa(i, buf)] = '\0';
-        _print(buf);
-        return *this;
-    }
-
-    OStream & operator<<(short s) {
-        return operator<<(static_cast<int>(s));
-    }
-
-    OStream & operator<<(long l) {
-        return operator<<(static_cast<int>(l));
-    }
-
-    OStream & operator<<(unsigned int u) {
-        char buf[64];
-        buf[utoa(u, buf)] = '\0';
-        _print(buf);
-        return *this;
-    }
-
-    OStream & operator<<(unsigned short s) {
-        return operator<<(static_cast<unsigned int>(s));
-    }
-
-    OStream & operator<<(unsigned long l) {
-        return operator<<(static_cast<unsigned int>(l));
-    }
-
-    OStream & operator<<(long long int u) {
-        char buf[64];
-        buf[llitoa(u, buf)] = '\0';
-        _print(buf);
-        return *this;
-    }
-
-    OStream & operator<<(unsigned long long int u) {
-        char buf[64];
-        buf[llutoa(u, buf)] = '\0';
-        _print(buf);
-        return *this;
-    }
-
-    OStream & operator<<(const void * p) {
-        char buf[64];
-        buf[ptoa(p, buf)] = '\0';
-        _print(buf);
-        return *this;
-    }
-
-    OStream & operator<<(const char * s) {
-        _print(s);
-        return *this;
-    }
+    // data overloads
+    OStream & operator<<(char c);
+    OStream & operator<<(unsigned char c);
+    OStream & operator<<(int i);
+    OStream & operator<<(short s);
+    OStream & operator<<(long l);
+    OStream & operator<<(unsigned int u);
+    OStream & operator<<(unsigned short s);
+    OStream & operator<<(unsigned long l);
+    OStream & operator<<(long long int u);
+    OStream & operator<<(unsigned long long int u);
+    OStream & operator<<(const void * p);
+    OStream & operator<<(const char * s);
 
   private:
+    void print(const char * s) { _printer.print(s); }
+    void error(void) { _printer.error(); }
 	int itoa(int v, char * s);
 	int utoa(unsigned int v, char * s, unsigned int i = 0);
 	int llitoa(long long int v, char * s);
@@ -123,7 +49,8 @@ class OStream {
 	int ptoa(const void * p, char * s);
 
 	int _base;
-    bool _error;
+    //@TODO: fix printer
+    Printer & _printer;
     static const char _digits[];
 };
 

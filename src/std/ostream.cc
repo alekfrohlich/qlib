@@ -1,14 +1,129 @@
 #include <std/ostream.h>
+#include <std/display.h>
 
 using namespace std;
 
-OStream std::cout;
+//@TODO: initialize cout at _pre_lib_init
+// standard output
+OStream std::cout(display);
 
+// control flags
 OStream::Endl std::endl;
 OStream::Hex  std::hex;
 OStream::Dec  std::dec;
 OStream::Oct  std::oct;
 OStream::Bin  std::bin;
+
+
+/**************************** CONTROL OVERLOADS ****************************/
+
+
+OStream & OStream::operator<<(const Endl & endl) {
+    print("\n");
+    _base = 10;
+    return *this;
+}
+
+OStream & OStream::operator<<(const Hex & hex) {
+    _base = 16;
+    return *this;
+}
+
+OStream & OStream::operator<<(const Dec & dec) {
+    _base = 10;
+    return *this;
+}
+
+OStream & OStream::operator<<(const Oct & oct) {
+    _base = 8;
+    return *this;
+}
+
+OStream & OStream::operator<<(const Bin & bin) {
+    _base = 2;
+    return *this;
+}
+
+OStream & OStream::operator<<(const Err & err) {
+    error();
+    return *this;
+}
+
+
+/**************************** DATA OVERLOADS ****************************/
+
+
+OStream & OStream::operator<<(char c) {
+    char buf[2];
+    buf[0] = c;
+    buf[1] = '\0';
+    print(buf);
+    return *this;
+}
+
+OStream & OStream::operator<<(unsigned char c) {
+    return operator<<(static_cast<unsigned int>(c));
+}
+
+OStream & OStream::operator<<(int i) {
+    char buf[16];
+    buf[itoa(i, buf)] = '\0';
+    print(buf);
+    return *this;
+}
+
+OStream & OStream::operator<<(short s) {
+    return operator<<(static_cast<int>(s));
+}
+
+OStream & OStream::operator<<(long l) {
+    return operator<<(static_cast<int>(l));
+}
+
+OStream & OStream::operator<<(unsigned int u) {
+    char buf[64];
+    buf[utoa(u, buf)] = '\0';
+    print(buf);
+    return *this;
+}
+
+OStream & OStream::operator<<(unsigned short s) {
+    return operator<<(static_cast<unsigned int>(s));
+}
+
+OStream & OStream::operator<<(unsigned long l) {
+    return operator<<(static_cast<unsigned int>(l));
+}
+
+OStream & OStream::operator<<(long long int u) {
+    char buf[64];
+    buf[llitoa(u, buf)] = '\0';
+    print(buf);
+    return *this;
+}
+
+OStream & OStream::operator<<(unsigned long long int u) {
+    char buf[64];
+    buf[llutoa(u, buf)] = '\0';
+    print(buf);
+    return *this;
+}
+
+OStream & OStream::operator<<(const void * p) {
+    char buf[64];
+    buf[ptoa(p, buf)] = '\0';
+    print(buf);
+    return *this;
+}
+
+OStream & OStream::operator<<(const char * s) {
+    print(s);
+    return *this;
+}
+
+
+/**************************** CONVERSION FUNCTIONS ****************************/
+
 
 const char OStream::_digits[] = "0123456789abcdef";
 

@@ -12,5 +12,6 @@ image:
 	cd $(IMG) && $(MAKE) all
 
 clean:
+	cd $(APP) && $(MAKE) clean
 	cd $(SRC) && $(MAKE) clean
 	cd $(IMG) && $(MAKE) clean
