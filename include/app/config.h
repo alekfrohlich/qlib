@@ -3,4 +3,4 @@
 
 extern void main(void);
 
-#endif // APP_CONFIG_H
+#endif  // APP_CONFIG_H

@@ -12,7 +12,7 @@ image:
 	cd $(IMG) && $(MAKE) all
 
 format:
-	find . -regex '.*\.\(cc\|c\|h\)' -exec clang-format style=$(DOCS)/.clang-format -i {}  2> /dev/null \;
+	cd $(DOCS) && $(MAKE) format
 
 clean:
 	cd $(APP) && $(MAKE) clean
