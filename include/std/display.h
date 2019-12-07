@@ -24,7 +24,7 @@ class Display : public Printer {
     static const int _height = 25;
     static const int _width  = 80;
 
-    Mode _mode;
+    Mode _mode = _normal;
     Cell * _buffer = reinterpret_cast<Cell*>(0xB8000);
 };
 
