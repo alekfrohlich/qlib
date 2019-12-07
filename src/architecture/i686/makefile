@@ -13,7 +13,7 @@ OBJ_LINK_LIST := crt0.o crtend.o $(OBJS) lib_init.o crtbegin.o
 # linker flags
 LDFLAGS  := -static -nostdlib \
 			-L $(patsubst %/libgcc.a,%/,$(shell $(CXX) -print-libgcc-file-name)) \
-			-T linker.ld
+			-T link.ld
 
 crt0.o: crt0.S
 	$(AS) crt0.S -o $@

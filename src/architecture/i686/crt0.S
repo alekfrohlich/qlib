@@ -18,7 +18,7 @@
 .type _start, @function
 _start:
 	# set-up stack pointer
-	mov $_edata+16384, %esp
+	mov $_ebss+16384, %esp
 
 	# set-up components
 	call _pre_lib_init
