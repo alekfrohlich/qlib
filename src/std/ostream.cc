@@ -1,4 +1,4 @@
-#include <std/display.h>
+#include <machine/pc/display.h>
 #include <std/ostream.h>
 
 using namespace std;

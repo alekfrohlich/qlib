@@ -2,4 +2,4 @@ include $(MAKEINC)
 
 .PHONY: clean
 clean:
-	@rm -f *.o
+	cd $(MACHNAME) && $(MAKE) clean

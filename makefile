@@ -1,7 +1,7 @@
 export MAKEINC = $(CURDIR)/makeinc
 include $(MAKEINC)
 
-.PHONY: all brae image clean format
+.PHONY: all brae image clean format tools
 
 all: brae image
 
@@ -13,6 +13,8 @@ image:
 
 format:
 	cd $(DOCS) && $(MAKE) format
+
+tools:
 
 clean:
 	cd $(APP) && $(MAKE) clean

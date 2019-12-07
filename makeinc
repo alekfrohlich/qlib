@@ -1,8 +1,6 @@
 # target architecture
-TARGET := ia32
-
-# shall be generalized
-MACH := i686
+TARGET 	 := ia32
+MACHNAME := pc
 
 # assembler, C/C++ compiler, linker
 AS  := $(TARGET)-as
@@ -10,21 +8,27 @@ CC  := $(TARGET)-gcc
 CXX := $(TARGET)-g++
 LD  := $(TARGET)-ld
 
-# directories
+# top directories
 TOP   := $(abspath $(dir $(filter %makeinc, $(MAKEFILE_LIST))))
 APP   := $(TOP)/app
 INC   := $(TOP)/include
 DOCS  := $(TOP)/docs
 IMG   := $(TOP)/img
 SRC   := $(TOP)/src
+TOOLS := $(TOP)/tools
 
-ARCH  := $(SRC)/architecture
-MACHD := $(ARCH)/$(MACH)
-LIB   := $(SRC)/std
-BOOT  := $(IMG)/boot
+# source code directories
+ARCH  := $(SRC)/arch
+BOOT  := $(SRC)/boot
+MACH  := $(SRC)/machine
+STD   := $(SRC)/std
+TEST  := $(SRC)/test
+
+# bootloader image directory
+GRUB  := $(IMG)/boot
 
 # fat binary
-FATBIN := $(BOOT)/brae.bin
+FATBIN := $(GRUB)/brae.bin
 
 # C compiler flags
 CFLAGS := -I $(INC)

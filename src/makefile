@@ -1,16 +1,20 @@
 include $(MAKEINC)
 
-.PHONY: all \
-		architecture boot std
+.PHONY: all clean \
+		arch boot machine std
 
-all: architecture boot std
+all: arch boot machine std
 
-architecture:
+arch:
 	cd $(ARCH) && $(MAKE) all
 
 boot:
 std:
+machine:
 
 clean:
 	cd $(ARCH) && $(MAKE) clean
-	cd $(LIB) && $(MAKE) clean
+	cd $(BOOT) && $(MAKE) clean
+	cd $(MACH) && $(MAKE) clean
+	cd $(STD)  && $(MAKE) clean
+	cd $(TEST) && $(MAKE) clean

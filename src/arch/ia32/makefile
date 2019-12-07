@@ -2,8 +2,11 @@ include $(MAKEINC)
 
 .PHONY: all clean
 
-CXX_SRC := $(wildcard $(LIB)/*.cc) \
-		   $(wildcard $(APP)/*.cc)
+CXX_SRC := 	$(wildcard $(ARCH)/*.cc) \
+			$(wildcard $(MACH)/*.cc) \
+			$(wildcard $(MACH)/$(MACHNAME)/*.cc) \
+			$(wildcard $(STD)/*.cc)  \
+		    $(wildcard $(APP)/*.cc)
 
 OBJS  	:= $(CXX_SRC:.cc=.o)
 
