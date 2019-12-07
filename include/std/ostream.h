@@ -59,6 +59,7 @@ extern OStream::Hex hex;
 extern OStream::Dec dec;
 extern OStream::Oct oct;
 extern OStream::Bin bin;
+extern OStream::Err err;
 
 //@TODO: handle especial colors for cerr
 extern OStream cout;

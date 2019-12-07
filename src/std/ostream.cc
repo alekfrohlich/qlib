@@ -13,6 +13,7 @@ OStream::Hex  std::hex;
 OStream::Dec  std::dec;
 OStream::Oct  std::oct;
 OStream::Bin  std::bin;
+OStream::Err  std::err;
 
 
 /**************************** CONTROL OVERLOADS ****************************/

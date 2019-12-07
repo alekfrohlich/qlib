@@ -2,5 +2,5 @@
 
 void main(void) {
     using namespace std;
-    cout << "Nicolas";
+    cout << "Nicolas" << std::endl << std::err << 11;
 }

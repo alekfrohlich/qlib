@@ -29,7 +29,7 @@ FATBIN := $(BOOT)/brae.bin
 CFLAGS := -I $(INC)
 
 # C++ compiler flags
-CXXFLAGS := -I $(INC)
+CXXFLAGS := -I $(INC) -g
 CXXFLAGS += -ffreestanding -fno-exceptions
 CXXFLAGS += -fno-rtti -nostdinc -fno-asynchronous-unwind-tables
 CXXFLAGS += --no-use-cxa-atexit -std=c++0x

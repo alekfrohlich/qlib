@@ -30,7 +30,7 @@ void Display::put(char c) {
 
         default:
             unsigned index = _row * _width + _column;
-            _buffer[index] = _mode;
+            _buffer[index] = c | _mode;
 
             if (++_column == _width) {
                 _column = 0;
