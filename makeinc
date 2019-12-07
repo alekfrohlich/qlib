@@ -13,13 +13,14 @@ LD  := $(TARGET)-ld
 # directories
 TOP   := $(abspath $(dir $(filter %makeinc, $(MAKEFILE_LIST))))
 APP   := $(TOP)/app
+INC   := $(TOP)/include
+DOCS  := $(TOP)/docs
+IMG   := $(TOP)/img
 SRC   := $(TOP)/src
+
 ARCH  := $(SRC)/architecture
 MACHD := $(ARCH)/$(MACH)
-COMP  := $(SRC)/components
 LIB   := $(SRC)/std
-INC   := $(TOP)/include
-IMG   := $(TOP)/img
 BOOT  := $(IMG)/boot
 
 # fat binary
