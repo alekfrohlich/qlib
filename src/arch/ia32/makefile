@@ -29,6 +29,3 @@ crt0.o: crt0.S
 
 all: $(OBJ_LINK_LIST)
 	$(LD) $(LDFLAGS) $(OBJ_LINK_LIST) -lgcc -o $(FATBIN)
-
-clean:
-	@rm -f *.o
