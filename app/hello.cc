@@ -2,5 +2,5 @@
 
 void main(void) {
     using namespace std;
-    std::cout << "asdads";
+    std::cout << "asadas";
 }

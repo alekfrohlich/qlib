@@ -3,8 +3,8 @@
 import subprocess
 import sys
 
-QEMU = 'qemu-system-i386' 
-BRAE = 'bin/brae.iso'   
+QEMU = 'qemu-system-i386'
+BRAE = 'brae.iso'
 
 if (len(sys.argv) > 1):
     debug = True

@@ -31,8 +31,9 @@ TRGT_MACH := $(MACH)/$(MACHNAME)
 # bootloader image directory
 GRUB  := $(IMG)/boot
 
-# fat binary
+# fat binary, grub bootable image
 FATBIN := $(GRUB)/brae.bin
+ISOFILE := brae.iso
 
 # C compiler flags
 CFLAGS := -I $(INC)
@@ -42,7 +43,6 @@ CXXFLAGS := -I $(INC)
 CXXFLAGS += -ffreestanding -fno-exceptions
 CXXFLAGS += -fno-rtti -nostdinc -fno-asynchronous-unwind-tables
 CXXFLAGS += --no-use-cxa-atexit -std=c++0x
-CXXFLAGS += -O2
 
 # linker flags
 LDFLAGS  := -static -nostdlib \
