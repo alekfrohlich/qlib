@@ -11,9 +11,10 @@ LD  := $(TARGET)-ld
 # top directories
 TOP   := $(abspath $(dir $(filter %makeinc, $(MAKEFILE_LIST))))
 APP   := $(TOP)/app
-INC   := $(TOP)/include
+BIN   := $(TOP)/bin
 DOCS  := $(TOP)/docs
 IMG   := $(TOP)/img
+INC   := $(TOP)/include
 SRC   := $(TOP)/src
 TOOLS := $(TOP)/tools
 
@@ -23,6 +24,9 @@ BOOT  := $(SRC)/boot
 MACH  := $(SRC)/machine
 STD   := $(SRC)/std
 TEST  := $(SRC)/test
+
+TRGT_ARCH := $(ARCH)/$(TARGET)
+TRGT_MACH := $(MACH)/$(MACHNAME)
 
 # bootloader image directory
 GRUB  := $(IMG)/boot
@@ -34,8 +38,13 @@ FATBIN := $(GRUB)/brae.bin
 CFLAGS := -I $(INC)
 
 # C++ compiler flags
-CXXFLAGS := -I $(INC) -g
+CXXFLAGS := -I $(INC)
 CXXFLAGS += -ffreestanding -fno-exceptions
 CXXFLAGS += -fno-rtti -nostdinc -fno-asynchronous-unwind-tables
 CXXFLAGS += --no-use-cxa-atexit -std=c++0x
-CXXFLAGS += -O2 -Wall -Wextra
+CXXFLAGS += -O2
+
+# linker flags
+LDFLAGS  := -static -nostdlib \
+			-L $(patsubst %/libgcc.a,%/,$(shell $(CXX) -print-libgcc-file-name)) \
+			-T $(TRGT_ARCH)/link.ld
