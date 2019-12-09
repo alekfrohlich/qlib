@@ -6,7 +6,7 @@ include $(MAKEINC)
 .PHONY: all clean distclean format image tools
 
 #=============================================================================#
-# @TODO: refactor inline bash to avoid entering/leaving message from make
+# @TODO: refactor inline bash in order to avoid testing for .debug.lock
 #=============================================================================#
 
 #_______SOURCE CODE___________________________________________________________#
@@ -15,18 +15,18 @@ include $(MAKEINC)
 
 all:
 	if test -f ".debug.lock"; then \
-    	$(MAKE) -s clean; \
+		$(MAKE) --no-print-directory clean; \
 	fi
-	$(MAKE) _all
+	$(MAKE) --no-print-directory _all
 
 _all: CXXFLAGS += -O2
 _all: $(FATBIN) $(ISOFILE)
 
 debug:
 	if ! test -f ".debug.lock"; then \
-    	$(MAKE) -s clean && touch .debug.lock; \
+		$(MAKE) --no-print-directory clean && touch .debug.lock; \
 	fi
-	@$(MAKE) _debug
+	@$(MAKE) --no-print-directory _debug
 
 _debug: CXXFLAGS += -Og -Wall -Wextra
 _debug: FATBIN = $(GRUB)/brae.bin.debug
@@ -34,7 +34,7 @@ _debug: $(FATBIN) $(ISOFILE)
 
 CXX_SRC :=  $(wildcard $(TRGT_MACH)/*.cc) \
 			$(wildcard $(STD)/*.cc) \
-		    $(wildcard $(APP)/*.cc)
+			$(wildcard $(APP)/*.cc)
 
 OBJS  	:= $(CXX_SRC:.cc=.o)
 
@@ -44,7 +44,7 @@ OBJ_LINK_LIST := $(TRGT_ARCH)/crt0.o $(TRGT_ARCH)/crtend.o $(OBJS) $(TRGT_ARCH)/
 # ld expects to find crtend.o and crtbegin.o relative to PWD,
 # it fails if given /path/to/crtbegin.o
 $(FATBIN): $(OBJ_LINK_LIST)
-	cd $(TRGT_ARCH) && $(LD) $(LDFLAGS) crt0.o crtend.o $(OBJS) lib_init.o crtbegin.o -lgcc -o $(FATBIN)
+	cd $(TRGT_ARCH) && $(LD) $(LDFLAGS) crt0.o crtend.o $(OBJS) lib_init.o crtbegin.o -lgcc -o $@
 
 %.o: %.S
 	 $(AS) $(ASFLAGS) $< -o $@
@@ -73,6 +73,7 @@ format:
 #=============================================================================#
 
 tools:
+	@echo $(shell $(CXX) $(CXXFLAGS) -MM -MG src/std/ostream.cc)
 
 clean:
 	@find . -type f \( -name "*.o" -o -name "brae.iso" \) -delete
