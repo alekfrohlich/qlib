@@ -1,3 +1,14 @@
+# vscode stuff
 *.vscode
+
+# gdb stuff
 *.gdbinit
+
+# compilation stuff
 *.o
+*.iso
+
+# makefile stuff
+.debug.lock
+*.bin.debug
+*.bin

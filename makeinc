@@ -32,7 +32,6 @@ TRGT_MACH := $(MACH)/$(MACHNAME)
 GRUB  := $(IMG)/boot
 
 # fat binary, grub bootable image
-FATBIN := $(GRUB)/brae.bin
 ISOFILE := brae.iso
 
 # C compiler flags

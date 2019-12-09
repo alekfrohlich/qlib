@@ -3,7 +3,7 @@ SHELL := /bin/bash
 export MAKEINC = $(CURDIR)/makeinc
 include $(MAKEINC)
 
-.PHONY: all clean distclean format image tools
+.PHONY: clean distclean format tools
 
 #=============================================================================#
 # @TODO: refactor inline bash in order to avoid testing for .debug.lock
@@ -11,26 +11,34 @@ include $(MAKEINC)
 
 #_______SOURCE CODE___________________________________________________________#
 
-.SILENT: all debug
+.SILENT: all _all debug _debug
+.PHONY: all _all debug _debug
+
+MAKEFLAGS += --no-print-directory
+CXXFLAGS += $(_ALL_CXXFLAGS)
+CXXFLAGS += $(_DEBUG_CXXFLAGS)
+_DEBUG_EXT :=
+FATBIN = $(addsuffix $(_DEBUG_EXT),$(GRUB)/brae.bin)
 
 all:
 	if test -f ".debug.lock"; then \
-		$(MAKE) --no-print-directory clean; \
+		$(MAKE) clean; \
 	fi
-	$(MAKE) --no-print-directory _all
+	$(MAKE) _all
 
-_all: CXXFLAGS += -O2
-_all: $(FATBIN) $(ISOFILE)
+_all:
+	$(MAKE) _ALL_CXXFLAGS=-O2 $(FATBIN)
+	$(MAKE) $(ISOFILE)
 
 debug:
 	if ! test -f ".debug.lock"; then \
-		$(MAKE) --no-print-directory clean && touch .debug.lock; \
+		$(MAKE) clean && touch .debug.lock; \
 	fi
-	@$(MAKE) --no-print-directory _debug
+	$(MAKE) _debug
 
-_debug: CXXFLAGS += -Og -Wall -Wextra
-_debug: FATBIN = $(GRUB)/brae.bin.debug
-_debug: $(FATBIN) $(ISOFILE)
+_debug:
+	$(MAKE) _DEBUG_CXXFLAGS="-Og -Wall -Wextra" _DEBUG_EXT=.debug $(FATBIN).debug
+	$(MAKE) $(ISOFILE)
 
 CXX_SRC :=  $(wildcard $(TRGT_MACH)/*.cc) \
 			$(wildcard $(STD)/*.cc) \
