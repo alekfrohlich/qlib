@@ -1,9 +1,13 @@
 #include <machine/pc/display.h>
 
-using namespace std;
+#include <std/printer.h>
 
-// standard x86 vga-display
-Display std::display;
+namespace _setup {
+std::Display display;
+Printer * printer = &display;
+}  // namespace _setup
+
+namespace std {
 
 /*________PRINTER IMPLEMENTATION_____________________________________________*/
 
@@ -74,3 +78,4 @@ void Display::scroll(void) {
         _buffer[_width * (_height - 1) + j] = c | _mode;
     }
 }
+}  // namespace std

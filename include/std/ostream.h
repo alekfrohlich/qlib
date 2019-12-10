@@ -15,7 +15,7 @@ class OStream
     struct Bin {};
     struct Err {};
 
-    OStream(Printer & printer) : _base(10), _printer(printer) {}
+    OStream(Printer * printer) : _base(10), _printer(printer) {}
 
     // control overloads
     OStream & operator<<(const Endl & endl);
@@ -41,8 +41,8 @@ class OStream
 
  private:
     // Printer dependency
-    void print(const char * s) { _printer.print(s); }
-    void error(void) { _printer.error(); }
+    void print(const char * s) { _printer->print(s); }
+    void error(void) { _printer->error(); }
 
     // conversion functions
     int itoa(int v, char * s);
@@ -52,7 +52,7 @@ class OStream
     int ptoa(const void * p, char * s);
 
     int _base;
-    Printer & _printer;
+    Printer * _printer;
     static const char _digits[];
 };
 

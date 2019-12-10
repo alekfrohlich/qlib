@@ -2,20 +2,9 @@
 
 #include <std/ostream.h>
 
-using namespace std;
+namespace std {
 
-//@TODO: initialize cout at
-//_pre_lib_init
-// standard output
-OStream std::cout(display);
-
-// control flags
-OStream::Endl std::endl;
-OStream::Hex std::hex;
-OStream::Dec std::dec;
-OStream::Oct std::oct;
-OStream::Bin std::bin;
-OStream::Err std::err;
+OStream cout(_setup::printer);
 
 /*________CONTROL OVERLOADS__________________________________________________*/
 
@@ -199,3 +188,4 @@ int OStream::ptoa(const void * p, char * s) {
 
     return j + 2;
 }
+}  // namespace std

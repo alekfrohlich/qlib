@@ -2,7 +2,6 @@
 
 namespace std {
 
-//@TODO: x86-32-vga specific! move to machine/arch!
 class Display : public Printer
 {
  public:
