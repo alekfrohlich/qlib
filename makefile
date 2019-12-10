@@ -5,22 +5,19 @@ include $(MAKEINC)
 
 .PHONY: clean distclean format tools
 
-#=============================================================================#
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
 # @TODO: refactor inline bash in order to avoid testing for .debug.lock
-#=============================================================================#
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
 
 #_______SOURCE CODE___________________________________________________________#
 
 .SILENT: all _all debug _debug
 .PHONY: all _all debug _debug
 
-MAKEFLAGS += --no-print-directory
-CXXFLAGS += $(_ALL_CXXFLAGS)
-CXXFLAGS += $(_DEBUG_CXXFLAGS)
-_DEBUG_EXT :=
-FATBIN = $(addsuffix $(_DEBUG_EXT),$(GRUB)/brae.bin)
-
 all:
+	if test -f ".debug.lock"; then \
+		$(MAKE) clean; \
+	fi
 	$(MAKE) _all
 
 _all:
@@ -46,17 +43,34 @@ CXX_SRC :=  $(wildcard $(TRGT_MACH)/*.cc) \
 OBJS  	:= $(CXX_SRC:.cc=.o)
 
 # the final executable must be linked in this exact order
-OBJ_LINK_LIST := $(TRGT_ARCH)/crt0.o $(TRGT_ARCH)/crtend.o $(OBJS) $(TRGT_ARCH)/lib_init.o $(TRGT_ARCH)/crtbegin.o
+OBJ_LINK_LIST := $(addprefix $(TRGT_ARCH)/, crt0.o crtend.o) \
+				 $(OBJS) $(addprefix $(TRGT_ARCH)/, lib_init.o crtbegin.o)
 
-# ld expects to find crtend.o and crtbegin.o relative to PWD,
-# it fails if given /path/to/crtbegin.o
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
+# @TODO: fix ld include error: ld expects to find crtend.o and crtbegin.o
+# to be relative to the working directory. It fails when given a relative path.
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
+
 $(FATBIN): $(OBJ_LINK_LIST)
-	cd $(TRGT_ARCH) && $(LD) $(LDFLAGS) crt0.o crtend.o $(OBJS) lib_init.o crtbegin.o -lgcc -o $@
+	cd $(TRGT_ARCH) && $(LD) $(LDFLAGS) crt0.o crtend.o $(OBJS) \
+		lib_init.o crtbegin.o -lgcc -o $@
 
-CPPFLAGS := -MD -MP
-
+# currently used to assamble crt0.S
 %.o: %.S
 	 $(AS) $(ASFLAGS) $< -o $@
+
+#=============AUTOMAKE========================================================#
+# Since it's possible to include files within GNU make, this build system
+# relies on GCC preprocessor's flags (CPPFLAGS) -MD -MP to generate make
+# compliant target rules for each .c and .cc file. It does so by including
+# the generated .d files. GNU make is able to turn .cc and .c files into
+# dependency files, .d implicitly by using the aforementioned C-preprocessor.
+#
+# For more information on this technique please refer to the links:
+#  - http://make.mad-scientist.net/papers/advanced-auto-dependency-generation/
+#  - http://www.microhowto.info/howto/automatically_generate_makefile_
+# 	dependencies.html
+#=============================================================================#
 
 -include $(CXX_SRC:.cc=.d)
 -include $(C_SRC:.c=.d)
@@ -74,16 +88,18 @@ format:
 
 #_______CROSS-CHAIN SETUP_____________________________________________________#
 
-#=============================================================================#
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
 # @TODO: add .PHONY bash script to automate tool installation
-#=============================================================================#
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
 
 tools:
-	@echo $(shell $(CXX) $(CXXFLAGS) -MM -MG src/std/ostream.cc)
+
+#_______CLEAN ENVIRONMENT______________________________________________________#
 
 clean:
-	@find . -type f \( -name "*.o" -o -name "*.d" \) -delete
+	@find . -type f \( -name "*.o" \) -delete
 	@rm -f .debug.lock brae.iso
 
 distclean: clean
+	@find . -type f -name "*.d" -delete
 	@rm -f img/boot/brae.bin img/boot/brae.bin.debug

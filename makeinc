@@ -25,25 +25,37 @@ MACH  := $(SRC)/machine
 STD   := $(SRC)/std
 TEST  := $(SRC)/test
 
+# target-specific directories
 TRGT_ARCH := $(ARCH)/$(TARGET)
 TRGT_MACH := $(MACH)/$(MACHNAME)
 
 # bootloader image directory
 GRUB  := $(IMG)/boot
 
-# fat binary, grub bootable image
-ISOFILE := brae.iso
-
 # C compiler flags
 CFLAGS := -I $(INC)
+
+# C-preprocessor flags (used to generate .d files)
+CPPFLAGS := -MD -MP
 
 # C++ compiler flags
 CXXFLAGS := -I $(INC)
 CXXFLAGS += -ffreestanding -fno-exceptions
 CXXFLAGS += -fno-rtti -nostdinc -fno-asynchronous-unwind-tables
 CXXFLAGS += --no-use-cxa-atexit -std=c++0x
+CXXFLAGS   += $(_ALL_CXXFLAGS) $(_DEBUG_CXXFLAGS)
 
 # linker flags
 LDFLAGS  := -static -nostdlib \
 			-L $(patsubst %/libgcc.a,%/,$(shell $(CXX) -print-libgcc-file-name)) \
 			-T $(TRGT_ARCH)/link.ld
+
+# make flags
+MAKEFLAGS  += --no-print-directory
+
+# debug fatbin extension
+_DEBUG_EXT :=
+
+# fat binary, grub bootable image
+FATBIN = $(addsuffix $(_DEBUG_EXT),$(GRUB)/brae.bin)
+ISOFILE := brae.iso
