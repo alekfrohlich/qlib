@@ -21,9 +21,6 @@ _DEBUG_EXT :=
 FATBIN = $(addsuffix $(_DEBUG_EXT),$(GRUB)/brae.bin)
 
 all:
-	if test -f ".debug.lock"; then \
-		$(MAKE) clean; \
-	fi
 	$(MAKE) _all
 
 _all:
@@ -40,6 +37,8 @@ _debug:
 	$(MAKE) _DEBUG_CXXFLAGS="-Og -Wall -Wextra" _DEBUG_EXT=.debug $(FATBIN).debug
 	$(MAKE) $(ISOFILE)
 
+C_SRC 	:= $(wildcard TRGT_ARCH/*.c)
+
 CXX_SRC :=  $(wildcard $(TRGT_MACH)/*.cc) \
 			$(wildcard $(STD)/*.cc) \
 			$(wildcard $(APP)/*.cc)
@@ -54,14 +53,13 @@ OBJ_LINK_LIST := $(TRGT_ARCH)/crt0.o $(TRGT_ARCH)/crtend.o $(OBJS) $(TRGT_ARCH)/
 $(FATBIN): $(OBJ_LINK_LIST)
 	cd $(TRGT_ARCH) && $(LD) $(LDFLAGS) crt0.o crtend.o $(OBJS) lib_init.o crtbegin.o -lgcc -o $@
 
+CPPFLAGS := -MD -MP
+
 %.o: %.S
 	 $(AS) $(ASFLAGS) $< -o $@
 
-%.o: %.cc
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+-include $(CXX_SRC:.cc=.d)
+-include $(C_SRC:.c=.d)
 
 #_______BOOTABLE GRUB IMAGE___________________________________________________#
 
@@ -84,8 +82,8 @@ tools:
 	@echo $(shell $(CXX) $(CXXFLAGS) -MM -MG src/std/ostream.cc)
 
 clean:
-	@find . -type f \( -name "*.o" -o -name "brae.iso" \) -delete
-	@rm -f .debug.lock
+	@find . -type f \( -name "*.o" -o -name "*.d" \) -delete
+	@rm -f .debug.lock brae.iso
 
 distclean: clean
 	@rm -f img/boot/brae.bin img/boot/brae.bin.debug
