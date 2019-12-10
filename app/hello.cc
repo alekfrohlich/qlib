@@ -2,5 +2,6 @@
 
 void main(void) {
     using namespace std;
-    std::cout << "asadas";
+    std::cout << "debug";
+    for(;;);
 }

@@ -1,3 +1,6 @@
+#ifndef DISPLAY_H
+#define DISPLAY_H
+
 #include <std/printer.h>
 
 namespace std {
@@ -35,3 +38,5 @@ class Display : public Printer
 extern Display display;
 
 };  // namespace std
+
+#endif // DISPLAY_H

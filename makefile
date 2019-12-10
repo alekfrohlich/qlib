@@ -31,7 +31,7 @@ debug:
 	$(MAKE) _debug
 
 _debug:
-	$(MAKE) _DEBUG_CXXFLAGS="-Og -Wall -Wextra" _DEBUG_EXT=.debug $(FATBIN).debug
+	$(MAKE) _DEBUG_CXXFLAGS="-g -Wall -Wextra" _DEBUG_EXT=.debug $(FATBIN).debug
 	$(MAKE) $(ISOFILE)
 
 C_SRC 	:= $(wildcard TRGT_ARCH/*.c)
@@ -42,9 +42,13 @@ CXX_SRC :=  $(wildcard $(TRGT_MACH)/*.cc) \
 
 OBJS  	:= $(CXX_SRC:.cc=.o)
 
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
+# @TODO: move cpu.o before OBJS
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
+
 # the final executable must be linked in this exact order
 OBJ_LINK_LIST := $(addprefix $(TRGT_ARCH)/, crt0.o crtend.o) \
-				 $(OBJS) $(addprefix $(TRGT_ARCH)/, lib_init.o crtbegin.o)
+				 $(OBJS) $(addprefix $(TRGT_ARCH)/, cpu.o lib_init.o crtbegin.o)
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
 # @TODO: fix ld include error: ld expects to find crtend.o and crtbegin.o
@@ -53,7 +57,7 @@ OBJ_LINK_LIST := $(addprefix $(TRGT_ARCH)/, crt0.o crtend.o) \
 
 $(FATBIN): $(OBJ_LINK_LIST)
 	cd $(TRGT_ARCH) && $(LD) $(LDFLAGS) crt0.o crtend.o $(OBJS) \
-		lib_init.o crtbegin.o -lgcc -o $@
+		cpu.o lib_init.o crtbegin.o -lgcc -o $@
 
 # currently used to assamble crt0.S
 %.o: %.S
