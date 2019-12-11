@@ -3,5 +3,6 @@
 void main(void) {
     using namespace std;
     std::cout << "debug";
-    for(;;);
+    while (true)
+        ;
 }

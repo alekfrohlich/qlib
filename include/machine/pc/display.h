@@ -39,4 +39,4 @@ extern Display display;
 
 };  // namespace std
 
-#endif // DISPLAY_H
+#endif  // DISPLAY_H

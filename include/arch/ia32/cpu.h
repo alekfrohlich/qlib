@@ -7,7 +7,6 @@
 class CPU : CPU_Common
 {
  public:
-
     typedef Reg16 IOPort;
 
     // idt entries are called gates
@@ -24,8 +23,11 @@ class CPU : CPU_Common
 
     static void init(void);
 
+    static void int_enable(void);
+    static void int_disable(void);
+
     //@: why not const?
-    static void loadidt(Reg32 base, Reg16 limit);
+    static void load_idt(Reg32 * idtptr);
 
     static Reg8 in8(const IOPort & port);
     static Reg16 in16(const IOPort & port);
@@ -36,4 +38,4 @@ class CPU : CPU_Common
     static void out32(const IOPort & port, const Reg32 & value);
 };
 
-#endif // CPU_H
+#endif  // CPU_H
