@@ -3,12 +3,13 @@
 
 namespace std {
 
-//@TODO: add additional methods for
-// queues, linkedlists...
 template<typename T>
 class List
 {
  public:
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
+    // @TODO: Add additional methods for queues, linkedlists...
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
     List();
     ~List();
     void push(T arg0);
@@ -23,6 +24,10 @@ class List
 };
 
 };  // namespace std
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
+// @TODO: Move implementation code to .cc file
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
 
 template<typename T>
 std::List<T>::List() {

@@ -51,9 +51,10 @@ class OStream
     int llutoa(unsigned long long int v, char * s, unsigned int i = 0);
     int ptoa(const void * p, char * s);
 
+    static const char DIGITS[];
+
     int _base;
     Printer * _printer;
-    static const char _digits[];
 };
 
 extern OStream::Endl endl;

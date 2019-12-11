@@ -13,7 +13,7 @@ Please respect the following:
 
 - Variables and methods in `lower_case`.
 - Constants in `ALL_CAPS`.
-- Classes, Enum and Structs in `Upper_Case`.
+- Classes, Enum, Structs and typedefs in `UpperCase`.
 - Private class attributes in `_prefixed_lower_case`.
 - Interface names should reflect their provided functionality, i.g: `Printer`.
 

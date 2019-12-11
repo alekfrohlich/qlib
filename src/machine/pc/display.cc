@@ -17,16 +17,16 @@ void Display::print(const char * s) {
 }
 
 void Display::error(void) {
-    if (_mode == _error)
-        _mode = _normal;
+    if (_mode == ERROR_MODE)
+        _mode = NORMAL_MODE;
     else
-        _mode = _error;
+        _mode = ERROR_MODE;
 }
 
 /*________INNER WORKINGS_____________________________________________________*/
 
 void Display::put(char c) {
-    if (_row == _height) {
+    if (_row == HEIGHT) {
         _row--;
         scroll();
     }
@@ -41,10 +41,10 @@ void Display::put(char c) {
             break;
 
         default:
-            unsigned index = _row * _width + _column;
+            unsigned index = _row * WIDTH + _column;
             _buffer[index] = c | _mode;
 
-            if (++_column == _width) {
+            if (++_column == WIDTH) {
                 _column = 0;
                 _row++;
             }
@@ -54,8 +54,8 @@ void Display::put(char c) {
 
 void Display::erase(void) {
     char c = ' ';
-    for (int i = 0; i < _height; i++) {
-        for (int j = 0; j < _width; j++) {
+    for (int i = 0; i < HEIGHT; i++) {
+        for (int j = 0; j < WIDTH; j++) {
             put(c);
         }
     }
@@ -66,16 +66,16 @@ void Display::erase(void) {
 void Display::scroll(void) {
     unsigned short c;
 
-    for (int i = 0; i < _height - 1; i++) {
-        for (int j = 0; j < _width; j++) {
-            c = _buffer[(i + 1) * _width + j];
-            _buffer[i * _width + j] = c;
+    for (int i = 0; i < HEIGHT - 1; i++) {
+        for (int j = 0; j < WIDTH; j++) {
+            c = _buffer[(i + 1) * WIDTH + j];
+            _buffer[i * WIDTH + j] = c;
         }
     }
 
     char ch = ' ';
-    for (int j = 0; j < _width; j++) {
-        _buffer[_width * (_height - 1) + j] = c | _mode;
+    for (int j = 0; j < WIDTH; j++) {
+        _buffer[WIDTH * (HEIGHT - 1) + j] = c | _mode;
     }
 }
 }  // namespace std

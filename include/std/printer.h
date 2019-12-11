@@ -5,6 +5,12 @@ class Printer
 {
  public:
     virtual void print(const char * s) = 0;
+
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
+    // @DEBATE: Is this error function really necessary? Shouldn't we provide a
+    //          debug stream?
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
+
     virtual void error(void) = 0;
 };
 
