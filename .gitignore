@@ -5,6 +5,7 @@
 *.gdbinit
 
 # compilation stuff
+*.d
 *.o
 *.iso
 

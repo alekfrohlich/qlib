@@ -4,13 +4,14 @@ SECTIONS
 {
     . = 0x00100000;
 
+/*
     .multiboot ALIGN(4)		:
     {
-        KEEP(*(.multiboot))
     }
-
+*/
     .init	:
     {
+        KEEP(*(.multiboot))
         KEEP(*(SORT_NONE(.init)))
     }
 

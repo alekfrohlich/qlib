@@ -4,7 +4,8 @@
 #include <std/ostream.h>
 
 #define ASM __asm__ __volatile__
-struct CPU::IDTEntry CPU::IDT[IDT_ENTRIES];
+CPU::IDTEntry CPU::IDT[IDT_ENTRIES];
+CPU::gdte CPU::GDT[GDT_ENTRIES];
 
 /*________INITIALIZE HARDWARE________________________________________________*/
 
@@ -15,12 +16,38 @@ void keyboard_handler_main(void) {
     std::cout << "interrompido\n";
 }
 extern void keyboard_handler(void);
+extern void gdt_flush(CPU::gdtptr * gdtptr);
 }
 
+static void set_gdte(int n, unsigned base, unsigned limit, unsigned granularity,
+    unsigned access) {
+    CPU::GDT[n].base_low = (base & 0xffffff);
+    CPU::GDT[n].base_high = (base >> 24) & 0xff;
+    CPU::GDT[n].limit_low = (limit & 0xffff);
+    CPU::GDT[n].limit_high = (limit >> 16) & 0xf;
+    CPU::GDT[n].granularity = granularity;
+    CPU::GDT[n].access = access;
+}
+CPU::gdtptr * gdt_ptr;
+
 void CPU::init() {
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    // @TODO: Setup Global Descriptor Table (GDT)
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // setup gdt
+
+    // create tree entries: NULL, CODE, DATA
+    set_gdte(0, 0, 0x00000, 0x0, 0x00);
+    set_gdte(1, 0, 0xfffff, 0xc, 0x9A);
+    set_gdte(2, 0, 0xfffff, 0xc, 0x92);
+
+    // fill gdtr
+    gdt_ptr->size = sizeof(GDT) - 1;
+    gdt_ptr->ptr = (unsigned) GDT;
+
+    // load gdt
+    gdt_flush(gdt_ptr);
+    while (true)
+        ;
+
+    //
 
     // setup idt
     Reg32 keyboard_address;
@@ -34,6 +61,12 @@ void CPU::init() {
     IDT[0x21].zero = 0;
     IDT[0x21].type_attr = 0x8e;
     IDT[0x21].offset_higherbits = (keyboard_address & 0xffff0000) >> 16;
+
+    // fill idtr
+    idt_address = reinterpret_cast<Reg32>(IDT);
+    idt_ptr[0] = (sizeof(struct IDTEntry) * IDT_ENTRIES) +
+                 ((idt_address & 0xffff) << 16);
+    idt_ptr[1] = idt_address >> 16;
 
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // @TODO: Move this code to a Programmable Interrupt Controller class (PIC)
@@ -61,12 +94,6 @@ void CPU::init() {
     out8(0x21, 0xff);
     out8(0xA1, 0xff);
 
-    // fill the IDT descriptor
-    idt_address = reinterpret_cast<Reg32>(IDT);
-    idt_ptr[0] = (sizeof(struct IDTEntry) * IDT_ENTRIES) +
-                 ((idt_address & 0xffff) << 16);
-    idt_ptr[1] = idt_address >> 16;
-
     // load idt
     load_idt(idt_ptr);
 
@@ -75,10 +102,6 @@ void CPU::init() {
 
     // unmask interrupts
     out8(0x21, 0xFD);
-
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    // @TODO: Setup Task State Segment (TSS)
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 }
 
 /*________ENABLE/DISABLE INTS________________________________________________*/
@@ -91,6 +114,10 @@ void CPU::int_enable(void) {
 
 void CPU::load_idt(Reg32 * idtptr) {
     ASM("lidt %0" : : "m"(*idtptr));
+}
+
+void CPU::load_gdt(Reg32 * gdtptr) {
+    ASM("lidt %0" : : "m"(*gdtptr));
 }
 
 /*________IO PORT INTERFACE__________________________________________________*/

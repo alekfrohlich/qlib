@@ -30,7 +30,7 @@ class Display : public Printer
     int _row = 0;
     int _column = 0;
 
-    Mode _mode = _normal;
+    Mode _mode = NORMAL_MODE;
     Cell * _buffer = reinterpret_cast<Cell *>(0xB8000);
 };
 
