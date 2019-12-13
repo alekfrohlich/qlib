@@ -22,6 +22,8 @@ all:
 
 _all:
 	$(MAKE) _ALL_CXXFLAGS=-O2 $(FATBIN)
+	# delete debug symbols from libgcc.a
+	strip -d $(FATBIN)
 	$(MAKE) $(ISOFILE)
 
 debug:
@@ -81,7 +83,7 @@ $(FATBIN): $(OBJ_LINK_LIST)
 
 #_______BOOTABLE GRUB IMAGE___________________________________________________#
 
-$(ISOFILE):
+$(ISOFILE): $(OBJ_LINK_LIST)
 	grub-mkrescue -o $@ $(IMG)
 
 #_______CLANG-FORMAT__________________________________________________________#

@@ -2,11 +2,12 @@
 TARGET 	 := ia32
 MACHNAME := pc
 
-# assembler, C/C++ compiler, linker
-AS  := $(TARGET)-as
-CC  := $(TARGET)-gcc
-CXX := $(TARGET)-g++
-LD  := $(TARGET)-ld
+# assembler, C/C++ compiler, linker, symbol stripper
+AS    := $(TARGET)-as
+CC    := $(TARGET)-gcc
+CXX   := $(TARGET)-g++
+LD    := $(TARGET)-ld
+STRIP := $(TARGET)-strip
 
 # top directories
 TOP   := $(abspath $(dir $(filter %makeinc, $(MAKEFILE_LIST))))

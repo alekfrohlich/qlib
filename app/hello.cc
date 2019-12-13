@@ -2,7 +2,7 @@
 
 void main(void) {
     using namespace std;
-    std::cout << "debug";
+    std::cout << "Hello intel!";
     while (true)
         ;
 }
