@@ -1,12 +1,14 @@
 #include <arch/cpu.h>
 #include <arch/ia32/cpu.h>
+#include <lib.h>
 #include <machine/pc/8259.h>
 
 #include <std/ostream.h>
 
-#define ASM __asm__ __volatile__
-CPU::IDTEntry CPU::IDT[IDT_ENTRIES];
-CPU::gdte CPU::GDT[GDT_ENTRIES];
+/*________DESCRIPTOR TABLES__________________________________________________*/
+
+CPU::IDT_Entry CPU::IDT[IDT_ENTRIES];
+CPU::GDT_Entry CPU::GDT[GDT_ENTRIES];
 
 /*________INITIALIZE HARDWARE________________________________________________*/
 
@@ -74,49 +76,38 @@ static void set_gdte(int n, unsigned base, unsigned limit, unsigned granularity,
     CPU::GDT[n].access = access;
 }
 
-void CPU::init() {
-    // setup gdt
+static void set_idte(int n, unsigned selector, unsigned type, unsigned isr) {
+    CPU::IDT[n].offset_low = isr & 0xffff;
+    CPU::IDT[n].selector = selector;
+    CPU::IDT[n].zero = 0;
+    CPU::IDT[n].type = type;
+    CPU::IDT[n].offset_high = (isr & 0xffff0000) >> 16;
+}
 
+void CPU::init() {
     // create tree entries: NULL, CODE, DATA
     set_gdte(0, 0, 0x00000, 0x0, 0x00);
     set_gdte(1, 0, 0xfffff, 0xc, 0x9A);
     set_gdte(2, 0, 0xfffff, 0xc, 0x92);
 
+    // load gdtr and reload segment registers
     Reg16 size = sizeof(GDT) - 1;
     Reg32 ptr = reinterpret_cast<Reg32>(GDT);
-
-    // load gdt and reload segment registers
     load_gdt(size, ptr);
 
-    // setup idt
-    Reg32 keyboard_address;
-    Reg32 idt_address;
-    Reg32 idt_ptr[2];
-
     // create IDT entry for keyboard interrupts
-    keyboard_address = reinterpret_cast<LogicalAddr>(keyboard_handler);
-    IDT[0x21].offset_lowerbits = keyboard_address & 0xffff;
-    IDT[0x21].selector = 0x08;
-    IDT[0x21].zero = 0;
-    IDT[0x21].type_attr = 0x8e;
-    IDT[0x21].offset_higherbits = (keyboard_address & 0xffff0000) >> 16;
+    Reg32 keyboard_address = reinterpret_cast<LogicalAddr>(keyboard_handler);
+    set_idte(0x21, 0x08, 0x8e, keyboard_address);
 
-    // fill idtr
-    idt_address = reinterpret_cast<Reg32>(IDT);
-    idt_ptr[0] = (sizeof(struct IDTEntry) * IDT_ENTRIES) +
-                 ((idt_address & 0xffff) << 16);
-    idt_ptr[1] = idt_address >> 16;
+    // load idtr
+    size = sizeof(IDT) - 1;
+    ptr = reinterpret_cast<Reg32>(IDT);
+    load_idt(size, ptr);
 
-    // initialize interrupt controller
     PIC::init();
 
-    // load idt
-    load_idt(idt_ptr);
-
-    // enable interrupts
     int_enable();
 
-    // unmask interrupts
     PIC::unmask(PIC::KEYBOARD_LINE);
 }
 
@@ -132,12 +123,13 @@ void CPU::int_disable(void) {
 
 /*________SPECIAL REGISTERS__________________________________________________*/
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
-// @TODO: receive size and ptr as parameters
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
+void CPU::load_idt(Reg16 size, Reg32 ptr) {
+    struct {
+        unsigned size : 16;
+        unsigned ptr : 32;
+    } __attribute__((packed)) idtptr = {size, ptr};
 
-void CPU::load_idt(Reg32 * idtptr) {
-    ASM("lidt %0" : : "m"(*idtptr));
+    ASM("lidt %0" : : "m"(idtptr));
 }
 
 void CPU::load_gdt(Reg16 size, Reg32 ptr) {
