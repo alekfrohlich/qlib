@@ -43,19 +43,3 @@ _start:
 keyboard_handler:
 	call keyboard_handler_main
 	iret
-
-# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% #
-# @TODO: inline below
-# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% #
-
-# 0x08 and 0x10 are the code and data selectors
-
-.globl gdt_flush
-gdt_flush:
-	mov 4(%esp), %eax
-	lgdt (%eax)
-	ljmp $0x8, $reload_cs
-reload_cs:
-	movw $0x10, %ax
-	movw %ax, %ds
-	ret
