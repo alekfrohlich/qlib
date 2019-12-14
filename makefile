@@ -22,6 +22,7 @@ all:
 
 _all:
 	$(MAKE) _ALL_CXXFLAGS=-O2 $(FATBIN)
+
 	# delete debug symbols from libgcc.a
 	strip -d $(FATBIN)
 	$(MAKE) $(ISOFILE)
@@ -45,7 +46,7 @@ CXX_SRC :=  $(wildcard $(TRGT_MACH)/*.cc) \
 OBJS  	:= $(CXX_SRC:.cc=.o)
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
-# @TODO: move cpu.o before OBJS
+# @TODO: Move cpu.o before OBJS.
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
 
 # the final executable must be linked in this exact order
@@ -53,7 +54,7 @@ OBJ_LINK_LIST := $(addprefix $(TRGT_ARCH)/, crt0.o crtend.o) \
 				 $(OBJS) $(addprefix $(TRGT_ARCH)/, cpu.o lib_init.o crtbegin.o)
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
-# @TODO: fix ld include error: ld expects to find crtend.o and crtbegin.o
+# @TODO: Fix ld include error: ld expects to find crtend.o and crtbegin.o
 # to be relative to the working directory. It fails when given a relative path.
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
 
@@ -94,18 +95,16 @@ format:
 
 #_______CROSS-CHAIN SETUP_____________________________________________________#
 
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
-# @TODO: add .PHONY bash script to automate tool installation
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
-
-tools:
+install-cross:
+	cd $(TOOLS) && bash install_cross.sh
 
 #_______CLEAN ENVIRONMENT______________________________________________________#
 
 clean:
-	@find . -type f \( -name "*.o" \) -delete
+	@find . -type f \( -name "*.o" -o -name "*.d" \) -delete
 	@rm -f .debug.lock brae.iso
-
-distclean: clean
-	@find . -type f -name "*.d" -delete
 	@rm -f img/boot/brae.bin img/boot/brae.bin.debug
+
+uninstall-cross: clean
+	@rm -rf $(TOOLS)/cross
+	@mkdir $(TOOLS)/cross

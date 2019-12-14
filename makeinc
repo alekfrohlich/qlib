@@ -2,13 +2,6 @@
 TARGET 	 := ia32
 MACHNAME := pc
 
-# assembler, C/C++ compiler, linker, symbol stripper
-AS    := $(TARGET)-as
-CC    := $(TARGET)-gcc
-CXX   := $(TARGET)-g++
-LD    := $(TARGET)-ld
-STRIP := $(TARGET)-strip
-
 # top directories
 TOP   := $(abspath $(dir $(filter %makeinc, $(MAKEFILE_LIST))))
 APP   := $(TOP)/app
@@ -32,6 +25,13 @@ TRGT_MACH := $(MACH)/$(MACHNAME)
 
 # bootloader image directory
 GRUB  := $(IMG)/boot
+
+# assembler, C/C++ compiler, linker, symbol stripper
+AS    := $(TOOLS)/cross/bin/$(TARGET)-as
+CC    := $(TOOLS)/cross/bin/$(TARGET)-gcc
+CXX   := $(TOOLS)/cross/bin/$(TARGET)-g++
+LD    := $(TOOLS)/cross/bin/$(TARGET)-ld
+STRIP := $(TOOLS)/cross/bin/$(TARGET)-strip
 
 # C compiler flags
 CFLAGS := -I $(INC)
