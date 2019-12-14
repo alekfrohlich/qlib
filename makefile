@@ -97,7 +97,9 @@ $(ISOFILE): $(OBJ_LINK_LIST)
 PHONY: format
 
 format:
-	cd $(DOCS) && find .. -regex '.*\.\(cc\|c\|h\)'\
+	cd $(DOCS) && find $(APP) -regex '.*\.\(cc\|c\|h\)'\
+		 -exec clang-format-8 style=.clang-format -i {} \;
+	cd $(DOCS) && find $(SRC) -regex '.*\.\(cc\|c\|h\)'\
 		 -exec clang-format-8 style=.clang-format -i {} \;
 
 #_______CROSS-CHAIN____________________________________________________________#
@@ -116,7 +118,8 @@ uninstall-cross:
 .PHONY: clean veryclean
 
 clean:
-	@find . -type f \( -name "*.o" -o -name "*.d" \) -delete
+	@find $(APP) -type f \( -name "*.o" -o -name "*.d" \) -delete
+	@find $(SRC) -type f \( -name "*.o" -o -name "*.d" \) -delete
 
 veryclean: clean
 	@rm -f .debug.lock brae.iso

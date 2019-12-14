@@ -4,13 +4,9 @@
 extern "C" {
 
 // make gcc happy
-void * __cxa_pure_virtual = 0;
+void *__cxa_pure_virtual = 0;
 
-void _pre_lib_init(void) {
-    CPU::init();
-}
+void _pre_lib_init(void) { CPU::init(); }
 
-void _lib_init(void) {
-    main();
-}
+void _lib_init(void) { main(); }
 }

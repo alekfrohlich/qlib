@@ -28,9 +28,26 @@ class PIC
 
     static void init(void);
 
-    // @TODO: make varargs
-    static void mask(const IRQ & line);
-    static void unmask(const IRQ & line);
+    /*________MANAGE IRQs________________________________________________________*/
+
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
+    // @TODO: Make mask/unmask varargs.
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
+
+    static void mask(const IRQ &line) {
+        if (line < INT_LINES)
+            CPU::out8(PIC1_DATA, PIC::_mask | line);
+        else
+            CPU::out8(PIC2_DATA, PIC::_mask | line);
+    }
+
+    static void unmask(const IRQ &line) {
+        if (line < INT_LINES)
+            CPU::out8(PIC1_DATA, PIC::_mask & ~(line));
+        else
+            CPU::out8(PIC2_DATA, PIC::_mask & ~(line));
+    }
+
 };
 
 #endif  // PIC_H

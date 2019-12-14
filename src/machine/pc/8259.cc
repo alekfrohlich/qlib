@@ -10,35 +10,19 @@ PIC::Mask PIC::_mask = static_cast<PIC::Mask>(0xff);
 /*________INITIALIZE HARDWARE________________________________________________*/
 
 void PIC::init(void) {
-    // ICW1
-    CPU::out8(0x20, 0x11);
-    CPU::out8(0xA0, 0x11);
-    // ICW2
-    CPU::out8(0x21, 0x20);
-    CPU::out8(0xA1, 0x28);
-    // ICW3
-    CPU::out8(0x21, 0x00);
-    CPU::out8(0xA1, 0x00);
-    // ICW4
-    CPU::out8(0x21, 0x01);
-    CPU::out8(0xA1, 0x01);
-    // mask interrupts
-    CPU::out8(0x21, 0xff);
-    CPU::out8(0xA1, 0xff);
-}
-
-/*________MANAGE IRQs________________________________________________________*/
-
-void PIC::mask(const IRQ & line) {
-    if (line < INT_LINES)
-        CPU::out8(PIC1_DATA, PIC::_mask | line);
-    else
-        CPU::out8(PIC2_DATA, PIC::_mask | line);
-}
-
-void PIC::unmask(const IRQ & line) {
-    if (line < INT_LINES)
-        CPU::out8(PIC1_DATA, PIC::_mask & ~(line));
-    else
-        CPU::out8(PIC2_DATA, PIC::_mask & ~(line));
+  // ICW1
+  CPU::out8(0x20, 0x11);
+  CPU::out8(0xA0, 0x11);
+  // ICW2
+  CPU::out8(0x21, 0x20);
+  CPU::out8(0xA1, 0x28);
+  // ICW3
+  CPU::out8(0x21, 0x00);
+  CPU::out8(0xA1, 0x00);
+  // ICW4
+  CPU::out8(0x21, 0x01);
+  CPU::out8(0xA1, 0x01);
+  // mask interrupts
+  CPU::out8(0x21, 0xff);
+  CPU::out8(0xA1, 0xff);
 }

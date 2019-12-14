@@ -2,6 +2,7 @@
 #define CPU_H
 
 #include <arch/cpu.h>
+#include <lib.h>
 
 //@TODO: private inheritance
 class CPU : CPU_Common
@@ -38,19 +39,68 @@ class CPU : CPU_Common
     // setup intel quirks
     static void init(void);
 
-    static void int_enable(void);
-    static void int_disable(void);
+    /*________ENABLE/DISABLE INTS________________________________________________*/
 
-    static void load_idt(Reg16 size, Reg32 ptr);
-    static void load_gdt(Reg16 size, Reg32 ptr);
+    static void int_enable(void) { ASM("sti"); }
 
-    // I/O ports
-    static Reg8 in8(const IOPort & port);
-    static Reg16 in16(const IOPort & port);
-    static Reg32 in32(const IOPort & port);
-    static void out8(const IOPort & port, const Reg8 & value);
-    static void out16(const IOPort & port, const Reg16 & value);
-    static void out32(const IOPort & port, const Reg32 & value);
+    static void int_disable(void) { ASM("cli"); }
+
+    /*________SPECIAL REGISTERS__________________________________________________*/
+
+    static void load_idt(Reg16 size, Reg32 ptr) {
+        struct {
+            unsigned size : 16;
+            unsigned ptr : 32;
+        } __attribute__((packed)) idtptr = {size, ptr};
+
+        ASM("lidt %0" : : "m"(idtptr));
+    }
+
+    static void load_gdt(Reg16 size, Reg32 ptr) {
+        struct {
+            unsigned size : 16;
+            unsigned ptr : 32;
+        } __attribute__((packed)) gdtptr = {size, ptr};
+
+        ASM("           lgdt %0                                             \n"
+            "           ljmp $0x8, $1f                                      \n"
+            "           1: movw $0x10, %%ax                                 \n"
+            "           movw %%ax, %%ds                                     \n"
+            :
+            : "m"(gdtptr));
+    }
+
+    /*________IO PORT INTERFACE__________________________________________________*/
+
+    static Reg8 in8(const IOPort & port) {
+        Reg8 value;
+        ASM("inb %1,%0" : "=a"(value) : "d"(port));
+        return value;
+    }
+
+    static Reg16 in16(const IOPort & port) {
+        Reg16 value;
+        ASM("inw %1,%0" : "=a"(value) : "d"(port));
+        return value;
+    }
+
+    static Reg32 in32(const IOPort & port) {
+        Reg32 value;
+        ASM("inl %1,%0" : "=a"(value) : "d"(port));
+        return value;
+    }
+
+    static void out8(const IOPort & port, const Reg8 & value) {
+        ASM("outb %1,%0" : : "d"(port), "a"(value));
+    }
+
+    static void out16(const IOPort & port, const Reg16 & value) {
+        ASM("outw %1,%0" : : "d"(port), "a"(value));
+    }
+
+    static void out32(const IOPort & port, const Reg32 & value) {
+        ASM("outl %1,%0" : : "d"(port), "a"(value));
+    }
 };
 
 #endif  // CPU_H
