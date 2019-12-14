@@ -33,8 +33,8 @@ PREFIX=$CROSS
 TARGET=i686-elf
 PROG_PREFIX=ia32-
 
-GCC_CONFIG="--enable-languages=c,c++ --disable-nls --disable-shared --with-gnu-as \
-            --with-gnu-ld --disable-threads --disable-libssp"
+GCC_CONFIG="--enable-languages=c,c++ --disable-nls --disable-shared \
+	--with-gnu-as --with-gnu-ld --disable-threads --disable-libssp"
 BINUTILS_CONFIG="--disable-nls"
 
 #_______INSTALL DEPENDENCIES__________________________________________________#
@@ -51,16 +51,16 @@ sudo apt install -y texinfo
 #________CONFIRM INSTALLATION_________________________________________________#
 
 if [ -d "`pwd`/cross/bin" ]; then
-    read -r -p "It looks like you already have some stuff installed under tools/cross, \
-                would you like to continue anyways? [y/N] " response
-    case "$response" in
-        [yY][eE][sS]|[yY])
-            echo continuing with the installation ...
-            ;;
-        *)
-            exit 0
-            ;;
-    esac
+	read -r -p "It looks like you already have some stuff installed under
+tools/cross, would you like to continue anyways? [y/N] " response
+	case "$response" in
+		[yY][eE][sS]|[yY])
+			echo continuing with the installation ...
+			;;
+		*)
+			exit 0
+			;;
+	esac
 fi
 
 #_______DOWNLOAD SOURCE_______________________________________________________#
@@ -83,7 +83,8 @@ echo building binutils ...
 cd $TMP
 mkdir build-binutils
 cd build-binutils
-../$BINUTILS/configure --target=$TARGET --prefix="$PREFIX" --program-prefix=$PROG_PREFIX $BINUTILS_CONFIG
+../$BINUTILS/configure --target=$TARGET --prefix="$PREFIX" \
+	--program-prefix=$PROG_PREFIX $BINUTILS_CONFIG
 make -j8
 make install -j8
 
@@ -93,7 +94,8 @@ echo building gcc ...
 cd $TMP
 mkdir build-gcc
 cd build-gcc
-../$GCC/configure --target=$TARGET --prefix="$PREFIX" --program-prefix=$PROG_PREFIX $GCC_CONFIG
+../$GCC/configure --target=$TARGET --prefix="$PREFIX" \
+	--program-prefix=$PROG_PREFIX $GCC_CONFIG
 make all-gcc -j8
 make all-target-libgcc -j8
 make install-gcc -j8

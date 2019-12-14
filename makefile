@@ -1,18 +1,20 @@
 SHELL := /bin/bash
 
+#_______INCLUDES______________________________________________________________#
+
 export MAKEINC = $(CURDIR)/makeinc
 include $(MAKEINC)
 
-.PHONY: clean distclean format tools
+#_______SOURCE CODE___________________________________________________________#
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
 # @TODO: refactor inline bash in order to avoid testing for .debug.lock
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
 
-#_______SOURCE CODE___________________________________________________________#
-
 .SILENT: all _all debug _debug
 .PHONY: all _all debug _debug
+
+# see makeinc's CONCURRENT BUILD section for more explanation on .debug.lock
 
 all:
 	if test -f ".debug.lock"; then \
@@ -34,14 +36,15 @@ debug:
 	$(MAKE) _debug
 
 _debug:
-	$(MAKE) _DEBUG_CXXFLAGS="-g -Wall -Wextra" _DEBUG_EXT=.debug $(FATBIN).debug
+	$(MAKE) _DEBUG_CXXFLAGS="-O0 -g -Wall -Wextra" _DEBUG_EXT=.debug \
+		$(FATBIN).debug
 	$(MAKE) $(ISOFILE)
 
 C_SRC 	:= $(wildcard TRGT_ARCH/*.c)
 
 CXX_SRC :=  $(wildcard $(TRGT_MACH)/*.cc) \
-			$(wildcard $(STD)/*.cc) \
-			$(wildcard $(APP)/*.cc)
+	$(wildcard $(STD)/*.cc) \
+	$(wildcard $(APP)/*.cc)
 
 OBJS  	:= $(CXX_SRC:.cc=.o)
 
@@ -51,10 +54,10 @@ OBJS  	:= $(CXX_SRC:.cc=.o)
 
 # the final executable must be linked in this exact order
 OBJ_LINK_LIST := $(addprefix $(TRGT_ARCH)/, crt0.o crtend.o) \
-				 $(OBJS) $(addprefix $(TRGT_ARCH)/, cpu.o lib_init.o crtbegin.o)
+	$(OBJS) $(addprefix $(TRGT_ARCH)/, cpu.o lib_init.o crtbegin.o)
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
-# @TODO: Fix ld include error: ld expects to find crtend.o and crtbegin.o
+# @TODO: Fix ld include error. ld expects to find crtend.o and crtbegin.o
 # to be relative to the working directory. It fails when given a relative path.
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
 
@@ -65,6 +68,7 @@ $(FATBIN): $(OBJ_LINK_LIST)
 # currently used to assamble crt0.S
 %.o: %.S
 	 $(AS) $(ASFLAGS) $< -o $@
+
 
 #=============AUTOMAKE========================================================#
 # Since it's possible to include files within GNU make, this build system
@@ -79,6 +83,7 @@ $(FATBIN): $(OBJ_LINK_LIST)
 # 	dependencies.html
 #=============================================================================#
 
+
 -include $(CXX_SRC:.cc=.d)
 -include $(C_SRC:.c=.d)
 
@@ -89,22 +94,30 @@ $(ISOFILE): $(OBJ_LINK_LIST)
 
 #_______CLANG-FORMAT__________________________________________________________#
 
+PHONY: format
+
 format:
 	cd $(DOCS) && find .. -regex '.*\.\(cc\|c\|h\)'\
 		 -exec clang-format-8 style=.clang-format -i {} \;
 
-#_______CROSS-CHAIN SETUP_____________________________________________________#
+#_______CROSS-CHAIN____________________________________________________________#
+
+.PHONY: install-cross uninstall-cross
 
 install-cross:
 	cd $(TOOLS) && bash install_cross.sh
 
+uninstall-cross:
+	@rm -rf $(TOOLS)/cross
+	@mkdir $(TOOLS)/cross
+
 #_______CLEAN ENVIRONMENT______________________________________________________#
+
+.PHONY: clean veryclean
 
 clean:
 	@find . -type f \( -name "*.o" -o -name "*.d" \) -delete
+
+veryclean: clean
 	@rm -f .debug.lock brae.iso
 	@rm -f img/boot/brae.bin img/boot/brae.bin.debug
-
-uninstall-cross: clean
-	@rm -rf $(TOOLS)/cross
-	@mkdir $(TOOLS)/cross
