@@ -1,6 +1,8 @@
 #include <arch/ia32/cpu.h>
 #include <machine/pc/8259.h>
 
+namespace std { namespace hardware {
+
 const CPU::IOPort PIC::PIC1_STATUS = static_cast<CPU::IOPort>(0x20);
 const CPU::IOPort PIC::PIC1_DATA = static_cast<CPU::IOPort>(0x21);
 const CPU::IOPort PIC::PIC2_STATUS = static_cast<CPU::IOPort>(0xA0);
@@ -8,6 +10,10 @@ const CPU::IOPort PIC::PIC2_DATA = static_cast<CPU::IOPort>(0xA1);
 PIC::Mask PIC::_mask = static_cast<PIC::Mask>(0xff);
 
 /*________INITIALIZE HARDWARE________________________________________________*/
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
+// @TODO: Explain setup process
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
 
 void PIC::init(void) {
   // ICW1
@@ -26,3 +32,5 @@ void PIC::init(void) {
   CPU::out8(0x21, 0xff);
   CPU::out8(0xA1, 0xff);
 }
+
+} } // namespace std::hardware

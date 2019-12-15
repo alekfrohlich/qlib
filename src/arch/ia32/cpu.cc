@@ -5,6 +5,8 @@
 
 #include <std/ostream.h>
 
+namespace std { namespace hardware {
+
 /*________DESCRIPTOR TABLES__________________________________________________*/
 
 CPU::IDT_Entry CPU::IDT[IDT_ENTRIES];
@@ -12,7 +14,7 @@ CPU::GDT_Entry CPU::GDT[GDT_ENTRIES];
 
 /*________INITIALIZE HARDWARE________________________________________________*/
 
-unsigned char keyboard_map[128] = {
+static unsigned char keyboard_map[128] = {
     0,    27,  '1', '2', '3',  '4', '5', '6', '7',  '8', /* 9 */
     '9',  '0', '-', '=', '\b',                           /* Backspace */
     '\t',                                                /* Tab */
@@ -67,6 +69,10 @@ void keyboard_handler_main(void) {
 void keyboard_handler(void);
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// @TODO: Write our own bootloader and throw away all this thrash!
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 static void set_gdte(int n, unsigned base, unsigned limit, unsigned granularity,
                      unsigned access) {
   CPU::GDT[n].base_low = (base & 0xffffff);
@@ -111,3 +117,5 @@ void CPU::init() {
 
   PIC::unmask(PIC::KEYBOARD_LINE);
 }
+
+} } // namespace std::hardware

@@ -56,8 +56,31 @@ Black-magic code should always come with an explanation, such as in:
 -include $(C_SRC:.c=.d)
 ```
 
-On certain situations, it may be necessary to write small comments to explain
-opaque code, such as in:
+This type of comment should also be used to describe the functionallity of
+scripts, as in:
+
+```
+#=======TOOL-CHAIN SETUP======================================================#
+# This script installs gcc and binutils alognside their dependencies. It
+# currently only works in ubuntu since it refers to apt package names.
+# Adapting it to fit other Linux distributions should be an easy task.
+# The script does not install the tools to $PATH.
+#
+# The script builds gcc version 7.3 and binutils version 2.30 to target
+# i686-elf. For more information on how to build a cross tool-chain refer to:
+# https://wiki.osdev.org/GCC_Cross-Compiler
+#
+# For more information on successful builds, refer to:
+# https://wiki.osdev.org/Cross-Compiler_Successful_Builds
+#
+# And lastly, for more information on configuration parameters for building
+# gcc, refer to:
+# https://gcc.gnu.org/install/configure.html
+#=============================================================================#
+```
+
+On other situations, it may be necessary to write small comments to
+explain opaque code, such as in:
 
 ```
 // mask interrupts
@@ -72,7 +95,7 @@ In such cases, prefer to write single-lined, lower case comments.
 Some of the following patterns are under debate. In such cases, follow what's
 been done in other parts of the codebase.
 
-### Hardware mediators
+### Hardware mediators (under debate)
 
 When designing a hardware mediator, say `Mediator`, one should strive to provide
 the biggest possible architecture-free interface under the name `Mediator_Common`.
@@ -93,9 +116,8 @@ the `std` namespace.
 ### Header files
 
 All header files should be placed under `include` and should be guarded by
-include guards. Header files should not contain any implementation code (with
-the except of one-liners). All symbols which other files would need from a given
-header file should be forward defined (extern).
+include guards. Header files should strive to be statically metaprogramed as to
+allow gcc to optimize the final code (inline in most cases).
 
 ### Class organization (under debate)
 

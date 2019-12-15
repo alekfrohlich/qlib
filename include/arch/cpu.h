@@ -4,6 +4,10 @@
 class CPU_Common
 {
  public:
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
+    // @TODO: Check if integer types are really architecture independent.
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
+
     typedef unsigned long Reg;
     typedef unsigned char Reg8;
     typedef unsigned short Reg16;

@@ -3,6 +3,8 @@
 
 #include <arch/cpu.h>
 
+namespace std { namespace hardware {
+
 // 8259 controller board
 class PIC
 {
@@ -49,5 +51,7 @@ class PIC
     }
 
 };
+
+} } // namespace std::hardware
 
 #endif  // PIC_H

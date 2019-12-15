@@ -3,8 +3,6 @@
 
 #include <std/printer.h>
 
-namespace std {
-
 class Display : public Printer
 {
  public:
@@ -14,6 +12,10 @@ class Display : public Printer
     // Printer implementation
     void print(const char * s);
     void error(void);
+
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
+    // @TODO: Maximize mechanism, minimize policy.
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
 
     // inner workings
     void put(char c);
@@ -35,7 +37,5 @@ class Display : public Printer
 };
 
 extern Display display;
-
-};  // namespace std
 
 #endif  // DISPLAY_H

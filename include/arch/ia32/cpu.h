@@ -4,6 +4,8 @@
 #include <arch/cpu.h>
 #include <lib.h>
 
+namespace std { namespace hardware {
+
 //@TODO: private inheritance
 class CPU : CPU_Common
 {
@@ -20,7 +22,8 @@ class CPU : CPU_Common
     } __attribute__((packed));
 
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
-    // @TODO: standarize descriptors
+    // @FIXME: IDT_Entry should be 64 bits. It's working with 56 for whatever
+    //         reason.
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
 
     struct IDT_Entry {
@@ -55,6 +58,10 @@ class CPU : CPU_Common
 
         ASM("lidt %0" : : "m"(idtptr));
     }
+
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
+    // @TODO: segregate reloading registers from load_gdt
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
 
     static void load_gdt(Reg16 size, Reg32 ptr) {
         struct {
@@ -102,5 +109,7 @@ class CPU : CPU_Common
         ASM("outl %1,%0" : : "d"(port), "a"(value));
     }
 };
+
+} } // namespace std::hardware
 
 #endif  // CPU_H

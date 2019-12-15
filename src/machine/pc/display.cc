@@ -3,11 +3,9 @@
 #include <std/printer.h>
 
 namespace _setup {
-std::Display display;
+Display display;
 Printer *printer = &display;
 } // namespace _setup
-
-namespace std {
 
 /*________PRINTER IMPLEMENTATION_____________________________________________*/
 
@@ -78,4 +76,3 @@ void Display::scroll(void) {
     _buffer[WIDTH * (HEIGHT - 1) + j] = c | _mode;
   }
 }
-} // namespace std
