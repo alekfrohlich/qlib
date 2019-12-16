@@ -1,7 +1,7 @@
 #include <arch/ia32/cpu.h>
 #include <machine/pc/8259.h>
 
-namespace std { namespace hardware {
+namespace std::hardware {
 
 const CPU::IOPort PIC::PIC1_STATUS = static_cast<CPU::IOPort>(0x20);
 const CPU::IOPort PIC::PIC1_DATA = static_cast<CPU::IOPort>(0x21);
@@ -33,4 +33,4 @@ void PIC::init(void) {
   CPU::out8(0xA1, 0xff);
 }
 
-} } // namespace std::hardware
+} // namespace std::hardware

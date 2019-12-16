@@ -5,7 +5,7 @@
 
 #include <std/ostream.h>
 
-namespace std { namespace hardware {
+namespace std::hardware {
 
 /*________DESCRIPTOR TABLES__________________________________________________*/
 
@@ -118,4 +118,4 @@ void CPU::init() {
   PIC::unmask(PIC::KEYBOARD_LINE);
 }
 
-} } // namespace std::hardware
+} // namespace std::hardware

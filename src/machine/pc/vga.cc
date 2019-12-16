@@ -1,11 +1,11 @@
-#include <machine/pc/display.h>
+#include <machine/pc/vga.h>
 
-#include <std/printer.h>
+namespace std::hardware {
 
-namespace _setup {
-Display display;
-Printer *printer = &display;
-} // namespace _setup
+int Display::_row = 0;
+int Display::_column = 0;
+Display::Mode Display::_mode = NORMAL_MODE;
+Display::Cell *Display::_buffer = reinterpret_cast<Cell *>(0xB8000);
 
 /*________PRINTER IMPLEMENTATION_____________________________________________*/
 
@@ -76,3 +76,5 @@ void Display::scroll(void) {
     _buffer[WIDTH * (HEIGHT - 1) + j] = c | _mode;
   }
 }
+
+} // namespace std::hardware

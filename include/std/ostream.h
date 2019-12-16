@@ -1,7 +1,7 @@
 #ifndef OSTREAM_H
 #define OSTREAM_H
 
-#include <std/printer.h>
+#include <machine/pc/vga.h>
 
 namespace std {
 
@@ -15,7 +15,7 @@ class OStream
     struct Bin {};
     struct Err {};
 
-    OStream(Printer * printer) : _base(10), _printer(printer) {}
+    OStream() : _base(10) {}
 
     // control overloads
     OStream & operator<<(const Endl & endl);
@@ -41,8 +41,11 @@ class OStream
 
  private:
     // Printer dependency
-    void print(const char * s) { _printer->print(s); }
-    void error(void) { _printer->error(); }
+    void print(const char * s) {
+       hardware::Display::print(s);
+    }
+
+    void error(void) { hardware::Display::error(); }
 
     // conversion functions
     int itoa(int v, char * s);
@@ -54,7 +57,6 @@ class OStream
     static const char DIGITS[];
 
     int _base;
-    Printer * _printer;
 };
 
 extern OStream::Endl endl;
@@ -63,7 +65,6 @@ extern OStream::Dec dec;
 extern OStream::Oct oct;
 extern OStream::Bin bin;
 extern OStream::Err err;
-
 extern OStream cout;
 
 }  // namespace std

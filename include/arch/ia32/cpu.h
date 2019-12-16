@@ -4,7 +4,7 @@
 #include <arch/cpu.h>
 #include <lib.h>
 
-namespace std { namespace hardware {
+namespace std::hardware {
 
 //@TODO: private inheritance
 class CPU : CPU_Common
@@ -110,6 +110,6 @@ class CPU : CPU_Common
     }
 };
 
-} } // namespace std::hardware
+} // namespace std::hardware
 
 #endif  // CPU_H

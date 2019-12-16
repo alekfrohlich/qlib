@@ -1,10 +1,8 @@
-#include <machine/pc/display.h>
-
 #include <std/ostream.h>
 
 namespace std {
 
-OStream cout(_setup::printer);
+OStream cout;
 
 /*________CONTROL OVERLOADS__________________________________________________*/
 
