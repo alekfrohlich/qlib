@@ -4,7 +4,7 @@
 #include <arch/cpu.h>
 #include <lib.h>
 
-namespace std::hardware {
+namespace qlib::hardware {
 
 //@TODO: private inheritance
 class CPU : CPU_Common
@@ -21,17 +21,12 @@ class CPU : CPU_Common
         unsigned base_high : 8;
     } __attribute__((packed));
 
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
-    // @FIXME: IDT_Entry should be 64 bits. It's working with 56 for whatever
-    //         reason.
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
-
     struct IDT_Entry {
-        unsigned short offset_low;
-        unsigned short selector;
-        unsigned char zero;
-        unsigned char type;
-        unsigned short offset_high;
+        unsigned offset_low : 16;
+        unsigned selector : 16;
+        unsigned zero : 8;
+        unsigned type : 8;
+        unsigned offset_high : 16;
     } __attribute__((packed));
 
     static const unsigned IDT_ENTRIES = 256;
@@ -110,6 +105,6 @@ class CPU : CPU_Common
     }
 };
 
-} // namespace std::hardware
+}  // namespace qlib::hardware
 
 #endif  // CPU_H

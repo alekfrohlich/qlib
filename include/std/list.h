@@ -1,7 +1,7 @@
 #ifndef LIST_H
 #define LIST_H
 
-namespace std {
+namespace qlib {
 
 template<typename T>
 class List
@@ -23,40 +23,40 @@ class List
     T vector[10];
 };
 
-};  // namespace std
+};  // namespace qlib
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
 // @TODO: Move implementation code to .cc file
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
 
 template<typename T>
-std::List<T>::List() {
+qlib::List<T>::List() {
     head = 0;
     for (int i = 0; i < 10; i++)
         vector[i] = 0;
 }
 
 template<typename T>
-std::List<T>::~List() {
+qlib::List<T>::~List() {
 }
 
 template<typename T>
-void std::List<T>::push(T arg0) {
+void qlib::List<T>::push(T arg0) {
     vector[head++] = arg0;
 }
 
 template<typename T>
-T std::List<T>::pop() {
+T qlib::List<T>::pop() {
     return vector[--head];
 }
 
 template<typename T>
-T std::List<T>::top() const {
+T qlib::List<T>::top() const {
     return vector[head];
 }
 
 template<typename T>
-bool std::List<T>::empty() const {
+bool qlib::List<T>::empty() const {
     return head == 0;
 }
 

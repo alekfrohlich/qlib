@@ -111,7 +111,7 @@ implementation should be under `src/machine/mediator.cc`. The same applies to
 
 In order to avoid a grotesque `_pre_lib_init`, the namespace `_setup` is provided
 to hide internal objects used for setting up other global objects that constitute
-the `std` namespace.
+the `qlib` namespace.
 
 ### Header files
 

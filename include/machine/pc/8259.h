@@ -3,7 +3,7 @@
 
 #include <arch/cpu.h>
 
-namespace std::hardware {
+namespace qlib::hardware {
 
 // 8259 controller board
 class PIC
@@ -36,22 +36,21 @@ class PIC
     // @TODO: Make mask/unmask varargs.
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
 
-    static void mask(const IRQ &line) {
+    static void mask(const IRQ & line) {
         if (line < INT_LINES)
             CPU::out8(PIC1_DATA, PIC::_mask | line);
         else
             CPU::out8(PIC2_DATA, PIC::_mask | line);
     }
 
-    static void unmask(const IRQ &line) {
+    static void unmask(const IRQ & line) {
         if (line < INT_LINES)
             CPU::out8(PIC1_DATA, PIC::_mask & ~(line));
         else
             CPU::out8(PIC2_DATA, PIC::_mask & ~(line));
     }
-
 };
 
-} // namespace std::hardware
+}  // namespace qlib::hardware
 
 #endif  // PIC_H

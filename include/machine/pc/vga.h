@@ -1,7 +1,7 @@
 #ifndef VGA_H
 #define VGA_H
 
-namespace std::hardware {
+namespace qlib::hardware {
 
 class Display
 {
@@ -36,6 +36,6 @@ class Display
     static Cell * _buffer;
 };
 
-} // namespace std::hardware
+}  // namespace qlib::hardware
 
 #endif  // VGA_H

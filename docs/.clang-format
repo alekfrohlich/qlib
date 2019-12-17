@@ -55,7 +55,7 @@ FixNamespaceComments: true
 IncludeBlocks: Regroup
 # extend in the future ...
 IncludeCategories:
-  - Regex: '(std)/'
+  - Regex: '(qlib)/'
     Priority: 4
 # IncludeIsMainRegex
 IndentCaseLabels: true

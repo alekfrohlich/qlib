@@ -1,8 +1,8 @@
-#include <std/ostream.h>
+#include <qlib/ostream.h>
 
 void main(void) {
-  using namespace std;
-  std::cout << "Hello intel!";
-  while (true)
-    ;
+    using namespace qlib;
+    qlib::cout << "Hello intel!";
+    while (true)
+        ;
 }

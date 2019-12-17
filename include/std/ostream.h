@@ -2,8 +2,9 @@
 #define OSTREAM_H
 
 #include <machine/pc/vga.h>
+//! __FRAME__WORK
 
-namespace std {
+namespace qlib {
 
 class OStream
 {
@@ -40,11 +41,8 @@ class OStream
     OStream & operator<<(const char * s);
 
  private:
-    // Printer dependency
-    void print(const char * s) {
-       hardware::Display::print(s);
-    }
-
+    // hardware dependency
+    void print(const char * s) { hardware::Display::print(s); }
     void error(void) { hardware::Display::error(); }
 
     // conversion functions
@@ -67,6 +65,6 @@ extern OStream::Bin bin;
 extern OStream::Err err;
 extern OStream cout;
 
-}  // namespace std
+}  // namespace qlib
 
 #endif  // OSTREAM_H
