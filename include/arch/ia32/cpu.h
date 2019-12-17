@@ -2,7 +2,7 @@
 #define CPU_H
 
 #include <arch/cpu.h>
-#include <lib.h>
+#include <qlib.h>
 
 namespace qlib::hardware {
 
@@ -71,6 +71,12 @@ class CPU : CPU_Common
             :
             : "m"(gdtptr));
     }
+
+    /*________SEGMENT REGISTERS__________________________________________________*/
+
+    // static void cs(const Reg16 & val) {
+    //     ASM()
+    // }
 
     /*________IO PORT INTERFACE__________________________________________________*/
 

@@ -1,6 +1,6 @@
 #include <arch/cpu.h>
 #include <arch/ia32/cpu.h>
-#include <lib.h>
+#include <qlib.h>
 #include <machine/pc/8259.h>
 
 #include <qlib/ostream.h>

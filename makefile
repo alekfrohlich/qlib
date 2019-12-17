@@ -43,7 +43,7 @@ _debug:
 C_SRC 	:= $(wildcard TRGT_ARCH/*.c)
 
 CXX_SRC :=  $(wildcard $(TRGT_MACH)/*.cc) \
-	$(wildcard $(qlib)/*.cc) \
+	$(wildcard $(QLIB)/*.cc) \
 	$(wildcard $(APP)/*.cc)
 
 OBJS  	:= $(CXX_SRC:.cc=.o)

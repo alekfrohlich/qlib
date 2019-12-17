@@ -1,8 +1,8 @@
 #ifndef OSTREAM_H
 #define OSTREAM_H
 
-#include <machine/pc/vga.h>
-//! __FRAME__WORK
+#include <qlib.h>
+#include __print_h
 
 namespace qlib {
 

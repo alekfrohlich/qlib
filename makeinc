@@ -29,7 +29,7 @@ TOOLS := $(TOP)/tools
 ARCH  := $(SRC)/arch
 BOOT  := $(SRC)/boot
 MACH  := $(SRC)/machine
-qlib   := $(SRC)/qlib
+QLIB  := $(SRC)/qlib
 TEST  := $(SRC)/test
 
 # target-specific directories
@@ -56,11 +56,11 @@ CPPFLAGS := -MD -MP
 
 CXXFLAGS := -I $(INC)
 CXXFLAGS += -ffreestanding -fno-exceptions
-CXXFLAGS += -fno-rtti -noqlibinc -fno-asynchronous-unwind-tables
-CXXFLAGS += --no-use-cxa-atexit -qlib=c++0x
+CXXFLAGS += -fno-rtti -nostdinc -fno-asynchronous-unwind-tables
+CXXFLAGS += --no-use-cxa-atexit -std=c++0x
 CXXFLAGS   += $(_ALL_CXXFLAGS) $(_DEBUG_CXXFLAGS)
 
-LDFLAGS  := -static -noqliblib \
+LDFLAGS  := -static -nostdlib \
 	-L $(patsubst %/libgcc.a,%/,$(shell $(CXX) -print-libgcc-file-name)) \
 	-T $(TRGT_ARCH)/link.ld
 
