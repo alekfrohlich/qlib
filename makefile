@@ -97,7 +97,7 @@ $(ISOFILE): $(OBJ_LINK_LIST)
 PHONY: format
 
 format:
-	cd $(DOCS) && find .. -type d \( -name .git -o -name tools \) -prune \
+	cd $(DOCS) && find .. -type d \( -name .git -o -name tools -o -name app \) -prune \
 		-o -regex '.*\.\(cc\|c\|h\)'\
 		-exec clang-format-8 style=.clang-format -i {} \;
 

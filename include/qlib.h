@@ -9,10 +9,11 @@
 #define __ARCH_HEADER(X, ARCH) <arch/ARCH/X.h>
 #define __MACH_HEADER(X, MACH) <machine/MACH/X.h>
 
-#if ARCH==ia32
-    #define __print_h __MACH_HEADER(vga,MACH)
+#if ARCH == ia32
+#    define __print_h __MACH_HEADER(vga, MACH)
+#    define __cpu_h __ARCH_HEADER(cpu, ARCH)
 #else
-    #define __print_h __MACH_HEADER(serial,MACH)
+#    define __print_h __MACH_HEADER(serial, MACH)
 #endif
 
 #endif  // QLIB_H
