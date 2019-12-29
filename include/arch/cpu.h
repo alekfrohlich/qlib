@@ -1,6 +1,11 @@
 #ifndef CPU_COMMON_H
 #define CPU_COMMON_H
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
+// @TODO: Move to arch/cpu.h . This file shall be needed again when qlib is
+//        ported to another arch.
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
+
 class CPU_Common
 {
  public:

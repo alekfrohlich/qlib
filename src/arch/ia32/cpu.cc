@@ -10,7 +10,7 @@ namespace qlib::hardware {
 /*________DESCRIPTOR TABLES__________________________________________________*/
 
 CPU::IDT_Entry CPU::IDT[IDT_ENTRIES];
-// CPU::GDT_Entry CPU::GDT[GDT_ENTRIES];
+CPU::GDT_Entry CPU::GDT[GDT_ENTRIES];
 
 /*________INITIALIZE HARDWARE________________________________________________*/
 
@@ -72,15 +72,15 @@ void keyboard_handler(void);
 // @TODO: Write our own bootloader and throw away all this thrash!
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-// static void set_gdte(int n, unsigned base, unsigned limit, unsigned granularity,
-//     unsigned access) {
-//     CPU::GDT[n].base_low = (base & 0xffffff);
-//     CPU::GDT[n].base_high = (base >> 24) & 0xff;
-//     CPU::GDT[n].limit_low = (limit & 0xffff);
-//     CPU::GDT[n].limit_high = (limit >> 16) & 0xf;
-//     CPU::GDT[n].granularity = granularity;
-//     CPU::GDT[n].access = access;
-// }
+static void set_gdte(int n, unsigned base, unsigned limit, unsigned granularity,
+    unsigned access) {
+    CPU::GDT[n].base_low = (base & 0xffffff);
+    CPU::GDT[n].base_high = (base >> 24) & 0xff;
+    CPU::GDT[n].limit_low = (limit & 0xffff);
+    CPU::GDT[n].limit_high = (limit >> 16) & 0xf;
+    CPU::GDT[n].granularity = granularity;
+    CPU::GDT[n].access = access;
+}
 
 static void set_idte(int n, unsigned selector, unsigned type, unsigned isr) {
     CPU::IDT[n].offset_low = isr & 0xffff;
@@ -92,27 +92,33 @@ static void set_idte(int n, unsigned selector, unsigned type, unsigned isr) {
 
 typedef CPU::GDT_Entry GDT_Entry;
 
+// GDT_Entry gdtptr[3] = {
+//     GDT_Entry(0, 0x00000, 0x0, 0x00),
+//     GDT_Entry(0, 0xfffff, 0xc, 0x9A),
+//     GDT_Entry(0, 0xfffff, 0xc, 0x92),
+// };
+
 // @TODO: rename to CPU::default_init
-
-void CPU::init() {
+void CPU::default_init() {
     // create tree entries: NULL, CODE, DATA
-    GDT_Entry gdtptr[3] = {
-        GDT_Entry(0,0x00000,0x0,0x00),
-        GDT_Entry(0,0xfffff,0xc,0x9A),
-        GDT_Entry(0,0xfffff,0xc,0x92),
-    };
+    set_gdte(0, 0, 0x00000, 0x0, 0x00);
+    set_gdte(1, 0, 0xfffff, 0xc, 0x9A);
+    set_gdte(2, 0, 0xfffff, 0xc, 0x92);
 
-    // set_gdte(0, 0, 0x00000, 0x0, 0x00);
-    // set_gdte(1, 0, 0xfffff, 0xc, 0x9A);
-    // set_gdte(2, 0, 0xfffff, 0xc, 0x92);
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
+    // @TODO: Get rid of the copying!
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
+
+    Reg16 size = sizeof(GDT) - 1;
+    Reg32 ptr = reinterpret_cast<Reg32>(GDT);
 
     // load gdtr
-    Reg16 size = sizeof(gdtptr)/sizeof(gdtptr[0]) - 1;
-    Reg32 ptr = reinterpret_cast<Reg32>(gdtptr);
+    // Reg16 size = sizeof(gdtptr) - 1;
+    // Reg32 ptr = reinterpret_cast<Reg32>(gdtptr);
     gdtr(size, ptr);
 
     // reload segment registers
-    cs(0x8);
+    cs(0x08);
     ds(0x10);
 
     // create IDT entry for keyboard interrupts

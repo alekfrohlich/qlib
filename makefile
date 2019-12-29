@@ -8,7 +8,7 @@ include $(MAKEINC)
 #_______SOURCE CODE___________________________________________________________#
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
-# @TODO: refactor inline bash in order to avoid testing for .debug.lock
+# @TODO: Refactor inline bash in order to avoid testing for .debug.lock .
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
 
 .SILENT: all _all debug _debug
@@ -26,7 +26,7 @@ _all:
 	$(MAKE) _ALL_CXXFLAGS=-O2 $(FATBIN)
 
 	# delete debug symbols from libgcc.a
-	strip -d $(FATBIN)
+	# strip -d $(FATBIN)
 	$(MAKE) $(ISOFILE)
 
 debug:
@@ -36,7 +36,7 @@ debug:
 	$(MAKE) _debug
 
 _debug:
-	$(MAKE) _DEBUG_CXXFLAGS="-O0 -g -Wall -Wextra" _DEBUG_EXT=.debug \
+	$(MAKE) _DEBUG_CXXFLAGS="-O0 -g" _DEBUG_EXT=.debug \
 		$(FATBIN).debug
 	$(MAKE) $(ISOFILE)
 

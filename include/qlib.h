@@ -2,6 +2,7 @@
 #define QLIB_H
 
 #define ASM __asm__ __volatile__
+#define INSTRINSIC [[gnu::always_inline, gnu::artificial]] static inline
 
 #define ARCH ia32
 #define MACH pc
