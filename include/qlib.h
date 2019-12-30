@@ -1,5 +1,11 @@
-#ifndef QLIB_H
-#define QLIB_H
+#ifndef _QLIB_H
+#define _QLIB_H
+
+/*_______ASPECTS_____________________________________________________________*/
+
+
+
+/*_______CONFIG______________________________________________________________*/
 
 #define ASM __asm__ __volatile__
 #define INSTRINSIC [[gnu::always_inline, gnu::artificial]] static inline
@@ -17,4 +23,4 @@
 #    define __print_h __MACH_HEADER(serial, MACH)
 #endif
 
-#endif  // QLIB_H
+#endif  // _QLIB_H

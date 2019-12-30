@@ -1,5 +1,5 @@
-#ifndef OSTREAM_H
-#define OSTREAM_H
+#ifndef _QLIB_OSTREAM_H
+#define _QLIB_OSTREAM_H
 
 #include <qlib.h>
 #include __print_h
@@ -67,4 +67,4 @@ extern OStream cout;
 
 }  // namespace qlib
 
-#endif  // OSTREAM_H
+#endif  // _QLIB_OSTREAM_H

@@ -1,5 +1,5 @@
-#ifndef LIST_H
-#define LIST_H
+#ifndef _QLIB_LIST_H
+#define _QLIB_LIST_H
 
 namespace qlib {
 

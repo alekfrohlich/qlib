@@ -1,38 +1,37 @@
-#ifndef CPU_H
-#define CPU_H
+#ifndef _QLIB_HARDWARE_CPU_H
+#define _QLIB_HARDWARE_CPU_H
 
-#include <arch/cpu.h>
 #include <qlib.h>
 
 namespace qlib::hardware {
 
-//@TODO: private inheritance
-class CPU : CPU_Common
+class CPU
 {
  public:
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
-    // @TODO: Add i386 specific typedefs
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
-
-    typedef Reg16 IOPort;
+    /*________I386 TYPES_________________________________________________________*/
 
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
-    // @TODO: Rewrite descriptor table entries as classes
+    // @TODO: Check if integer types are really architecture independent.
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
+
+    typedef unsigned long Reg;
+    typedef unsigned char Reg8;
+    typedef unsigned short Reg16;
+    typedef unsigned long Reg32;
+    typedef unsigned long long Reg64;
+    typedef unsigned long Log_Address;
+    typedef unsigned long Lin_Address;
+    typedef unsigned short IOPort;
 
     struct [[gnu::packed]] GDT_Entry {
-        //  public:
-        //     GDT_Entry(unsigned base, unsigned limit, unsigned granularity,
-        //         unsigned access) {
-        //         base_low = (base & 0xffffff);
-        //         base_high = (base >> 24) & 0xff;
-        //         limit_low = (limit & 0xffff);
-        //         limit_high = (limit >> 16) & 0xf;
-        //         granularity = granularity;
-        //         access = access;
-        //     }
+     public:
+        GDT_Entry(unsigned base, unsigned limit, unsigned granularity,
+            unsigned access)
+            : base_low {base & 0xffffff}, base_high {(base >> 24) & 0xff},
+              limit_low {(limit & 0xffff)}, limit_high {(limit >> 16) & 0xf},
+              granularity {granularity}, access {access} {}
 
-        //  private:
+     private:
         unsigned limit_low : 16;
         unsigned base_low : 24;
         unsigned access : 8;
@@ -42,6 +41,13 @@ class CPU : CPU_Common
     };
 
     struct [[gnu::packed]] IDT_Entry {
+     public:
+        IDT_Entry() {}
+        IDT_Entry(unsigned selector, unsigned type, unsigned isr)
+            : offset_low {isr & 0xffff}, selector {selector}, zero {0},
+              type {type}, offset_high {(isr & 0xffff0000) >> 16} {}
+
+     private:
         unsigned offset_low : 16;
         unsigned selector : 16;
         unsigned zero : 8;
@@ -49,21 +55,19 @@ class CPU : CPU_Common
         unsigned offset_high : 16;
     };
 
-    static const unsigned IDT_ENTRIES = 256;
-    static IDT_Entry IDT[IDT_ENTRIES];
-    static const unsigned GDT_ENTRIES = 3;
-    static GDT_Entry GDT[GDT_ENTRIES];
-
+    //========DEFAULT INIT=======================================================//
     // setup Global Descriptor Table (GDT) and Interrupt Descriptor Table (IDT)
     // also configures Programmable Interrupt Controller (PIC) to enable irq1,
     // aka the keyboard line.
+    //===========================================================================//
+
     static void default_init(void);
 
     /*________ENABLE/DISABLE INTERRUPTS______________________________________*/
 
-    static void int_enable(void) { ASM("sti"); }
+    INSTRINSIC void int_enable(void) { ASM("sti"); }
 
-    static void int_disable(void) { ASM("cli"); }
+    INSTRINSIC void int_disable(void) { ASM("cli"); }
 
     /*________DESCRIPTOR TABLE REGISTERS_____________________________________*/
 
@@ -158,7 +162,7 @@ class CPU : CPU_Common
         return gs;
     }
 
-    INSTRINSIC void ss(const Reg16 & val) { ASM("movw %0, %%ss" : : "m"(val)); }
+    INSTRINSIC void ss(Reg16 val) { ASM("movw %0, %%ss" : : "m"(val)); }
 
     INSTRINSIC Reg16 ss() {
         volatile Reg16 ss;
@@ -168,29 +172,29 @@ class CPU : CPU_Common
 
     /*________IO PORT INTERFACE__________________________________________________*/
 
-    static Reg8 in8(const IOPort & port) {
+    INSTRINSIC Reg8 in8(IOPort port) {
         Reg8 value;
         ASM("inb %1,%0" : "=a"(value) : "d"(port));
         return value;
     }
 
-    static Reg16 in16(const IOPort & port) {
+    INSTRINSIC Reg16 in16(IOPort port) {
         Reg16 value;
         ASM("inw %1,%0" : "=a"(value) : "d"(port));
         return value;
     }
 
-    static Reg32 in32(const IOPort & port) {
+    INSTRINSIC Reg32 in32(IOPort port) {
         Reg32 value;
         ASM("inl %1,%0" : "=a"(value) : "d"(port));
         return value;
     }
 
-    static void out8(const IOPort & port, const Reg8 & value) {
+    INSTRINSIC void out8(IOPort port, Reg8 value) {
         ASM("outb %1,%0" : : "d"(port), "a"(value));
     }
 
-    static void out16(const IOPort & port, const Reg16 & value) {
+    INSTRINSIC void out16(IOPort port, Reg16 value) {
         ASM("outw %1,%0" : : "d"(port), "a"(value));
     }
 
@@ -201,4 +205,4 @@ class CPU : CPU_Common
 
 }  // namespace qlib::hardware
 
-#endif  // CPU_H
+#endif  // _QLIB_HARDWARE_CPU_H

@@ -11,10 +11,10 @@ void __cxa_guard_release(long long int *) {
 }
 
 void _pre_lib_init(void) {
-    qlib::hardware::CPU::default_init();
 }
 
 void _lib_init(void) {
+    qlib::hardware::CPU::default_init();
     main();
 }
 }

@@ -1,7 +1,7 @@
-#ifndef PIC_H
-#define PIC_H
+#ifndef _QLIB_HARDWARE_PIC_H
+#define _QLIB_HARDWARE_PIC_H
 
-#include <arch/cpu.h>
+#include <arch/ia32/cpu.h>
 
 namespace qlib::hardware {
 
@@ -53,4 +53,4 @@ class PIC
 
 }  // namespace qlib::hardware
 
-#endif  // PIC_H
+#endif  // _QLIB_HARDWARE_PIC_H

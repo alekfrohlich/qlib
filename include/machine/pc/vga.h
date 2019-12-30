@@ -1,5 +1,5 @@
-#ifndef VGA_H
-#define VGA_H
+#ifndef _QLIB_HARDWARE_VGA_H
+#define _QLIB_HARDWARE_VGA_H
 
 namespace qlib::hardware {
 
@@ -38,4 +38,4 @@ class Display
 
 }  // namespace qlib::hardware
 
-#endif  // VGA_H
+#endif  // _QLIB_HARDWARE_VGA_H

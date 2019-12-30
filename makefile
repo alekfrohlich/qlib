@@ -36,7 +36,7 @@ debug:
 	$(MAKE) _debug
 
 _debug:
-	$(MAKE) _DEBUG_CXXFLAGS="-O0 -g" _DEBUG_EXT=.debug \
+	$(MAKE) _DEBUG_CXXFLAGS="-g" _DEBUG_EXT=.debug \
 		$(FATBIN).debug
 	$(MAKE) $(ISOFILE)
 
@@ -97,8 +97,8 @@ $(ISOFILE): $(OBJ_LINK_LIST)
 PHONY: format
 
 format:
-	cd $(DOCS) && find .. -type d \( -name .git -o -name tools -o -name app \) -prune \
-		-o -regex '.*\.\(cc\|c\|h\)'\
+	cd $(DOCS) && find .. -type d \( -name .git -o -name tools -o -name app \) \
+		-prune -o -regex '.*\.\(cc\|c\|h\)'\
 		-exec clang-format-8 style=.clang-format -i {} \;
 
 #_______CROSS-CHAIN____________________________________________________________#
