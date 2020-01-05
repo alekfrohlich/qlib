@@ -1,7 +1,7 @@
 #include <qlib.h>
 
 #include <qlib/ostream.h>
-#include __cpu_h
+#include <machine/pc/8259.h>
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
 // @TODO: Make target-app a parameter to make or a new python/bash script, else
@@ -13,23 +13,10 @@ void main(void) {
     using namespace qlib;
     using namespace hardware;
 
-    cout << "Hello segment registers!\n";
+    cout << "Hello 8259A!" << endl;
+    cout << "imr = " << PIC::imr() << endl;
+    cout << "irr = " << PIC::irr() << endl;
+    cout << "isr = " << PIC::isr() << endl;
 
-    cout << "cs = " << CPU::cs() << "\n";
-    cout << "ds = " << CPU::ds() << "\n";
-    cout << "es = " << CPU::es() << "\n";
-    cout << "fs = " << CPU::fs() << "\n";
-    cout << "gs = " << CPU::gs() << "\n";
-    cout << "ss = " << CPU::ss() << "\n";
-
-    unsigned short * limit;
-    unsigned long * base;
-
-    CPU::gdtr(limit, base);
-    cout << "limit = " << *limit << " base = " << *base << "\n";
-
-    CPU::idtr(limit, base);
-    cout << "limit = " << *limit << " base = " << *base << "\n";
-
-    while (true);
+    while(1);
 }

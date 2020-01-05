@@ -1,5 +1,6 @@
 #include <app/config.h>
 #include <arch/ia32/cpu.h>
+#include <machine/pc/8259.h>
 
 extern "C" {
 
@@ -14,7 +15,12 @@ void _pre_lib_init(void) {
 }
 
 void _lib_init(void) {
-    qlib::hardware::CPU::default_init();
+    using namespace qlib::hardware;
+
+    CPU::default_init();
+    PIC::default_init();
+    PIC::unmask(PIC::KEYBOARD_LINE);
+
     main();
 }
 }

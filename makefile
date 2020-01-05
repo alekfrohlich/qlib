@@ -42,9 +42,11 @@ _debug:
 
 C_SRC 	:= $(wildcard TRGT_ARCH/*.c)
 
+# @TODO: make app-target a cli argument
+
 CXX_SRC :=  $(wildcard $(TRGT_MACH)/*.cc) \
 	$(wildcard $(QLIB)/*.cc) \
-	$(wildcard $(APP)/*.cc)
+	$(wildcard $(APP)/hello.cc)
 
 OBJS  	:= $(CXX_SRC:.cc=.o)
 

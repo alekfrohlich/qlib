@@ -3,34 +3,34 @@
 
 namespace qlib::hardware {
 
-const CPU::IOPort PIC::PIC1_STATUS = static_cast<CPU::IOPort>(0x20);
-const CPU::IOPort PIC::PIC1_DATA = static_cast<CPU::IOPort>(0x21);
-const CPU::IOPort PIC::PIC2_STATUS = static_cast<CPU::IOPort>(0xA0);
-const CPU::IOPort PIC::PIC2_DATA = static_cast<CPU::IOPort>(0xA1);
-PIC::Mask PIC::_mask = static_cast<PIC::Mask>(0xff);
-
 /*________INITIALIZE HARDWARE________________________________________________*/
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
-// @TODO: Explain setup process
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
+PIC::Mask PIC::_pic1_mask = PIC::MASK_NONE;
+PIC::Mask PIC::_pic2_mask = PIC::MASK_NONE;
 
-void PIC::init(void) {
-    // ICW1
+void PIC::default_init(void) {
+    // ICW1, initialization:
+    // 1 | edge triggered | interval of 8 | not single | ICW4 needed
     CPU::out8(0x20, 0x11);
     CPU::out8(0xA0, 0x11);
-    // ICW2
+
+    // ICW2, mapping configuration:
+    // PIC1: 0x20-0x27, PIC2: 0x28-0x2f
     CPU::out8(0x21, 0x20);
     CPU::out8(0xA1, 0x28);
-    // ICW3
+
+    // ICW3, cascade configuration:
+    // input does not have a slave
     CPU::out8(0x21, 0x00);
     CPU::out8(0xA1, 0x00);
-    // ICW4
+
+    // ICW4, environmental configuration:
+    // not special fully nested mode | non buffered mode | normal eoi | 8086 mode
     CPU::out8(0x21, 0x01);
     CPU::out8(0xA1, 0x01);
-    // mask interrupts
-    CPU::out8(0x21, 0xff);
-    CPU::out8(0xA1, 0xff);
+
+    mask(MASK_ALL, MASTER);
+    mask(MASK_ALL, SLAVE);
 }
 
 }  // namespace qlib::hardware

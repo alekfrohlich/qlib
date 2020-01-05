@@ -11,43 +11,106 @@ class PIC
  public:
     typedef unsigned char Mask;
 
-    // interrupt request lines
+    // @TODO: refactor the following enum
+    // usefull values
+    enum {
+        MASK_ALL = 0xff,
+        MASK_NONE = 0x00,
+        EOI = 0x20,
+        READ_IRR = 0xa,
+        READ_ISR = 0xb,
+    };
+
+    enum Mode {
+        MASTER,
+        SLAVE,
+    };
+
     enum IRQ {
-        KEYBOARD_LINE = 2
-    };  // @TODO: should be 1, but breaks if changed.
+        PIT_LINE = 1 << 0,
+        KEYBOARD_LINE = 1 << 1,
+        CASCADE_LINE = 1 << 2,
+        COM2_LINE = 1 << 3,
+        COM1_LINE = 1 << 4,
+        LPT2_LINE = 1 << 5,
+        FLOPPY_LINE = 1 << 6,
+        SPURIUS_LINE = 1 << 7,
+        RTS_LINE = 1 << 8,
+        NIC_LINE = 1 << 9,
+        SCSI_LINE = 1 << 10,
+        FREE_LINE = 1 << 11,
+        PS2_MOUSE_LINE = 1 << 12,
+        FPU_LINE = 1 << 13,
+        PRIMARY_ATA_LINE = 1 << 14,
+        SECONDARY_ATA_LINE = 1 << 15,
+    };
 
-    // interrupt lines per PIC
-    static const unsigned INT_LINES = 8;
+    // PIC IO ports
+    enum {
+        PIC1_CMD = 0x20,
+        PIC1_DATA = 0x21,
+        PIC2_CMD = 0xA0,
+        PIC2_DATA = 0xA1,
+    };
 
-    // I/O ports
-    static const CPU::IOPort PIC1_STATUS;
-    static const CPU::IOPort PIC1_DATA;
-    static const CPU::IOPort PIC2_STATUS;
-    static const CPU::IOPort PIC2_DATA;
+    static Mask _pic1_mask;
+    static Mask _pic2_mask;
+    static unsigned constexpr LINES_PER_PIC = 8;
 
-    // current mask
-    static Mask _mask;
+    //========DEFAULT INIT=======================================================//
+    // Set up intel's 8259A without cascading in unbuffered, edge-triggered 8086
+    // mode. Also Configure interrupt vectors to first available offset (0x20 and
+    // 0x28). No auto eoi.
+    //===========================================================================//
 
-    static void init(void);
+    static void default_init(void);
 
-    /*________MANAGE IRQs________________________________________________________*/
-
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
-    // @TODO: Make mask/unmask varargs.
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
-
-    static void mask(const IRQ & line) {
-        if (line < INT_LINES)
-            CPU::out8(PIC1_DATA, PIC::_mask | line);
-        else
-            CPU::out8(PIC2_DATA, PIC::_mask | line);
+    INTRIN void eoi(IRQ line) {
+        CPU::out8(line < LINES_PER_PIC ? PIC1_CMD : PIC2_CMD, EOI);
     }
 
-    static void unmask(const IRQ & line) {
-        if (line < INT_LINES)
-            CPU::out8(PIC1_DATA, PIC::_mask & ~(line));
+    INTRIN CPU::Reg8 imr(Mode mode = MASTER) {
+        return (mode == MASTER) ? _pic1_mask : _pic2_mask;
+    }
+
+    INTRIN CPU::Reg8 irr(Mode mode = MASTER) {
+        CPU::out8((mode == MASTER) ? PIC1_CMD : PIC2_CMD, READ_IRR);
+        return CPU::in8((mode == MASTER) ? PIC1_CMD : PIC2_CMD);
+    }
+
+    INTRIN CPU::Reg8 isr(Mode mode = MASTER) {
+        CPU::out8((mode == MASTER) ? PIC1_CMD : PIC2_CMD, READ_ISR);
+        return CPU::in8((mode == MASTER) ? PIC1_CMD : PIC2_CMD);
+    }
+
+    /*________MASK/UNMASK IRQs___________________________________________________*/
+
+    INTRIN void mask(IRQ line) {
+        // @OBS: could be made varargs
+        if (line < LINES_PER_PIC) {
+            _pic1_mask |= line;
+            CPU::out8(PIC1_DATA, _pic1_mask);
+        } else {
+            _pic2_mask |= line;
+            CPU::out8(PIC2_DATA, _pic2_mask);
+        }
+    }
+
+    INTRIN void mask(Mask mask, Mode mode = MASTER) {
+        if (mode == MASTER)
+            _pic1_mask = mask;
         else
-            CPU::out8(PIC2_DATA, PIC::_mask & ~(line));
+            _pic2_mask = mask;
+    }
+
+    INTRIN void unmask(IRQ line) {
+        if (line < LINES_PER_PIC) {
+            _pic1_mask &= ~(line);
+            CPU::out8(PIC1_DATA, _pic1_mask);
+        } else {
+            _pic2_mask &= ~(line);
+            CPU::out8(PIC2_DATA, _pic2_mask);
+        }
     }
 };
 

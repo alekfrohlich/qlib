@@ -23,8 +23,8 @@ class Display
 
  private:
     // white-black and red-black operating modes
-    static const Mode NORMAL_MODE = static_cast<Mode>(7 << 8);
-    static const Mode ERROR_MODE = static_cast<Mode>(12 << 8);
+    static const Mode NORMAL_MODE = 7 << 8;
+    static const Mode ERROR_MODE = 12 << 8;
 
     static const int HEIGHT = 25;
     static const int WIDTH = 80;

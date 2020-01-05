@@ -36,11 +36,11 @@ unsigned char const keyboard_map[128] = {
     0, /* All other keys are undefined */
 };
 
-class Keyboard {
-    public:
-
+class Keyboard
+{
+ public:
 };
 
-}; // namespace qlib::hardware
+};  // namespace qlib::hardware
 
-#endif // _QLIB_HARDWARE_KEYBOARD_H
+#endif  // _QLIB_HARDWARE_KEYBOARD_H

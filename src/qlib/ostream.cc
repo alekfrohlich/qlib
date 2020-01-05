@@ -2,6 +2,12 @@
 
 namespace qlib {
 
+OStream::Endl endl;
+OStream::Hex hex;
+OStream::Dec dec;
+OStream::Oct oct;
+OStream::Bin bin;
+OStream::Err err;
 OStream cout;
 
 /*________CONTROL OVERLOADS__________________________________________________*/

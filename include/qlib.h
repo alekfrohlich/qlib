@@ -3,12 +3,10 @@
 
 /*_______ASPECTS_____________________________________________________________*/
 
-
-
 /*_______CONFIG______________________________________________________________*/
 
 #define ASM __asm__ __volatile__
-#define INSTRINSIC [[gnu::always_inline, gnu::artificial]] static inline
+#define INTRIN [[gnu::always_inline, gnu::artificial]] static inline
 
 #define ARCH ia32
 #define MACH pc
