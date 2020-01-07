@@ -27,8 +27,8 @@
 #________PARAMETERS___________________________________________________________#
 
 CROSS="`pwd`/cross"
-GCC=gcc-7.3.0
-BINUTILS=binutils-2.30
+GCC=gcc-9.2.0
+BINUTILS=binutils-2.33.1
 PREFIX=$CROSS
 TARGET=i686-elf
 PROG_PREFIX=ia32-

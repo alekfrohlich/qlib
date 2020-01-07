@@ -65,7 +65,7 @@ class CPU
               zero {0}, type {type},
               offset_high {((Log_Address) isr & 0xffff0000) >> 16} {}
 
-        void isr(void (*new_isr)()) {
+        void isr(unsigned new_isr) {
             offset_low = (Log_Address) new_isr & 0xffff;
             offset_high = ((Log_Address) new_isr & 0xffff0000) >> 16;
         }
@@ -78,6 +78,9 @@ class CPU
         unsigned offset_high : 16;
     };
 
+    static GDT_Entry * gdt_ptr;
+    static IDT_Entry * idt_ptr;
+
     //========DEFAULT INIT=======================================================//
     // Setup Global Descriptor Table (GDT) and Interrupt Descriptor Table (IDT).
     // Also configures Programmable Interrupt Controller (PIC) to enable irq1,
@@ -88,7 +91,8 @@ class CPU
 
     /*________MISCELLANEOUS__________________________________________________*/
 
-    INTRIN void halt(void) { ASM("hlt"); }
+    // halt is used as a function for filling the idt
+    static void halt(void) { ASM("hlt"); }
 
     /*________ENABLE/DISABLE INTERRUPTS______________________________________*/
 
@@ -144,7 +148,7 @@ class CPU
 
     /*________SEGMENT REGISTERS__________________________________________________*/
 
-    // @OBS: This library does not attempt to provide full segmentation support!
+    // @OBS: qlib does not attempt to provide full segmentation support!
 
     INTRIN void cs(const Reg16 val) {
         ASM("ljmp %0, $1f   \n"

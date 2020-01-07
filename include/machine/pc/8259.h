@@ -45,6 +45,7 @@ class PIC
         SECONDARY_ATA_LINE = 1 << 15,
     };
 
+    // @TODO: verify the following values (compare them to the keyboard int handler)
     // PIC IO ports
     enum {
         PIC1_CMD = 0x20,
@@ -86,7 +87,6 @@ class PIC
     /*________MASK/UNMASK IRQs___________________________________________________*/
 
     INTRIN void mask(IRQ line) {
-        // @OBS: could be made varargs
         if (line < LINES_PER_PIC) {
             _pic1_mask |= line;
             CPU::out8(PIC1_DATA, _pic1_mask);
