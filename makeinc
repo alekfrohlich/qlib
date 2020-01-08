@@ -58,8 +58,6 @@ CXXFLAGS := -I $(INC)
 CXXFLAGS += -ffreestanding -fno-exceptions
 CXXFLAGS += -fno-rtti -nostdinc -fno-asynchronous-unwind-tables
 CXXFLAGS += --no-use-cxa-atexit -std=c++0x
-CXXFLAGS += $(_ALL_CXXFLAGS) $(_DEBUG_CXXFLAGS)
-
 # needed for [[gcc::interrupt]]
 CXXFLAGS += -mgeneral-regs-only
 
@@ -71,26 +69,5 @@ MAKEFLAGS  += --no-print-directory
 
 #_______OS IMAGE______________________________________________________________#
 
-
-#=======CONCURRENT BUILDS=====================================================#
-# The current version of the makefile supports having two concurrent builds
-# compiled at the same time: release and debug. However, the build system only
-# holds one object file for each .c/.cc file (to avoid cluttering?). Thus,
-# there is a need to keep track of which build is currently compiled
-# (.debug.lock).
-#
-# There is also a need to suplement CXXFLAGS and FATBIN with additional flags
-# based on which build currently has it's .o files. I.g, a release build
-# requires -O2 for CXXFLAGS whilst debug requires -O0, conflicting needs indeed.
-# We fix this demand by checking for the presence of .debug.lock (which all
-# removes and debug touches) and passing extra parameters to sub-makes.
-#
-# The advantage of this decision is that there is no need to clear all .o files
-# in subsequents compilations of either build.
-#=============================================================================#
-
-
-_DEBUG_EXT :=
-
-FATBIN = $(addsuffix $(_DEBUG_EXT),$(GRUB)/brae.bin)
-ISOFILE := brae.iso
+BINARY = $(GRUB)/runnable_app.bin
+IMAGE := bootable_app.iso

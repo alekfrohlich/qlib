@@ -7,38 +7,23 @@ include $(MAKEINC)
 
 #_______SOURCE CODE___________________________________________________________#
 
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
-# @TODO: Refactor inline bash in order to avoid testing for .debug.lock .
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
+# @DEBATE: how to manage two binaries without recompiling the debug version?
 
-.SILENT: all _all debug _debug
-.PHONY: all _all debug _debug
+.SILENT: all debug
+.PHONY: all debug
 
-# see makeinc's CONCURRENT BUILD section for more explanation on .debug.lock
-
+all: CXXFLAGS += -O2
 all:
-	if test -f ".debug.lock"; then \
-		$(MAKE) clean; \
-	fi
-	$(MAKE) _all
+	$(MAKE) $(BINARY)
+	$(MAKE) $(IMAGE)
+	# delete debug symbols that came from libgcc.a and qlib
+	strip -d $(BINARY)
 
-_all:
-	$(MAKE) _ALL_CXXFLAGS=-O2 $(FATBIN)
-
-	# delete debug symbols from libgcc.a
-	# strip -d $(FATBIN)
-	$(MAKE) $(ISOFILE)
-
+debug: CXXFLAGS += -g
 debug:
-	if ! test -f ".debug.lock"; then \
-		$(MAKE) clean && touch .debug.lock; \
-	fi
-	$(MAKE) _debug
-
-_debug:
-	$(MAKE) _DEBUG_CXXFLAGS="-g" _DEBUG_EXT=.debug \
-		$(FATBIN).debug
-	$(MAKE) $(ISOFILE)
+	$(MAKE) veryclean
+	$(MAKE) $(BINARY)
+	$(MAKE) $(IMAGE)
 
 C_SRC 	:= $(wildcard TRGT_ARCH/*.c)
 
@@ -50,20 +35,14 @@ CXX_SRC :=  $(wildcard $(TRGT_MACH)/*.cc) \
 
 OBJS  	:= $(CXX_SRC:.cc=.o)
 
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
-# @TODO: Move cpu.o before OBJS.
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
-
 # the final executable must be linked in this exact order
+# (cpu.o is explicitly written here because we compile ARCH/ file by file)
 OBJ_LINK_LIST := $(addprefix $(TRGT_ARCH)/, crt0.o crtend.o) \
 	$(OBJS) $(addprefix $(TRGT_ARCH)/, cpu.o lib_init.o crtbegin.o)
 
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
-# @TODO: Fix ld include error. ld expects to find crtend.o and crtbegin.o
-# to be relative to the working directory. It fails when given a relative path.
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
-
-$(FATBIN): $(OBJ_LINK_LIST)
+# if the path of crtend/begin.o is not specified correctly ld will try to
+# include it's own version of the files leading to strange errors
+$(BINARY): $(OBJ_LINK_LIST)
 	cd $(TRGT_ARCH) && $(LD) $(LDFLAGS) crt0.o crtend.o $(OBJS) \
 		cpu.o lib_init.o crtbegin.o -lgcc -o $@
 
@@ -91,7 +70,7 @@ $(FATBIN): $(OBJ_LINK_LIST)
 
 #_______BOOTABLE GRUB IMAGE___________________________________________________#
 
-$(ISOFILE): $(OBJ_LINK_LIST)
+$(IMAGE): $(OBJ_LINK_LIST)
 	grub-mkrescue -o $@ $(IMG)
 
 #_______CLANG-FORMAT__________________________________________________________#
@@ -123,5 +102,5 @@ clean:
 		\( -name "*.o" -o -name "*.d" \) -delete
 
 veryclean: clean
-	@rm -f .debug.lock brae.iso
-	@rm -f img/boot/brae.bin img/boot/brae.bin.debug
+	@rm -f bootable_app.iso
+	@rm -f img/boot/runnable_app.bin
