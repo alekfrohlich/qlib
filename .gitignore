@@ -9,6 +9,8 @@
 *.o
 *.iso
 ./build
+*.release
+*.debug
 
 # makefile stuff
 *.bin

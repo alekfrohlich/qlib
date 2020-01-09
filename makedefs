@@ -1,5 +1,5 @@
 
-#=======MAKE HEADER===========================================================#
+#=======MAKEDEFS==============================================================#
 # This header contains information about target architecture and machine,
 # directory tree and tool-chain flags. It also holds information needed to
 # generate the final OS image.
@@ -16,6 +16,7 @@ MACHNAME := pc
 
 #_______DIRECTORIES___________________________________________________________#
 
+# project level directories
 TOP   := $(abspath $(dir $(filter %makedefs, $(MAKEFILE_LIST))))
 APP   := $(TOP)/app
 BIN   := $(TOP)/bin
@@ -32,7 +33,7 @@ MACH  := $(SRC)/machine
 QLIB  := $(SRC)/qlib
 TEST  := $(SRC)/test
 
-# target-specific directories
+# rename this
 TRGT_ARCH := $(ARCH)/$(TARGET)
 TRGT_MACH := $(MACH)/$(MACHNAME)
 
@@ -49,6 +50,8 @@ STRIP := $(TOOLS)/cross/bin/$(TARGET)-strip
 
 #_______FLAGS_________________________________________________________________#
 
+ASFLAGS :=
+
 CFLAGS := -I $(INC)
 
 # C-preprocessor flags (used to generate .d files)
@@ -57,10 +60,8 @@ CPPFLAGS := -MD -MP
 CXXFLAGS := -I $(INC)
 CXXFLAGS += -ffreestanding -fno-exceptions
 CXXFLAGS += -fno-rtti -nostdinc -fno-asynchronous-unwind-tables
-# @TODO: verify -std=c++0x
-CXXFLAGS += --no-use-cxa-atexit -std=c++0x
-# needed for [[gcc::interrupt]]
-CXXFLAGS += -mgeneral-regs-only
+# test std=c++2a
+CXXFLAGS += --no-use-cxa-atexit -std=c++11
 
 LDFLAGS  := -static -nostdlib \
 	-L $(patsubst %/libgcc.a,%/,$(shell $(CXX) -print-libgcc-file-name)) \
@@ -68,15 +69,15 @@ LDFLAGS  := -static -nostdlib \
 
 MAKEFLAGS  += --no-print-directory
 
-#_______OS IMAGE______________________________________________________________#
+#________APP IMAGE____________________________________________________________#
 
-IMAGE  := bootable_app.iso
+IMAGE := bootable_app.iso
 
-#_______BUILD_________________________________________________________________#
+#________BUILD________________________________________________________________#
 
 CXX_SRC_DIRS_REL := arch arch/ia32 machine/pc machine qlib
 
-# didn't find any better way to change include $(DEPS) based on chosen rule
+# the path of included files changes based on the chosen target (release/debug)
 ifeq (, $(filter debug, $(MAKECMDGOALS)))
 	BUILD := $(TOP)/build/release
 	CXXFLAGS += -O2
@@ -87,7 +88,9 @@ else
 	BINARY := $(GRUB)/runnable_app.debug
 endif
 
-#________STATIC ANALYSIS______________________________________________________#
+#________ERROR CHECKING_______________________________________________________#
+
+# GNUMake is REALLY unsafe, so here's some help
 
 OTHER_RULES := format install-cross uninstall-cross install-directories clean \
 	veryclean

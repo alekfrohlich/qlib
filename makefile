@@ -5,10 +5,25 @@ SHELL := /bin/bash
 export MAKEDEFS = $(CURDIR)/makedefs
 include $(MAKEDEFS)
 
-#________GENERIC SOURCE CODE__________________________________________________#
+#________BUILD OPTIONS________________________________________________________#
 
-CXX_SRC_DIRS_ABS := $(foreach dir, $(CXX_SRC_DIRS_REL), $(addprefix $(SRC)/, $(dir)))
-BUILD_DIRS := $(foreach dir, $(CXX_SRC_DIRS_REL), $(addprefix $(BUILD)/, $(dir)))
+.PHONY: release debug
+.SILENT: release debug
+
+# BUILD_DIRS's recipe was not being executed as an order only pre-requisite
+
+# release has to delete debug symbols that come from libgcc.a
+release: install-directories $(BINARY) $(IMAGE)
+	$(STRIP) -d $(BINARY)
+
+debug: install-directories $(BINARY) $(IMAGE)
+
+#________COMMON SOURCE CODE___________________________________________________#
+
+CXX_SRC_DIRS_ABS := \
+	$(foreach dir, $(CXX_SRC_DIRS_REL), $(addprefix $(SRC)/, $(dir)))
+BUILD_DIRS := \
+	$(foreach dir, $(CXX_SRC_DIRS_REL), $(addprefix $(BUILD)/, $(dir)))
 
 INCLUDES := $(foreach dir, $(CXX_SRC_DIRS_ABS), $(addprefix -I, $(dir)))
 
@@ -22,28 +37,31 @@ APP_OBJS := $(APP_CXX_SRC:.cc=.o)
 OBJS := $(subst $(SRC),$(BUILD),$(CXX_SRC:.cc=.o))
 DEPS := $(OBJS:.o=.d)
 
-#________SPECIFIC SOURCE CODE_________________________________________________#
+#________CRT-STUFF____________________________________________________________#
 
-.PHONY: release debug install-crt-stuff
+$(BUILD)/arch/$(TARGET)/crt0.o: $(TRGT_ARCH)/crt0.S
+	$(AS) $(ASFLAGS) $< -o $@
 
-# @TODO: shouldn't install-directories be an order-only pre-req?
-release: install-directories install-crt-stuff $(BINARY) $(IMAGE)
+$(BUILD)/arch/$(TARGET)/crtbegin.o: $(TRGT_ARCH)/crtbegin.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
-debug: install-directories install-crt-stuff $(BINARY) $(IMAGE)
+$(BUILD)/arch/$(TARGET)/crtend.o: $(TRGT_ARCH)/crtend.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
-install-crt-stuff:
-	$(AS) $(ASFLAGS) $(addprefix $(TRGT_ARCH)/, crt0.S) -o $(addprefix $(BUILD)/arch/$(TARGET)/, crt0.o)
-	$(CC) $(CFLAGS) -c $(addprefix $(TRGT_ARCH)/, crtbegin.c) -o $(addprefix $(BUILD)/arch/$(TARGET)/, crtbegin.o)
-	$(CC) $(CFLAGS) -c $(addprefix $(TRGT_ARCH)/, crtend.c) -o $(addprefix $(BUILD)/arch/$(TARGET)/, crtend.o)
+#________TARGET-SPECIFIC FLAGS________________________________________________#
+
+HAS_INT_HANDLER := $(addprefix $(BUILD)/machine/$(MACHNAME)/, keyboard.o)
+$(HAS_INT_HANDLER): CXXFLAGS += -mgeneral-regs-only
 
 #________GENERATING RULES_____________________________________________________#
 
 define generate-rules
 $(1)/%.o: %.cc
-	$(CXX) $(CXXFLAGS) -c $$(INCLUDES) -o $$@ $$< -MMD
+	$(CXX) $$(CXXFLAGS) -c $$(INCLUDES) -o $$@ $$< -MMD
 endef
 
-$(foreach targetdir, $(BUILD_DIRS), $(eval $(call generate-rules, $(targetdir))))
+$(foreach targetdir, $(BUILD_DIRS), \
+	$(eval $(call generate-rules, $(targetdir))))
 
 #________LINKING______________________________________________________________#
 
@@ -78,8 +96,19 @@ endif
 
 #_______BOOTABLE GRUB IMAGE___________________________________________________#
 
-$(IMAGE): $(OBJ_LINK_LIST)
+# the image depends on grub.cfg which in turn depends on it's menuentries
+# (BINARY). For some reason the rule executes every time if it depends on
+# BINARY so it's left depending on the objs.
+
+$(IMAGE): $(IMG)/boot/grub/grub.cfg $(OBJ_LINK_LIST)
 	grub-mkrescue -o $@ $(IMG)
+
+#_______SETUP ENVIRONMENT______________________________________________________#
+
+.PHONY:install-directories
+
+install-directories:
+	@mkdir -p $(BUILD_DIRS)
 
 #_______CLANG-FORMAT__________________________________________________________#
 
@@ -100,13 +129,6 @@ install-cross:
 uninstall-cross:
 	@rm -rf $(TOOLS)/cross
 	@mkdir $(TOOLS)/cross
-
-#_______SETUP ENVIRONMENT______________________________________________________#
-
-.PHONY:install-directories
-
-install-directories:
-	mkdir -p $(BUILD_DIRS)
 
 #_______CLEAN ENVIRONMENT______________________________________________________#
 

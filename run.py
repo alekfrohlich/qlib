@@ -4,7 +4,6 @@ import subprocess
 import sys
 
 QEMU = 'qemu-system-i386'
-BRAE = 'bootable_app.iso'
 
 if (len(sys.argv) > 1):
     debug = True
@@ -12,6 +11,6 @@ else:
     debug = False
 
 if debug:
-    subprocess.run([QEMU, '-cdrom', BRAE, '-s', '-S'])
+    subprocess.run([QEMU, '-cdrom', 'bootable_app.iso', '-s', '-S'])
 else:
-    subprocess.run([QEMU, '-cdrom', BRAE])
+    subprocess.run([QEMU, '-cdrom', 'bootable_app.iso'])
