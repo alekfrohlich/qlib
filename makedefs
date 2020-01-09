@@ -16,10 +16,9 @@ MACHNAME := pc
 
 #_______DIRECTORIES___________________________________________________________#
 
-TOP   := $(abspath $(dir $(filter %makeinc, $(MAKEFILE_LIST))))
+TOP   := $(abspath $(dir $(filter %makedefs, $(MAKEFILE_LIST))))
 APP   := $(TOP)/app
 BIN   := $(TOP)/bin
-BUILD := $(TOP)/build
 DOCS  := $(TOP)/docs
 IMG   := $(TOP)/img
 INC   := $(TOP)/include
@@ -58,6 +57,7 @@ CPPFLAGS := -MD -MP
 CXXFLAGS := -I $(INC)
 CXXFLAGS += -ffreestanding -fno-exceptions
 CXXFLAGS += -fno-rtti -nostdinc -fno-asynchronous-unwind-tables
+# @TODO: verify -std=c++0x
 CXXFLAGS += --no-use-cxa-atexit -std=c++0x
 # needed for [[gcc::interrupt]]
 CXXFLAGS += -mgeneral-regs-only
@@ -70,9 +70,30 @@ MAKEFLAGS  += --no-print-directory
 
 #_______OS IMAGE______________________________________________________________#
 
-BINARY := $(GRUB)/runnable_app.bin
 IMAGE  := bootable_app.iso
 
 #_______BUILD_________________________________________________________________#
 
 CXX_SRC_DIRS_REL := arch arch/ia32 machine/pc machine qlib
+
+# didn't find any better way to change include $(DEPS) based on chosen rule
+ifeq (, $(filter debug, $(MAKECMDGOALS)))
+	BUILD := $(TOP)/build/release
+	CXXFLAGS += -O2
+	BINARY := $(GRUB)/runnable_app.release
+else
+	BUILD := $(TOP)/build/debug
+	CXXFLAGS += -g
+	BINARY := $(GRUB)/runnable_app.debug
+endif
+
+#________STATIC ANALYSIS______________________________________________________#
+
+OTHER_RULES := format install-cross uninstall-cross install-directories clean \
+	veryclean
+
+ifneq (, $(filter release, $(MAKECMDGOALS)))
+ifneq (, $(filter debug, $(MAKECMDGOALS)))
+$(error relase and debug are orthogonal, choose only one of them!)
+endif
+endif

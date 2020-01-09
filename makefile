@@ -2,19 +2,17 @@ SHELL := /bin/bash
 
 #________INCLUDES_____________________________________________________________#
 
-export MAKEINC = $(CURDIR)/makeinc
-include $(MAKEINC)
+export MAKEDEFS = $(CURDIR)/makedefs
+include $(MAKEDEFS)
 
 #________GENERIC SOURCE CODE__________________________________________________#
-
-.PHONY: all
 
 CXX_SRC_DIRS_ABS := $(foreach dir, $(CXX_SRC_DIRS_REL), $(addprefix $(SRC)/, $(dir)))
 BUILD_DIRS := $(foreach dir, $(CXX_SRC_DIRS_REL), $(addprefix $(BUILD)/, $(dir)))
 
 INCLUDES := $(foreach dir, $(CXX_SRC_DIRS_ABS), $(addprefix -I, $(dir)))
 
-VPATH := $(CXX_SRC_DIRS_ABS) $(TRGT_ARCH)
+VPATH := $(CXX_SRC_DIRS_ABS)
 
 CXX_SRC := $(foreach dir,$(CXX_SRC_DIRS_ABS),$(wildcard $(dir)/*.cc))
 
@@ -26,10 +24,12 @@ DEPS := $(OBJS:.o=.d)
 
 #________SPECIFIC SOURCE CODE_________________________________________________#
 
-# @TODO: shouldn't install-directories be an order-only pre-req?
-all: install-directories install-crt-stuff $(BINARY) $(IMAGE)
+.PHONY: release debug install-crt-stuff
 
-.PHONY: install-crt-stuff
+# @TODO: shouldn't install-directories be an order-only pre-req?
+release: install-directories install-crt-stuff $(BINARY) $(IMAGE)
+
+debug: install-directories install-crt-stuff $(BINARY) $(IMAGE)
 
 install-crt-stuff:
 	$(AS) $(ASFLAGS) $(addprefix $(TRGT_ARCH)/, crt0.S) -o $(addprefix $(BUILD)/arch/$(TARGET)/, crt0.o)
@@ -48,10 +48,8 @@ $(foreach targetdir, $(BUILD_DIRS), $(eval $(call generate-rules, $(targetdir)))
 #________LINKING______________________________________________________________#
 
 # the final executable must be linked in this exact order
-OBJ_LINK_LIST := $(addprefix $(BUILD)/arch/$(TARGET)/, crt0.o crtend.o) \
+OBJ_LINK_LIST = $(addprefix $(BUILD)/arch/$(TARGET)/, crt0.o crtend.o) \
 	$(OBJS) $(APP_OBJS) $(addprefix $(BUILD)/arch/$(TARGET)/, crtbegin.o)
-
-$(BINARY): $(OBJ_LINK_LIST)
 
 # if the path of crtend/begin.o is not specified correctly ld will try to
 # include it's own version of the files leading to strange errors
@@ -73,8 +71,10 @@ $(BINARY): $(OBJ_LINK_LIST)
 # 	dependencies.html
 #=============================================================================#
 
-
+# avoid including compilation stuff when it's not needed
+ifeq (, $(filter $(OTHER_RULES),$(MAKECMDGOALS)))
 -include $(DEPS)
+endif
 
 #_______BOOTABLE GRUB IMAGE___________________________________________________#
 
@@ -116,15 +116,8 @@ clean:
 	@find . -depth -type d \( -name .git -o -name tools \) -prune -o -type f \
 		\( -name "*.o" -o -name "*.d" \) -delete
 	@rm -f bootable_app.iso
-	@rm -f img/boot/runnable_app.bin
+	@rm -f img/boot/runnable_app.release
+	@rm -f img/boot/runnable_app.debug
 
 veryclean: clean
 	@rm -rf build
-	@echo $(CXX_SRC_DIRS_ABS)
-	@echo $(BUILD_DIRS)
-	@echo $(INCLUDES)
-	@echo $(VPATH)
-	@echo $(CXX_SRC)
-	@echo $(OBJS)
-	@echo $(DEPS)
-	@echo $(OBJ_LINK_LIST)
