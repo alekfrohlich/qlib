@@ -75,5 +75,4 @@ IMAGE  := bootable_app.iso
 
 #_______BUILD_________________________________________________________________#
 
-SRC_DIR_TREE := $(shell find $(SRC) -type d)
-BUILD_DIR_TREE := $(subst $(SRC),$(BUILD),$(SRC_DIR_TREE))
+CXX_SRC_DIRS_REL := arch arch/ia32 machine/pc machine qlib

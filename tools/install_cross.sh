@@ -51,7 +51,7 @@ sudo apt install -y texinfo
 #________CONFIRM INSTALLATION_________________________________________________#
 
 if [ -d "`pwd`/cross/bin" ]; then
-	read -r -p "It looks like you already have some stuff installed under
+	read -r -p "it looks like you already have some stuff installed under
 tools/cross, would you like to continue anyways? [y/N] " response
 	case "$response" in
 		[yY][eE][sS]|[yY])

@@ -1,51 +1,63 @@
 SHELL := /bin/bash
-VERBOSE = TRUE
 
-#_______INCLUDES______________________________________________________________#
+#________INCLUDES_____________________________________________________________#
 
 export MAKEINC = $(CURDIR)/makeinc
 include $(MAKEINC)
 
-#_______SOURCE CODE___________________________________________________________#
+#________GENERIC SOURCE CODE__________________________________________________#
 
-.SILENT: all debug
-.PHONY: all debug
+.PHONY: all
 
-all: CXXFLAGS += -O2
-all: | $(BUILD_DIR_TREE)
-	$(MAKE) $(BINARY)
-	$(MAKE) $(IMAGE)
-	# delete debug symbols that came from libgcc.a and qlib
-	strip -d $(BINARY)
+CXX_SRC_DIRS_ABS := $(foreach dir, $(CXX_SRC_DIRS_REL), $(addprefix $(SRC)/, $(dir)))
+BUILD_DIRS := $(foreach dir, $(CXX_SRC_DIRS_REL), $(addprefix $(BUILD)/, $(dir)))
 
-debug: CXXFLAGS += -g
-debug: | $(BUILD_DIR_TREE)
-	$(MAKE) veryclean
-	$(MAKE) $(BINARY)
-	$(MAKE) $(IMAGE)
+INCLUDES := $(foreach dir, $(CXX_SRC_DIRS_ABS), $(addprefix -I, $(dir)))
 
-C_SRC 	:= $(wildcard TRGT_ARCH/*.c)
+VPATH := $(CXX_SRC_DIRS_ABS) $(TRGT_ARCH)
 
-CXX_SRC :=  $(wildcard $(TRGT_MACH)/*.cc) \
-	$(wildcard $(QLIB)/*.cc) \
-	$(wildcard $(APP)/hello.cc)
+CXX_SRC := $(foreach dir,$(CXX_SRC_DIRS_ABS),$(wildcard $(dir)/*.cc))
 
-OBJS  	:= $(CXX_SRC:.cc=.o)
+APP_CXX_SRC := $(wildcard $(APP)/*.cc)
+APP_OBJS := $(APP_CXX_SRC:.cc=.o)
+
+OBJS := $(subst $(SRC),$(BUILD),$(CXX_SRC:.cc=.o))
+DEPS := $(OBJS:.o=.d)
+
+#________SPECIFIC SOURCE CODE_________________________________________________#
+
+# @TODO: shouldn't install-directories be an order-only pre-req?
+all: install-directories install-crt-stuff $(BINARY) $(IMAGE)
+
+.PHONY: install-crt-stuff
+
+install-crt-stuff:
+	$(AS) $(ASFLAGS) $(addprefix $(TRGT_ARCH)/, crt0.S) -o $(addprefix $(BUILD)/arch/$(TARGET)/, crt0.o)
+	$(CC) $(CFLAGS) -c $(addprefix $(TRGT_ARCH)/, crtbegin.c) -o $(addprefix $(BUILD)/arch/$(TARGET)/, crtbegin.o)
+	$(CC) $(CFLAGS) -c $(addprefix $(TRGT_ARCH)/, crtend.c) -o $(addprefix $(BUILD)/arch/$(TARGET)/, crtend.o)
+
+#________GENERATING RULES_____________________________________________________#
+
+define generate-rules
+$(1)/%.o: %.cc
+	$(CXX) $(CXXFLAGS) -c $$(INCLUDES) -o $$@ $$< -MMD
+endef
+
+$(foreach targetdir, $(BUILD_DIRS), $(eval $(call generate-rules, $(targetdir))))
+
+#________LINKING______________________________________________________________#
 
 # the final executable must be linked in this exact order
-# (cpu.o is explicitly written here because we compile ARCH/ file by file)
-OBJ_LINK_LIST := $(addprefix $(TRGT_ARCH)/, crt0.o crtend.o) \
-	$(OBJS) $(addprefix $(TRGT_ARCH)/, cpu.o lib_init.o crtbegin.o)
+OBJ_LINK_LIST := $(addprefix $(BUILD)/arch/$(TARGET)/, crt0.o crtend.o) \
+	$(OBJS) $(APP_OBJS) $(addprefix $(BUILD)/arch/$(TARGET)/, crtbegin.o)
+
+$(BINARY): $(OBJ_LINK_LIST)
 
 # if the path of crtend/begin.o is not specified correctly ld will try to
 # include it's own version of the files leading to strange errors
 $(BINARY): $(OBJ_LINK_LIST)
-	cd $(TRGT_ARCH) && $(LD) $(LDFLAGS) crt0.o crtend.o $(OBJS) \
-		cpu.o lib_init.o crtbegin.o -lgcc -o $@
-
-# currently used to assamble crt0.S
-%.o: %.S
-	 $(AS) $(ASFLAGS) $< -o $@
+	cd $(BUILD)/arch/$(TARGET) && $(LD) $(LDFLAGS) crt0.o crtend.o $(OBJS) \
+		$(APP_OBJS) crtbegin.o -lgcc -o $@
 
 
 #=============AUTOMAKE========================================================#
@@ -62,8 +74,7 @@ $(BINARY): $(OBJ_LINK_LIST)
 #=============================================================================#
 
 
--include $(CXX_SRC:.cc=.d)
--include $(C_SRC:.c=.d)
+-include $(DEPS)
 
 #_______BOOTABLE GRUB IMAGE___________________________________________________#
 
@@ -92,11 +103,10 @@ uninstall-cross:
 
 #_______SETUP ENVIRONMENT______________________________________________________#
 
-$(BUILD_DIR_TREE):
-	mkdir -p build
-	cd $(SRC) && find . -type d > dirs.txt
-	cd $(BUILD) && xargs mkdir -p < $(SRC)/dirs.txt
-	@rm -f $(SRC)/dirs.txt
+.PHONY:install-directories
+
+install-directories:
+	mkdir -p $(BUILD_DIRS)
 
 #_______CLEAN ENVIRONMENT______________________________________________________#
 
@@ -109,4 +119,12 @@ clean:
 	@rm -f img/boot/runnable_app.bin
 
 veryclean: clean
-	@rm -rf $(BUILD)
+	@rm -rf build
+	@echo $(CXX_SRC_DIRS_ABS)
+	@echo $(BUILD_DIRS)
+	@echo $(INCLUDES)
+	@echo $(VPATH)
+	@echo $(CXX_SRC)
+	@echo $(OBJS)
+	@echo $(DEPS)
+	@echo $(OBJ_LINK_LIST)
