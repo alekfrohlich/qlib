@@ -19,6 +19,7 @@ MACHNAME := pc
 TOP   := $(abspath $(dir $(filter %makeinc, $(MAKEFILE_LIST))))
 APP   := $(TOP)/app
 BIN   := $(TOP)/bin
+BUILD := $(TOP)/build
 DOCS  := $(TOP)/docs
 IMG   := $(TOP)/img
 INC   := $(TOP)/include
@@ -69,5 +70,10 @@ MAKEFLAGS  += --no-print-directory
 
 #_______OS IMAGE______________________________________________________________#
 
-BINARY = $(GRUB)/runnable_app.bin
-IMAGE := bootable_app.iso
+BINARY := $(GRUB)/runnable_app.bin
+IMAGE  := bootable_app.iso
+
+#_______BUILD_________________________________________________________________#
+
+SRC_DIR_TREE := $(shell find $(SRC) -type d)
+BUILD_DIR_TREE := $(subst $(SRC),$(BUILD),$(SRC_DIR_TREE))

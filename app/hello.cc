@@ -3,12 +3,6 @@
 #include <qlib/ostream.h>
 #include <machine/pc/8259.h>
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
-// @TODO: Make target-app a parameter to make or a new python/bash script, else
-//        the user will have to swap the contents of app/ each time he/she
-//        wants to compile a new app.
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
-
 void main(void) {
     using namespace qlib;
     using namespace hardware;

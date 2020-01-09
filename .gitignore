@@ -4,13 +4,12 @@
 # gdb stuff
 *.gdbinit
 
-# compilation stuff
+# build stuff
 *.d
 *.o
 *.iso
+./build
 
 # makefile stuff
-.debug.lock
-*.bin.debug
 *.bin
 *cross

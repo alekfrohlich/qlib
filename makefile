@@ -1,4 +1,5 @@
 SHELL := /bin/bash
+VERBOSE = TRUE
 
 #_______INCLUDES______________________________________________________________#
 
@@ -7,27 +8,23 @@ include $(MAKEINC)
 
 #_______SOURCE CODE___________________________________________________________#
 
-# @DEBATE: how to manage two binaries without recompiling the debug version?
-
 .SILENT: all debug
 .PHONY: all debug
 
 all: CXXFLAGS += -O2
-all:
+all: | $(BUILD_DIR_TREE)
 	$(MAKE) $(BINARY)
 	$(MAKE) $(IMAGE)
 	# delete debug symbols that came from libgcc.a and qlib
 	strip -d $(BINARY)
 
 debug: CXXFLAGS += -g
-debug:
+debug: | $(BUILD_DIR_TREE)
 	$(MAKE) veryclean
 	$(MAKE) $(BINARY)
 	$(MAKE) $(IMAGE)
 
 C_SRC 	:= $(wildcard TRGT_ARCH/*.c)
-
-# @TODO: make app-target a cli argument
 
 CXX_SRC :=  $(wildcard $(TRGT_MACH)/*.cc) \
 	$(wildcard $(QLIB)/*.cc) \
@@ -93,6 +90,14 @@ uninstall-cross:
 	@rm -rf $(TOOLS)/cross
 	@mkdir $(TOOLS)/cross
 
+#_______SETUP ENVIRONMENT______________________________________________________#
+
+$(BUILD_DIR_TREE):
+	mkdir -p build
+	cd $(SRC) && find . -type d > dirs.txt
+	cd $(BUILD) && xargs mkdir -p < $(SRC)/dirs.txt
+	@rm -f $(SRC)/dirs.txt
+
 #_______CLEAN ENVIRONMENT______________________________________________________#
 
 .PHONY: clean veryclean
@@ -100,7 +105,8 @@ uninstall-cross:
 clean:
 	@find . -depth -type d \( -name .git -o -name tools \) -prune -o -type f \
 		\( -name "*.o" -o -name "*.d" \) -delete
-
-veryclean: clean
 	@rm -f bootable_app.iso
 	@rm -f img/boot/runnable_app.bin
+
+veryclean: clean
+	@rm -rf $(BUILD)
