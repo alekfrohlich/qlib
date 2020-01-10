@@ -54,9 +54,6 @@ ASFLAGS :=
 
 CFLAGS := -I $(INC)
 
-# C-preprocessor flags (used to generate .d files)
-CPPFLAGS := -MD -MP
-
 CXXFLAGS := -I $(INC)
 CXXFLAGS += -ffreestanding -fno-exceptions
 CXXFLAGS += -fno-rtti -nostdinc -fno-asynchronous-unwind-tables

@@ -114,10 +114,12 @@ install-directories:
 
 PHONY: format
 
+# clang-format-8 behaves awkwardly (when ran, always: No such file or
+# directory), but seems to work nonetheless.
 format:
-	cd $(DOCS) && find .. -type d \( -name .git -o -name tools -o -name app \) \
+	@cd $(DOCS) && find .. -type d \( -name .git -o -name tools -o -name app \) \
 		-prune -o -regex '.*\.\(cc\|c\|h\)'\
-		-exec clang-format-8 style=.clang-format -i {} \;
+		-exec clang-format-8 style=.clang-format -i {} \; 2> /dev/null
 
 #_______CROSS-CHAIN____________________________________________________________#
 
