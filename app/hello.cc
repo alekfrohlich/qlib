@@ -1,7 +1,7 @@
 #include <qlib.h>
 
 #include <qlib/ostream.h>
-#include <machine/pc/8259.h>
+#include <machine/pc/pic.h>
 
 void main(void) {
     using namespace qlib;

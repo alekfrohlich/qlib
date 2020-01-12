@@ -2,11 +2,6 @@
 
 namespace qlib::hardware {
 
-int Display::_row = 0;
-int Display::_column = 0;
-Display::Mode Display::_mode = NORMAL_MODE;
-Display::Cell * Display::_buffer = reinterpret_cast<Cell *>(0xB8000);
-
 /*________PRINTER IMPLEMENTATION_____________________________________________*/
 
 void Display::print(const char * s) {
@@ -15,23 +10,23 @@ void Display::print(const char * s) {
 }
 
 void Display::error(void) {
-    if (_mode == ERROR_MODE)
-        _mode = NORMAL_MODE;
+    if (mode == Mode::ERROR)
+        mode = Mode::NORMAL;
     else
-        _mode = ERROR_MODE;
+        mode = Mode::ERROR;
 }
 
 /*________INNER WORKINGS_____________________________________________________*/
 
 void Display::put(char c) {
-    if (_row == HEIGHT) {
-        _row--;
+    if (row == HEIGHT) {
+        row--;
         scroll();
     }
     switch (c) {
         case '\n':
-            _column = 0;
-            _row++;
+            column = 0;
+            row++;
             break;
 
         case '\t':
@@ -39,12 +34,12 @@ void Display::put(char c) {
             break;
 
         default:
-            unsigned index = _row * WIDTH + _column;
-            _buffer[index] = c | _mode;
+            unsigned index = row * WIDTH + column;
+            buffer[index] = c | mode;
 
-            if (++_column == WIDTH) {
-                _column = 0;
-                _row++;
+            if (++column == WIDTH) {
+                column = 0;
+                row++;
             }
             break;
     }
@@ -57,8 +52,8 @@ void Display::erase(void) {
             put(c);
         }
     }
-    _column = 0;
-    _row = 0;
+    column = 0;
+    row = 0;
 }
 
 void Display::scroll(void) {
@@ -66,14 +61,14 @@ void Display::scroll(void) {
 
     for (int i = 0; i < HEIGHT - 1; i++) {
         for (int j = 0; j < WIDTH; j++) {
-            c = _buffer[(i + 1) * WIDTH + j];
-            _buffer[i * WIDTH + j] = c;
+            c = buffer[(i + 1) * WIDTH + j];
+            buffer[i * WIDTH + j] = c;
         }
     }
 
     char ch = ' ';
     for (int j = 0; j < WIDTH; j++) {
-        _buffer[WIDTH * (HEIGHT - 1) + j] = c | _mode;
+        buffer[WIDTH * (HEIGHT - 1) + j] = c | mode;
     }
 }
 

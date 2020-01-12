@@ -3,10 +3,10 @@
 
 namespace qlib::hardware {
 
+// VGA controller
 class Display
 {
  public:
-    typedef unsigned short Mode;  // foreground-background color
     typedef unsigned short Cell;  // vga entry
 
     static void print(const char * s);
@@ -22,18 +22,20 @@ class Display
     static void scroll(void);
 
  private:
-    // white-black and red-black operating modes
-    static const Mode NORMAL_MODE = 7 << 8;
-    static const Mode ERROR_MODE = 12 << 8;
+    // (foreground-background): white-black and red-black operating modes
+    enum Mode {
+        NORMAL = 7 << 8,
+        ERROR = 12 << 8,
+    };
 
-    static const int HEIGHT = 25;
-    static const int WIDTH = 80;
+    static constexpr int HEIGHT = 25;
+    static constexpr int WIDTH = 80;
 
-    static int _row;
-    static int _column;
+    static inline int row = 0;
+    static inline int column = 0;
 
-    static Mode _mode;
-    static Cell * _buffer;
+    inline static Mode mode = NORMAL;
+    inline static Cell * buffer = reinterpret_cast<Cell *>(0xB8000);
 };
 
 }  // namespace qlib::hardware

@@ -78,8 +78,8 @@ class CPU
         unsigned offset_high : 16;
     };
 
-    static GDT_Entry * gdt_ptr;
-    static IDT_Entry * idt_ptr;
+    inline static GDT_Entry * gdt_ptr = nullptr;
+    inline static IDT_Entry * idt_ptr = nullptr;
 
     //========DEFAULT INIT=======================================================//
     // Setup Global Descriptor Table (GDT) and Interrupt Descriptor Table (IDT).

@@ -1,6 +1,6 @@
 #include <arch/ia32/cpu.h>
-#include <machine/pc/8259.h>
 #include <machine/pc/keyboard.h>
+#include <machine/pc/pic.h>
 #include <qlib.h>
 
 #include <qlib/ostream.h>
@@ -22,14 +22,12 @@ static GDT_Entry gdt[3] = {
 };
 static IDT_Entry idt[256];
 
-GDT_Entry * CPU::gdt_ptr = gdt;
-IDT_Entry * CPU::idt_ptr = idt;
-
 void CPU::default_init() {
     // load gdtr
     Reg16 size = sizeof(GDT_Entry) * 3 - 1;
     Reg32 ptr = reinterpret_cast<Reg32>(gdt);
     gdtr(size, ptr);
+    CPU::gdt_ptr = gdt;
 
     // reload segment registers
     cs(0x08);
@@ -39,6 +37,7 @@ void CPU::default_init() {
     size = sizeof(IDT_Entry) * 256 - 1;
     ptr = reinterpret_cast<Reg32>(idt);
     idtr(size, ptr);
+    CPU::idt_ptr = idt;
 
     for (int i = 0; i < 256; i++)
         idt[i] = IDT_Entry(CPU::cs(), IDT_Entry::INTGATE_32, CPU::halt);

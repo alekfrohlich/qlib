@@ -1,6 +1,6 @@
 #include <arch/ia32/cpu.h>
-#include <machine/pc/8259.h>
 #include <machine/pc/keyboard.h>
+#include <machine/pc/pic.h>
 
 namespace qlib::hardware {
 
