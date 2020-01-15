@@ -19,9 +19,9 @@ void _pre_lib_init(void) {
 void _lib_init(void) {
     using namespace qlib::hardware;
 
-    CPU::default_init();
-    PIC::default_init();
-    Keyboard::default_init();
+    CPU::init();
+    PIC::init();
+    Keyboard::init();
     PIC::unmask(PIC::KEYBOARD_LINE);
 
     main();

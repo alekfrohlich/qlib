@@ -45,11 +45,11 @@ class Keyboard
         0,  // all other keys are undefined
     };
 
-    //========DEFAULT INIT=======================================================//
+    //========INITIALIZE=========================================================//
     //
     //===========================================================================//
 
-    static void default_init(void);
+    static void init(void);
 
     // @TODO: this should not print (should buffer instead?)
     INTRIN void default_handler(void) {

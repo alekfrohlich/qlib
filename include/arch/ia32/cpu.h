@@ -81,13 +81,13 @@ class CPU
     inline static GDT_Entry * gdt_ptr = nullptr;
     inline static IDT_Entry * idt_ptr = nullptr;
 
-    //========DEFAULT INIT=======================================================//
+    //========INITIALIZATION=====================================================//
     // Setup Global Descriptor Table (GDT) and Interrupt Descriptor Table (IDT).
     // Also configures Programmable Interrupt Controller (PIC) to enable irq1,
     // aka the keyboard line.
     //===========================================================================//
 
-    static void default_init(void);
+    static void init(void);
 
     /*________MISCELLANEOUS__________________________________________________*/
 
@@ -148,7 +148,7 @@ class CPU
 
     /*________SEGMENT REGISTERS__________________________________________________*/
 
-    // @OBS: qlib does not attempt to provide full segmentation support!
+    // @OBS: Qlib does not attempt to provide full segmentation support!
 
     INTRIN void cs(const Reg16 val) {
         ASM("ljmp %0, $1f   \n"

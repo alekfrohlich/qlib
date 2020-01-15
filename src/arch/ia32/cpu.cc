@@ -7,8 +7,6 @@
 
 namespace qlib::hardware {
 
-/*________INITIALIZE HARDWARE________________________________________________*/
-
 typedef CPU::GDT_Entry GDT_Entry;
 typedef CPU::IDT_Entry IDT_Entry;
 
@@ -22,7 +20,9 @@ static GDT_Entry gdt[3] = {
 };
 static IDT_Entry idt[256];
 
-void CPU::default_init() {
+/*________INITIALIZE CPU_____________________________________________________*/
+
+void CPU::init() {
     // load gdtr
     Reg16 size = sizeof(GDT_Entry) * 3 - 1;
     Reg32 ptr = reinterpret_cast<Reg32>(gdt);

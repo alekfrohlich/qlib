@@ -2,6 +2,13 @@
 
 namespace qlib::hardware {
 
+// void VGA::default_init() {
+//     CPU::out8(0x3d4, 0x0a);
+// 	CPU::out8(0x3d5, 0x00);
+// 	CPU::out8(0x3d4, 0x0b);
+// 	CPU::out8(0x3d5, 0x1f);
+// }
+
 /*________PRINTER IMPLEMENTATION_____________________________________________*/
 
 void Display::print(const char * s) {
@@ -34,8 +41,10 @@ void Display::put(char c) {
             break;
 
         default:
-            unsigned index = row * WIDTH + column;
-            buffer[index] = c | mode;
+            auto index = row * WIDTH + column;
+
+            // @TODO: consider mode
+            buffer[index] = mode | c;
 
             if (++column == WIDTH) {
                 column = 0;

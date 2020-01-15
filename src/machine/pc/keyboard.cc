@@ -8,7 +8,7 @@ __attribute__((interrupt)) static void keyboard_handler(void * ignored) {
     Keyboard::default_handler();
 }
 
-void Keyboard::default_init() {
+void Keyboard::init() {
     CPU::idt_ptr[0x21].isr((unsigned) keyboard_handler);
 }
 

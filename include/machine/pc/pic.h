@@ -119,13 +119,13 @@ class PIC
     static inline Mask pic2_mask = MASK_NONE;
     static constexpr int LINES_PER_PIC = 8;
 
-    //========DEFAULT INIT=======================================================//
+    //========INITIALIZE=========================================================//
     // Set up intel's 8259A without cascading in unbuffered, edge-triggered mode.
     // Also Configure interrupt vectors to first available offset (0x20 and
     // 0x28). No auto eoi and not specially fully nested.
     //===========================================================================//
 
-    static void default_init(void);
+    static void init(void);
 
     /*________END OF INTERRUPT___________________________________________________*/
 

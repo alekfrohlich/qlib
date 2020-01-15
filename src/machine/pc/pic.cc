@@ -5,7 +5,7 @@ namespace qlib::hardware {
 
 /*________INITIALIZE HARDWARE________________________________________________*/
 
-void PIC::default_init(void) {
+void PIC::init(void) {
     // ICW1
     CPU::out8(PIC1_CMD, ICW1::ICW4_NEEDED | ICW1::ALWAYS);
     CPU::out8(PIC2_CMD, ICW1::ICW4_NEEDED | ICW1::ALWAYS);
