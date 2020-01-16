@@ -1,11 +1,9 @@
-#include <qlib.h>
-
-#include <qlib/ostream.h>
-#include <machine/pc/vga.h>
+#include <ostream.h>
+#include <machine/display.h>
 
 void main(void) {
     using namespace qlib;
-    using namespace hardware;
+    using namespace mediator;
 
     cout << "Hello VGA text mode!" << endl;
 

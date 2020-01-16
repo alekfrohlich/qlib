@@ -3,21 +3,21 @@
 
 #include <qlib.h>
 
-namespace qlib::hardware {
+namespace qlib::mediator {
 
 class CPU
 {
  public:
     /*________I386 TYPES_________________________________________________________*/
 
-    typedef unsigned char Reg8;
-    typedef unsigned short Reg16;
-    typedef unsigned long Reg32;
-    typedef unsigned long long Reg64;
-    typedef unsigned long Log_Address;
-    typedef unsigned long Lin_Address;
-    typedef unsigned long Phy_Address;
-    typedef unsigned short IOPort;
+    using Reg8 = unsigned char;
+    using Reg16 = unsigned short;
+    using Reg32 = unsigned long;
+    using Reg64 = unsigned long long;
+    using Log_Address = unsigned long;
+    using Lin_Address = unsigned long;
+    using Phy_Address = unsigned long;
+    using IOPort = unsigned short;
 
     struct [[gnu::packed]] GDT_Entry {
      public:
@@ -33,7 +33,6 @@ class CPU
             PAGE_GR_AND_32BIT_SEL = 0xc  // page granularity and 32 bit selector
         };
 
-        constexpr GDT_Entry() {}
         constexpr GDT_Entry(
             unsigned base, unsigned limit, unsigned flags, unsigned access)
             : base_low {base & 0xffffff}, base_high {(base >> 24) & 0xff},
@@ -197,37 +196,41 @@ class CPU
 
     /*________IO PORT INTERFACE__________________________________________________*/
 
+    // IN / OUT only accept 8-bit immediates. So optmizing the following could would
+    // checking wether port > 0xff
+
     INTRIN Reg8 in8(IOPort port) {
         Reg8 value;
-        ASM("inb %1,%0" : "=a"(value) : "id"(port));
+        ASM("inb %1,%0" : "=a"(value) : "d"(port));
         return value;
     }
 
     INTRIN Reg16 in16(IOPort port) {
         Reg16 value;
-        ASM("inw %1,%0" : "=a"(value) : "id"(port));
+        ASM("inw %1,%0" : "=a"(value) : "d"(port));
         return value;
     }
 
     INTRIN Reg32 in32(IOPort port) {
         Reg32 value;
-        ASM("inl %1,%0" : "=a"(value) : "id"(port));
+        ASM("inl %1,%0" : "=a"(value) : "d"(port));
         return value;
     }
 
     INTRIN void out8(IOPort port, Reg8 value) {
-        ASM("outb %1,%0" : : "id"(port), "a"(value));
+        ASM("outb %1,%0" : : "d"(port), "a"(value));
     }
 
+    // currently bugged in gcc10
     INTRIN void out16(IOPort port, Reg16 value) {
-        ASM("outw %1,%0" : : "id"(port), "a"(value));
+        ASM("outw %1,%0" : : "d"(port), "a"(value));
     }
 
     INTRIN void out32(IOPort port, Reg32 value) {
-        ASM("outl %1,%0" : : "id"(port), "a"(value));
+        ASM("outl %1,%0" : : "d"(port), "a"(value));
     }
 };
 
-}  // namespace qlib::hardware
+}  // namespace qlib::mediator
 
 #endif  // _QLIB_HARDWARE_CPU_H

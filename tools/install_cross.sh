@@ -74,10 +74,10 @@ echo downloading gcc and binutils src ...
 wget ftp://ftp.gwdg.de/pub/misc/gcc/snapshots/LATEST-10/gcc-10-20200110.tar.xz
 wget https://ftp.gnu.org/gnu/binutils/$BINUTILS.tar.gz
 
-echo extracting gcc and binutils ...
-tar xvzf $GCC.tar.gz
+# echo extracting gcc and binutils ...
+# # tar xvzf $GCC.tar.gz
+tar xvf $GCC.tar.xz
 tar xvzf $BINUTILS.tar.gz
-# mv /home/alek/gcc-10-20200110 .
 
 #_______INSTALL BINUTILS______________________________________________________#
 

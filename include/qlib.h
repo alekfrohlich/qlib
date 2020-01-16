@@ -1,10 +1,6 @@
 #ifndef _QLIB_H
 #define _QLIB_H
 
-/*_______ASPECTS_____________________________________________________________*/
-
-/*_______CONFIG______________________________________________________________*/
-
 #define ASM __asm__ __volatile__
 #define INTRIN [[gnu::always_inline, gnu::artificial]] static inline
 
@@ -14,13 +10,12 @@
 #define __ARCH_HEADER(X, ARCH) <arch/ARCH/X.h>
 #define __MACH_HEADER(X, MACH) <machine/MACH/X.h>
 
-// @TODO: refactor this
+// machine model
+#define __CPU_H __ARCH_HEADER(cpu, ARCH)
 
-#if ARCH == ia32
-#    define __print_h __MACH_HEADER(vga, MACH)
-#    define __cpu_h __ARCH_HEADER(cpu, ARCH)
-#else
-#    define __print_h __MACH_HEADER(serial, MACH)
-#endif
+// hardware mediators
+#define __DISPLAY_H __MACH_HEADER(display, MACH)
+#define __IC_H __MACH_HEADER(ic, MACH)
+#define __KEYBOARD_H __MACH_HEADER(keyboard, MACH)
 
 #endif  // _QLIB_H

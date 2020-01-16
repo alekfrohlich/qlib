@@ -71,7 +71,7 @@ IMAGE := bootable_app.iso
 
 #________BUILD________________________________________________________________#
 
-CXX_SRC_DIRS_REL := arch arch/ia32 machine/pc machine qlib
+CXX_SRC_DIRS_REL := arch arch/ia32 machine/pc machine .
 
 # the path of included files changes based on the chosen target (release/debug)
 ifeq (, $(filter debug, $(MAKECMDGOALS)))
@@ -93,6 +93,14 @@ OTHER_RULES := format install-cross uninstall-cross install-directories clean \
 
 ifneq (, $(filter release, $(MAKECMDGOALS)))
 ifneq (, $(filter debug, $(MAKECMDGOALS)))
-$(error relase and debug are orthogonal, choose only one of them!)
+$(error relase and debug are orthogonal, choose only one of them)
 endif
 endif
+
+# # @TODO: add target 'all'
+# ifeq (, $(filter $(OTHER_RULES),$(MAKECMDGOALS)))
+# ifeq (, $(APPLICATION))
+# # ifndef APPLICATION
+# $(error no value for 'APPLICATION', try: make APPLICATION=<app_name>)
+# endif
+# endif

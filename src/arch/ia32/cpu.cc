@@ -1,28 +1,25 @@
-#include <arch/ia32/cpu.h>
-#include <machine/pc/keyboard.h>
-#include <machine/pc/pic.h>
-#include <qlib.h>
+#include <arch/cpu.h>
+#include <machine/ic.h>
+#include <machine/keyboard.h>
 
-#include <qlib/ostream.h>
+namespace qlib::mediator {
 
-namespace qlib::hardware {
-
-typedef CPU::GDT_Entry GDT_Entry;
-typedef CPU::IDT_Entry IDT_Entry;
+using GDT_Entry = CPU::GDT_Entry;
+using IDT_Entry = CPU::IDT_Entry;
 
 // @TODO: malloc this!
-static constinit GDT_Entry gdt[3] = {
+static GDT_Entry gdt[3] = {
     GDT_Entry(0, 0x00000, GDT_Entry::ZERO, GDT_Entry::ZERO),
     GDT_Entry(
         0, 0xfffff, GDT_Entry::PAGE_GR_AND_32BIT_SEL, GDT_Entry::TEXT_SEG),
     GDT_Entry(
         0, 0xfffff, GDT_Entry::PAGE_GR_AND_32BIT_SEL, GDT_Entry::DATA_SEG),
 };
-static constinit IDT_Entry idt[256];
+static IDT_Entry idt[256];
 
 /*________INITIALIZE CPU_____________________________________________________*/
 
-void CPU::init() {
+void CPU::init(void) {
     // load gdtr
     Reg16 size = sizeof(GDT_Entry) * 3 - 1;
     Reg32 ptr = reinterpret_cast<Reg32>(gdt);
@@ -45,4 +42,4 @@ void CPU::init() {
     int_enable();
 }
 
-}  // namespace qlib::hardware
+}  // namespace qlib::mediator

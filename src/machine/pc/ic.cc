@@ -1,7 +1,7 @@
-#include <arch/ia32/cpu.h>
-#include <machine/pc/pic.h>
+#include <arch/cpu.h>
+#include <machine/ic.h>
 
-namespace qlib::hardware {
+namespace qlib::mediator {
 
 /*________INITIALIZE HARDWARE________________________________________________*/
 
@@ -26,4 +26,4 @@ void PIC::init(void) {
     mask(MASK_ALL, Mode::SLAVE);
 }
 
-}  // namespace qlib::hardware
+}  // namespace qlib::mediator

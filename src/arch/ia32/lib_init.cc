@@ -1,9 +1,10 @@
-#include <app/config.h>
-#include <arch/ia32/cpu.h>
-#include <machine/pc/keyboard.h>
-#include <machine/pc/pic.h>
+#include <arch/cpu.h>
+#include <machine/ic.h>
+#include <machine/keyboard.h>
 
 extern "C" {
+
+extern void main(void);
 
 // make gcc happy
 void * __cxa_pure_virtual = 0;
@@ -17,11 +18,12 @@ void _pre_lib_init(void) {
 }
 
 void _lib_init(void) {
-    using namespace qlib::hardware;
+    using namespace qlib::mediator;
 
     CPU::init();
     PIC::init();
     Keyboard::init();
+    VGA::init();
     PIC::unmask(PIC::KEYBOARD_LINE);
 
     main();

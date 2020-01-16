@@ -1,12 +1,11 @@
 #ifndef _QLIB_HARDWARE_KEYBOARD_H
 #define _QLIB_HARDWARE_KEYBOARD_H
 
-#include <machine/pc/pic.h>
+#include <machine/ic.h>
+#include <ostream.h>
 #include <qlib.h>
 
-#include <qlib/ostream.h>
-
-namespace qlib::hardware {
+namespace qlib::mediator {
 
 // 8042 PS/2 keyboard controller
 class Keyboard
@@ -68,6 +67,6 @@ class Keyboard
     }
 };
 
-};  // namespace qlib::hardware
+};  // namespace qlib::mediator
 
 #endif  // _QLIB_HARDWARE_KEYBOARD_H

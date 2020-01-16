@@ -1,15 +1,15 @@
 #ifndef _QLIB_HARDWARE_PIC_H
 #define _QLIB_HARDWARE_PIC_H
 
-#include <arch/ia32/cpu.h>
+#include <arch/cpu.h>
 
-namespace qlib::hardware {
+namespace qlib::mediator {
 
 // Intel's 8259A Programmable Interrupt Controller
 class PIC
 {
  public:
-    typedef unsigned char Mask;
+    using Mask = unsigned char;
 
     enum {
         MASK_ALL = 0xff,
@@ -129,29 +129,29 @@ class PIC
 
     /*________END OF INTERRUPT___________________________________________________*/
 
-    INTRIN void eoi(Mode mode = MASTER) {
+    static void eoi(Mode mode = MASTER) {
         CPU::out8(mode == MASTER ? PIC1_CMD : PIC2_CMD, OCW2::NON_SPECIFIC_EOI);
     }
 
     /*________READ STATUS REGISTERS______________________________________________*/
 
-    INTRIN CPU::Reg8 imr(Mode mode = MASTER) {
+    static CPU::Reg8 imr(Mode mode = MASTER) {
         return (mode == MASTER) ? pic1_mask : pic2_mask;
     }
 
-    INTRIN CPU::Reg8 irr(Mode mode = MASTER) {
+    static CPU::Reg8 irr(Mode mode = MASTER) {
         CPU::out8((mode == MASTER) ? PIC1_CMD : PIC2_CMD, OCW3::READ_IRR);
         return CPU::in8((mode == MASTER) ? PIC1_CMD : PIC2_CMD);
     }
 
-    INTRIN CPU::Reg8 isr(Mode mode = MASTER) {
+    static CPU::Reg8 isr(Mode mode = MASTER) {
         CPU::out8((mode == MASTER) ? PIC1_CMD : PIC2_CMD, OCW3::READ_ISR);
         return CPU::in8((mode == MASTER) ? PIC1_CMD : PIC2_CMD);
     }
 
     /*________MASK/UNMASK IRQs___________________________________________________*/
 
-    INTRIN void mask(IRQ line) {
+    static void mask(IRQ line) {
         if (line < LINES_PER_PIC) {
             pic1_mask |= line;
             CPU::out8(PIC1_DATA, pic1_mask);
@@ -161,14 +161,14 @@ class PIC
         }
     }
 
-    INTRIN void mask(Mask mask, Mode mode = MASTER) {
+    static void mask(Mask mask, Mode mode = MASTER) {
         if (mode == MASTER)
             pic1_mask = mask;
         else
             pic2_mask = mask;
     }
 
-    INTRIN void unmask(IRQ line) {
+    static void unmask(IRQ line) {
         if (line < LINES_PER_PIC) {
             pic1_mask &= ~(line);
             CPU::out8(PIC1_DATA, pic1_mask);
@@ -179,6 +179,6 @@ class PIC
     }
 };
 
-}  // namespace qlib::hardware
+}  // namespace qlib::mediator
 
 #endif  // _QLIB_HARDWARE_PIC_H

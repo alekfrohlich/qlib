@@ -31,7 +31,12 @@ VPATH := $(CXX_SRC_DIRS_ABS)
 
 CXX_SRC := $(foreach dir,$(CXX_SRC_DIRS_ABS),$(wildcard $(dir)/*.cc))
 
-APP_CXX_SRC := $(wildcard $(APP)/*.cc)
+# better test variables
+ifdef APPLICATION
+	APP_CXX_SRC := $(wildcard $(APP)/$(APPLICATION))
+else
+	APP_CXX_SRC := $(wildcard $(APP)/hello_i386.cc)
+endif
 APP_OBJS := $(APP_CXX_SRC:.cc=.o)
 
 OBJS := $(subst $(SRC),$(BUILD),$(CXX_SRC:.cc=.o))
@@ -128,19 +133,19 @@ install-cross:
 	cd $(TOOLS) && bash install_cross.sh
 
 uninstall-cross:
-	@rm -rf $(TOOLS)/cross
-	@mkdir $(TOOLS)/cross
+	rm -rf $(TOOLS)/cross
+	mkdir $(TOOLS)/cross
 
 #_______CLEAN ENVIRONMENT______________________________________________________#
 
 .PHONY: clean veryclean
 
 clean:
-	@find . -depth -type d \( -name .git -o -name tools \) -prune -o -type f \
+	find . -depth -type d \( -name .git -o -name tools \) -prune -o -type f \
 		\( -name "*.o" -o -name "*.d" \) -delete
-	@rm -f bootable_app.iso
-	@rm -f img/boot/runnable_app.release
-	@rm -f img/boot/runnable_app.debug
+	rm -f bootable_app.iso
+	rm -f img/boot/runnable_app.release
+	rm -f img/boot/runnable_app.debug
 
 veryclean: clean
-	@rm -rf build
+	rm -rf build
