@@ -27,7 +27,7 @@
 #________PARAMETERS___________________________________________________________#
 
 CROSS="`pwd`/cross"
-GCC=gcc-9.2.0
+GCC=gcc-10-20200110
 BINUTILS=binutils-2.33.1
 PREFIX=$CROSS
 TARGET=i686-elf
@@ -70,12 +70,13 @@ cd $TMP
 echo building toolchain inside `pwd` ...
 
 echo downloading gcc and binutils src ...
-wget https://ftp.gnu.org/gnu/gcc/gcc-7.3.0/$GCC.tar.gz
+#wget https://ftp.gnu.org/gnu/gcc/gcc-7.3.0/$GCC.tar.gz
 wget https://ftp.gnu.org/gnu/binutils/$BINUTILS.tar.gz
 
 echo extracting gcc and binutils ...
-tar xvzf $GCC.tar.gz
+#tar xvzf $GCC.tar.gz
 tar xvzf $BINUTILS.tar.gz
+mv /home/alek/gcc-10-20200110 .
 
 #_______INSTALL BINUTILS______________________________________________________#
 

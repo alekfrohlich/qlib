@@ -57,7 +57,7 @@ CFLAGS := -I $(INC)
 CXXFLAGS := -I $(INC)
 CXXFLAGS += -ffreestanding -fno-exceptions
 CXXFLAGS += -fno-rtti -nostdinc -fno-asynchronous-unwind-tables
-CXXFLAGS += --no-use-cxa-atexit -std=c++17
+CXXFLAGS += --no-use-cxa-atexit -std=c++2a
 
 LDFLAGS  := -static -nostdlib \
 	-L $(patsubst %/libgcc.a,%/,$(shell $(CXX) -print-libgcc-file-name)) \

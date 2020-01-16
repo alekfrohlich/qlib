@@ -24,13 +24,13 @@ _start:
 	call _pre_lib_init
 
 	# call the global constructors
-	call _init
+	# call _init
 
 	# transfer control to operating system
 	call _lib_init
 
 	# call global destructors
-	call _fini
+	# call _fini
 
 	# hang if _kmain unexpectedly returns
 	cli

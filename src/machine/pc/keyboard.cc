@@ -4,7 +4,7 @@
 
 namespace qlib::hardware {
 
-__attribute__((interrupt)) static void keyboard_handler(void * ignored) {
+[[gnu::interrupt]] static void keyboard_handler(void * ignored) {
     Keyboard::default_handler();
 }
 

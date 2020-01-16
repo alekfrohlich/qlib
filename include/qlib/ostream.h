@@ -16,7 +16,7 @@ class OStream
     struct Bin {};
     struct Err {};
 
-    OStream() : _base(10) {}
+    constexpr OStream() : _base(10) {}
 
     // control overloads
     OStream & operator<<(const Endl & endl);

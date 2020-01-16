@@ -75,7 +75,6 @@ $(BINARY): $(OBJ_LINK_LIST)
 	cd $(BUILD)/arch/$(TARGET) && $(LD) $(LDFLAGS) crt0.o crtend.o $(OBJS) \
 		$(APP_OBJS) crtbegin.o -lgcc -o $@
 
-
 #=============AUTOMAKE========================================================#
 # Since it's possible to include files within GNU make, this build system
 # relies on GCC preprocessor's flags (CPPFLAGS) -MD -MP to generate make

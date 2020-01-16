@@ -33,8 +33,8 @@ class CPU
             PAGE_GR_AND_32BIT_SEL = 0xc  // page granularity and 32 bit selector
         };
 
-        GDT_Entry() = default;
-        GDT_Entry(
+        constexpr GDT_Entry() {}
+        constexpr GDT_Entry(
             unsigned base, unsigned limit, unsigned flags, unsigned access)
             : base_low {base & 0xffffff}, base_high {(base >> 24) & 0xff},
               limit_low {(limit & 0xffff)}, limit_high {(limit >> 16) & 0xf},
@@ -59,8 +59,8 @@ class CPU
             TRAPGATE_32 = 0x8f,
         };
 
-        IDT_Entry() = default;
-        IDT_Entry(unsigned selector, unsigned type, void (*isr)())
+        constexpr IDT_Entry() {}
+        constexpr IDT_Entry(unsigned selector, unsigned type, void (*isr)())
             : offset_low {(Log_Address) isr & 0xffff}, selector {selector},
               zero {0}, type {type},
               offset_high {((Log_Address) isr & 0xffff0000) >> 16} {}

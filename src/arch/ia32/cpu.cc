@@ -11,14 +11,14 @@ typedef CPU::GDT_Entry GDT_Entry;
 typedef CPU::IDT_Entry IDT_Entry;
 
 // @TODO: malloc this!
-static GDT_Entry gdt[3] = {
+static constinit GDT_Entry gdt[3] = {
     GDT_Entry(0, 0x00000, GDT_Entry::ZERO, GDT_Entry::ZERO),
     GDT_Entry(
         0, 0xfffff, GDT_Entry::PAGE_GR_AND_32BIT_SEL, GDT_Entry::TEXT_SEG),
     GDT_Entry(
         0, 0xfffff, GDT_Entry::PAGE_GR_AND_32BIT_SEL, GDT_Entry::DATA_SEG),
 };
-static IDT_Entry idt[256];
+static constinit IDT_Entry idt[256];
 
 /*________INITIALIZE CPU_____________________________________________________*/
 

@@ -8,7 +8,7 @@ OStream::Dec dec;
 OStream::Oct oct;
 OStream::Bin bin;
 OStream::Err err;
-OStream cout;
+constinit OStream cout;
 
 /*________CONTROL OVERLOADS__________________________________________________*/
 
