@@ -1,6 +1,6 @@
 #include <arch/cpu.h>
 #include <machine/ic.h>
-#include <machine/keyboard.h>
+#include <machine/display.h>
 
 extern "C" {
 
@@ -22,9 +22,7 @@ void _lib_init(void) {
 
     CPU::init();
     PIC::init();
-    Keyboard::init();
     VGA::init();
-    PIC::unmask(PIC::KEYBOARD_LINE);
 
     main();
 }

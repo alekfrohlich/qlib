@@ -150,14 +150,6 @@ class Display : VGA
             case '\t':
                 column += 4;
                 break;
-            case '\b':
-                if (column == 0 && row == 0) return;
-                if (--column < 0) {
-                    row--;
-                    column = WIDTH - 1;
-                }
-                VGA::put(' ');
-                return;
             default:
                 VGA::put(c);
                 break;

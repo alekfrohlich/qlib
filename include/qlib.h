@@ -16,6 +16,5 @@
 // hardware mediators
 #define __DISPLAY_H __MACH_HEADER(display, MACH)
 #define __IC_H __MACH_HEADER(ic, MACH)
-#define __KEYBOARD_H __MACH_HEADER(keyboard, MACH)
 
 #endif  // _QLIB_H

@@ -53,11 +53,6 @@ $(BUILD)/arch/$(TARGET)/crtbegin.o: $(TRGT_ARCH)/crtbegin.c
 $(BUILD)/arch/$(TARGET)/crtend.o: $(TRGT_ARCH)/crtend.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-#________TARGET-SPECIFIC FLAGS________________________________________________#
-
-HAS_INT_HANDLER := $(addprefix $(BUILD)/machine/$(MACHNAME)/, keyboard.o)
-$(HAS_INT_HANDLER): CXXFLAGS += -mgeneral-regs-only
-
 #________GENERATING RULES_____________________________________________________#
 
 define generate-rules

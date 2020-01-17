@@ -1,6 +1,5 @@
 #include <arch/cpu.h>
 #include <machine/ic.h>
-#include <machine/keyboard.h>
 
 namespace qlib::mediator {
 

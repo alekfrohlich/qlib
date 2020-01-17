@@ -82,8 +82,6 @@ class CPU
 
     //========INITIALIZATION=====================================================//
     // Setup Global Descriptor Table (GDT) and Interrupt Descriptor Table (IDT).
-    // Also configures Programmable Interrupt Controller (PIC) to enable irq1,
-    // aka the keyboard line.
     //===========================================================================//
 
     static void init(void);
