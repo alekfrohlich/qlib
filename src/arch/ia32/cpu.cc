@@ -6,7 +6,6 @@ namespace qlib::mediator {
 using GDT_Entry = CPU::GDT_Entry;
 using IDT_Entry = CPU::IDT_Entry;
 
-// @TODO: malloc this!
 static GDT_Entry gdt[3] = {
     GDT_Entry(0, 0x00000, GDT_Entry::ZERO, GDT_Entry::ZERO),
     GDT_Entry(
@@ -35,6 +34,7 @@ void CPU::init(void) {
     idtr(size, ptr);
     CPU::idt_ptr = idt;
 
+    // fill idt
     for (int i = 0; i < 256; i++)
         idt[i] = IDT_Entry(CPU::cs(), IDT_Entry::INTGATE_32, CPU::halt);
 

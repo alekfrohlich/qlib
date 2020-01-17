@@ -10,10 +10,10 @@
 #define __ARCH_HEADER(X, ARCH) <arch/ARCH/X.h>
 #define __MACH_HEADER(X, MACH) <machine/MACH/X.h>
 
-// machine model
+// architecture hardware mediators
 #define __CPU_H __ARCH_HEADER(cpu, ARCH)
 
-// hardware mediators
+// machine hardware mediators
 #define __DISPLAY_H __MACH_HEADER(display, MACH)
 #define __IC_H __MACH_HEADER(ic, MACH)
 

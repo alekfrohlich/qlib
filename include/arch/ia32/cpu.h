@@ -145,8 +145,6 @@ class CPU
 
     /*________SEGMENT REGISTERS__________________________________________________*/
 
-    // @OBS: Qlib does not attempt to provide full segmentation support!
-
     INTRIN void cs(const Reg16 val) {
         ASM("ljmp %0, $1f   \n"
             "1: nop"
@@ -194,9 +192,6 @@ class CPU
 
     /*________IO PORT INTERFACE__________________________________________________*/
 
-    // IN / OUT only accept 8-bit immediates. So optmizing the following could would
-    // checking wether port > 0xff
-
     INTRIN Reg8 in8(IOPort port) {
         Reg8 value;
         ASM("inb %1,%0" : "=a"(value) : "d"(port));
@@ -219,7 +214,6 @@ class CPU
         ASM("outb %1,%0" : : "d"(port), "a"(value));
     }
 
-    // currently bugged in gcc10
     INTRIN void out16(IOPort port, Reg16 value) {
         ASM("outw %1,%0" : : "d"(port), "a"(value));
     }
