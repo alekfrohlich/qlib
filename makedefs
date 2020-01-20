@@ -71,6 +71,7 @@ IMAGE := bootable_app.iso
 
 #________BUILD________________________________________________________________#
 
+# refactor temp
 CXX_SRC_DIRS_REL := arch arch/ia32 machine/pc machine .
 
 # the path of included files changes based on the chosen target (release/debug)

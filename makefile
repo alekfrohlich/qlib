@@ -109,6 +109,13 @@ $(IMAGE): $(IMG)/boot/grub/grub.cfg $(OBJ_LINK_LIST)
 install-directories:
 	@mkdir -p $(BUILD_DIRS)
 
+#_______PREPROCESSOR OUTPUT___________________________________________________#
+
+.PHONY: preprecess-file
+
+preprecess-file:
+	$(CXX) $(CXXFLAGS) -E $(FILE)
+
 #_______CLANG-FORMAT__________________________________________________________#
 
 PHONY: format

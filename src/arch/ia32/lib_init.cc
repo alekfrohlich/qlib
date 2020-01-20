@@ -1,6 +1,6 @@
 #include <arch/cpu.h>
-#include <machine/ic.h>
 #include <machine/display.h>
+#include <machine/ic.h>
 
 extern "C" {
 

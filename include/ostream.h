@@ -1,7 +1,10 @@
 #ifndef _QLIB_OSTREAM_H
 #define _QLIB_OSTREAM_H
 
-#include <machine/display.h>
+// ostream is included by all hardware mediators, which in turn depends on the
+// display machine mediator to print. To avoid this cyclic dependency, we provide
+// __Puts along in another translation unit (display.cc)
+extern "C" void __Puts(const char * s);
 
 namespace qlib {
 
@@ -113,7 +116,7 @@ class OStream
     }
 
  private:
-    void print(const char * s) { mediator::Display::print(s); }
+    void print(const char * s) { __Puts(s); }
     //  void error(void) { hardware::Display::error(); }
 
     // conversion functions
@@ -134,7 +137,7 @@ extern OStream::Dec dec;
 extern OStream::Oct oct;
 extern OStream::Bin bin;
 // extern OStream::Err err;
-extern OStream cout;
+inline OStream cout;
 
 }  // namespace qlib
 

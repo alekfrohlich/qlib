@@ -23,6 +23,8 @@ void CPU::init(void) {
     Reg32 ptr = reinterpret_cast<Reg32>(gdt);
     gdtr(size, ptr);
     CPU::gdt_ptr = gdt;
+    db() << "Global Descriptor Table Entries\n" << gdt[0] << "\n" << gdt[1] <<
+        "\n" << gdt[2] << "\n";
 
     // reload segment registers
     cs(0x08);

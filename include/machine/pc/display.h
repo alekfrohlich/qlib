@@ -1,5 +1,5 @@
-#ifndef _QLIB_HARDWARE_VGA_H
-#define _QLIB_HARDWARE_VGA_H
+#ifndef _QLIB_MEDIATOR_PC_DISPLAY_H
+#define _QLIB_MEDIATOR_PC_DISPLAY_H
 
 #include <arch/cpu.h>
 
@@ -163,4 +163,4 @@ class Display : VGA
 
 }  // namespace qlib::mediator
 
-#endif  // _QLIB_HARDWARE_VGA_H
+#endif  // _QLIB_MEDIATOR_PC_DISPLAY_H

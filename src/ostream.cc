@@ -2,7 +2,7 @@
 
 namespace qlib {
 
-OStream cout;
+// OStream cout;
 
 const char OStream::DIGITS[] = "0123456789abcdef";
 

@@ -4,6 +4,11 @@
 #define ASM __asm__ __volatile__
 #define INTRIN [[gnu::always_inline, gnu::artificial]] static inline
 
+// review this
+namespace qlib::mediator {
+    using namespace qlib;
+};
+
 #define ARCH ia32
 #define MACH pc
 
@@ -16,5 +21,8 @@
 // machine hardware mediators
 #define __DISPLAY_H __MACH_HEADER(display, MACH)
 #define __IC_H __MACH_HEADER(ic, MACH)
+
+// refactor into mediator header
+#include <debug.h>
 
 #endif  // _QLIB_H

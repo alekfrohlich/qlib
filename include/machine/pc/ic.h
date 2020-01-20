@@ -1,7 +1,8 @@
-#ifndef _QLIB_HARDWARE_PIC_H
-#define _QLIB_HARDWARE_PIC_H
+#ifndef _QLIB_MEDIATOR_PC_IC_H
+#define _QLIB_MEDIATOR_PC_IC_H
 
 #include <arch/cpu.h>
+#include <qlib.h>
 
 namespace qlib::mediator {
 
@@ -181,4 +182,4 @@ class PIC
 
 }  // namespace qlib::mediator
 
-#endif  // _QLIB_HARDWARE_PIC_H
+#endif  // _QLIB_MEDIATOR_PC_IC_H

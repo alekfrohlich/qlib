@@ -1,5 +1,5 @@
-#ifndef _QLIB_HARDWARE_CPU_H
-#define _QLIB_HARDWARE_CPU_H
+#ifndef _QLIB_MEDIATOR_PC_CPU_H
+#define _QLIB_MEDIATOR_PC_CPU_H
 
 #include <qlib.h>
 
@@ -39,6 +39,16 @@ class CPU
               limit_low {(limit & 0xffff)}, limit_high {(limit >> 16) & 0xf},
               flags {flags}, access {access} {}
 
+        friend Debug & operator<<(Debug & db, const GDT_Entry & gdte) {
+            db << "limit_low = " << gdte.limit_low << "\n"
+               << "limit_low = " << gdte.base_low << "\n"
+               << "limit_low = " << gdte.access << "\n"
+               << "limit_low = " << gdte.limit_high << "\n"
+               << "limit_low = " << gdte.flags << "\n"
+               << "limit_low = " << gdte.base_high << "\n";
+            return db;
+        }
+
      private:
         unsigned limit_low : 16;
         unsigned base_low : 24;
@@ -67,6 +77,15 @@ class CPU
         void isr(unsigned new_isr) {
             offset_low = (Log_Address) new_isr & 0xffff;
             offset_high = ((Log_Address) new_isr & 0xffff0000) >> 16;
+        }
+
+        friend Debug & operator<<(Debug & db, const IDT_Entry & idte) {
+            db << "limit_low = " << idte.offset_low << "\n"
+               << "limit_low = " << idte.selector << "\n"
+               << "limit_low = " << idte.zero << "\n"
+               << "limit_low = " << idte.type << "\n"
+               << "limit_low = " << idte.offset_high << "\n";
+            return db;
         }
 
      private:
@@ -225,4 +244,4 @@ class CPU
 
 }  // namespace qlib::mediator
 
-#endif  // _QLIB_HARDWARE_CPU_H
+#endif  // _QLIB_MEDIATOR_PC_CPU_H
