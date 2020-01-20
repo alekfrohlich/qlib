@@ -25,9 +25,9 @@ void PIC::init(void) {
     mask(MASK_ALL, Mode::MASTER);
     mask(MASK_ALL, Mode::SLAVE);
 
-    db() << "Interrupt Mask Register = " << PIC::imr() << "\n"
-         << "Interrupt Request Register = " << PIC::irr() << "\n"
-         << "Interrupt Status Register = " << PIC::isr() << "\n";
+    db<IC>() << "Interrupt Mask Register = " << PIC::imr() << "\n"
+             << "Interrupt Request Register = " << PIC::irr() << "\n"
+             << "Interrupt Status Register = " << PIC::isr() << "\n";
 }
 
 }  // namespace qlib::mediator

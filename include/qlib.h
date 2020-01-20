@@ -6,7 +6,7 @@
 
 // review this
 namespace qlib::mediator {
-    using namespace qlib;
+using namespace qlib;
 };
 
 #define ARCH ia32

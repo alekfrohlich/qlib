@@ -35,7 +35,7 @@ CXX_SRC := $(foreach dir,$(CXX_SRC_DIRS_ABS),$(wildcard $(dir)/*.cc))
 ifdef APPLICATION
 	APP_CXX_SRC := $(wildcard $(APP)/$(APPLICATION))
 else
-	APP_CXX_SRC := $(wildcard $(APP)/hello_i386.cc)
+	APP_CXX_SRC := $(wildcard $(APP)/hello.cc)
 endif
 APP_OBJS := $(APP_CXX_SRC:.cc=.o)
 

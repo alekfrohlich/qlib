@@ -31,16 +31,16 @@ class Null_Debug
 };
 
 template<bool Enable>
-class Enable_Debug: public Debug {};
+class Enable_Debug : public Debug
+{};
 template<>
-class Enable_Debug<false>: public Null_Debug {};
+class Enable_Debug<false> : public Null_Debug
+{};
 
-// could be extended on a pair-mediator base (using template and traits)
-// and on a level basis (info-log-warn-error ...)
-INTRIN
-Enable_Debug<Traits::debugged>
-db(void) {
-    return Enable_Debug<Traits::debugged>();
+// could be extended on a level basis (info-log-warn-error ...)
+template<typename T>
+inline Enable_Debug<Traits<T>::debugged && Traits<General>::debugged> db(void) {
+    return Enable_Debug<Traits<T>::debugged && Traits<General>::debugged>();
 }
 
 }  // namespace qlib

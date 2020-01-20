@@ -20,6 +20,9 @@ class VGA
         WHITE = 15,
     };
 
+    static constexpr int HEIGHT = 25;
+    static constexpr int WIDTH = 80;
+
     /*________CRT GROUP OF REGISTERS_____________________________________________*/
 
     // The CRT group of 8-bit registers are indexed throught the CRT_ADDRESS I/O
@@ -70,8 +73,10 @@ class VGA
         CD = 1 << 5,  // Cursor Disable
     };
 
-    static constexpr int HEIGHT = 25;
-    static constexpr int WIDTH = 80;
+    static CPU::Reg8 crt_reg(CRT reg) {
+        CPU::out8(CRT_ADDRESS, reg);
+        return CPU::in8(CRT_DATA);
+    }
 
     //========INITIALIZE=========================================================//
     //
@@ -85,15 +90,17 @@ class VGA
         buffer[pos] = c | (cell_color << 8);
     }
 
+    /*________HARDWARE CURSOR________________________________________________*/
+
     static void disable_cursor(void) {
-        CPU::out8(CRT_ADDRESS, CURSOR_START);
+        CPU::out8(CRT_ADDRESS, CRT::CURSOR_START);
         CPU::out8(CRT_DATA, Cursor_Start::CD);
     }
 
     static void move_cursor(int pos = row * WIDTH + column) {
-        CPU::out8(CRT_ADDRESS, CURSOR_LOCATION_LOW);
+        CPU::out8(CRT_ADDRESS, CRT::CURSOR_LOCATION_LOW);
         CPU::out8(CRT_DATA, pos & 0xff);
-        CPU::out8(CRT_ADDRESS, CURSOR_LOCATION_HIGH);
+        CPU::out8(CRT_ADDRESS, CRT::CURSOR_LOCATION_HIGH);
         CPU::out8(CRT_DATA, pos >> 8);
     }
 
