@@ -111,9 +111,9 @@ install-directories:
 
 #_______PREPROCESSOR OUTPUT___________________________________________________#
 
-.PHONY: preprecess-file
+.PHONY: preprocessor-output
 
-preprecess-file:
+preprocessor-output:
 	$(CXX) $(CXXFLAGS) -E $(FILE)
 
 #_______CLANG-FORMAT__________________________________________________________#
@@ -123,9 +123,9 @@ PHONY: format
 # clang-format-8 behaves awkwardly (when ran, always: No such file or
 # directory), but seems to work nonetheless.
 format:
-	@cd $(DOCS) && find .. -type d \( -name .git -o -name tools -o -name app \) \
+	find . -type d \( -name .git -o -name tools -o -name app \) \
 		-prune -o -regex '.*\.\(cc\|c\|h\)'\
-		-exec clang-format-8 style=.clang-format -i {} \; 2> /dev/null
+		-exec clang-format-8 style=llvm -i {} \; 2> /dev/null
 
 #_______CROSS-CHAIN____________________________________________________________#
 

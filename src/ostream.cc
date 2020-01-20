@@ -2,9 +2,7 @@
 
 namespace qlib {
 
-// OStream cout;
-
-const char OStream::DIGITS[] = "0123456789abcdef";
+static constexpr char DIGITS[] = "0123456789abcdef";
 
 int OStream::itoa(int v, char * s) {
     unsigned int i = 0;
@@ -26,14 +24,14 @@ int OStream::utoa(unsigned int v, char * s, unsigned int i) {
     }
 
     if (v > 256) {
-        if (_base == 8 || _base == 16) s[i++] = '0';
-        if (_base == 16) s[i++] = 'x';
+        if (base == 8 || base == 16) s[i++] = '0';
+        if (base == 16) s[i++] = 'x';
     }
 
-    for (j = v; j != 0; i++, j /= _base)
+    for (j = v; j != 0; i++, j /= base)
         ;
-    for (j = 0; v != 0; j++, v /= _base)
-        s[i - 1 - j] = DIGITS[v % _base];
+    for (j = 0; v != 0; j++, v /= base)
+        s[i - 1 - j] = DIGITS[v % base];
 
     return i;
 }
@@ -58,14 +56,14 @@ int OStream::llutoa(unsigned long long int v, char * s, unsigned int i) {
     }
 
     if (v > 256) {
-        if (_base == 8 || _base == 16) s[i++] = '0';
-        if (_base == 16) s[i++] = 'x';
+        if (base == 8 || base == 16) s[i++] = '0';
+        if (base == 16) s[i++] = 'x';
     }
 
-    for (j = v; j != 0; i++, j /= _base)
+    for (j = v; j != 0; i++, j /= base)
         ;
-    for (j = 0; v != 0; j++, v /= _base)
-        s[i - 1 - j] = DIGITS[v % _base];
+    for (j = 0; v != 0; j++, v /= base)
+        s[i - 1 - j] = DIGITS[v % base];
 
     return i;
 }

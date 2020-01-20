@@ -18,31 +18,31 @@ class OStream
     struct Bin {};
     //  struct Err {};
 
-    constexpr OStream() : _base(10) {}
+    constexpr OStream() : base(10) {}
 
     OStream & operator<<(const Endl & endl) {
         print("\n");
-        _base = 10;
+        base = 10;
         return *this;
     }
 
     OStream & operator<<(const Hex & hex) {
-        _base = 16;
+        base = 16;
         return *this;
     }
 
     OStream & operator<<(const Dec & dec) {
-        _base = 10;
+        base = 10;
         return *this;
     }
 
     OStream & operator<<(const Oct & oct) {
-        _base = 8;
+        base = 8;
         return *this;
     }
 
     OStream & operator<<(const Bin & bin) {
-        _base = 2;
+        base = 2;
         return *this;
     }
 
@@ -126,9 +126,7 @@ class OStream
     int llutoa(unsigned long long int v, char * s, unsigned int i = 0);
     int ptoa(const void * p, char * s);
 
-    static const char DIGITS[];
-
-    int _base;
+    int base;
 };
 
 extern OStream::Endl endl;
