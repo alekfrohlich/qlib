@@ -20,9 +20,6 @@ class VGA
         WHITE = 15,
     };
 
-    static constexpr int HEIGHT = 25;
-    static constexpr int WIDTH = 80;
-
     /*________CRT GROUP OF REGISTERS_____________________________________________*/
 
     // The CRT group of 8-bit registers are indexed throught the CRT_ADDRESS I/O
@@ -84,8 +81,8 @@ class VGA
 
     static void init(void);
 
-    static void put(char c, int pos = row * WIDTH + column,
-        Color foreground = WHITE, Color background = BLACK) {
+    static void put(
+        char c, int pos, Color foreground = WHITE, Color background = BLACK) {
         auto cell_color = (foreground) | (background << 4);
         buffer[pos] = c | (cell_color << 8);
     }
@@ -97,17 +94,18 @@ class VGA
         CPU::out8(CRT_DATA, Cursor_Start::CD);
     }
 
-    static void move_cursor(int pos = row * WIDTH + column) {
+    static void move_cursor(int pos) {
         CPU::out8(CRT_ADDRESS, CRT::CURSOR_LOCATION_LOW);
         CPU::out8(CRT_DATA, pos & 0xff);
         CPU::out8(CRT_ADDRESS, CRT::CURSOR_LOCATION_HIGH);
         CPU::out8(CRT_DATA, pos >> 8);
     }
 
+    static constexpr int HEIGHT = 25;
+    static constexpr int WIDTH = 80;
+
  protected:
     static inline Cell * buffer = reinterpret_cast<Cell *>(TEXT_MODE_BASE);
-    // software cache of hardware cursor
-    static inline int row = 0, column = 0;
 };
 
 // Display mediator
@@ -117,20 +115,18 @@ class Display : VGA
     static void print(const char * s) {
         for (unsigned i = 0; s[i]; i++)
             put(s[i]);
-        move_cursor();
+        move_cursor(position);
     }
 
     static void clear(void) {
         for (int pos = 0; pos < HEIGHT * WIDTH; pos++)
             VGA::put(' ', pos);
-        column = 0;
-        row = 0;
+        move_cursor(0);
     }
 
     static void scroll(void) {
         Cell cell;
-        row--;
-        column = 0;
+        position = (HEIGHT - 1) * WIDTH;
 
         // move up
         for (int i = 0; i < HEIGHT - 1; i++) {
@@ -142,30 +138,31 @@ class Display : VGA
 
         // clear last row
         for (int j = 0; j < WIDTH; j++)
-            VGA::put(' ', row * WIDTH + j);
+            VGA::put(' ', position + j);
     }
 
  private:
     static void put(char c) {
-        if (row == HEIGHT) scroll();
+        if (position == HEIGHT * WIDTH) scroll();
 
         switch (c) {
             case '\n':
-                column = 0;
-                row++;
+                position =
+                    ((position + WIDTH) / WIDTH) * WIDTH;  // integer floor
                 return;
             case '\t':
-                column += 4;
+                position += 4;
                 break;
             default:
-                VGA::put(c);
+                VGA::put(c, position);
                 break;
         }
-        if (++column == WIDTH) {
-            column = 0;
-            row++;
-        }
+        position++;
     }
+
+ private:
+    // software cache of hardware cursor's position
+    static inline int position = 0;
 };
 
 }  // namespace qlib::mediator

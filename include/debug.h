@@ -40,7 +40,7 @@ class Enable_Debug<false> : public Null_Debug
 // could be extended on a level basis (info-log-warn-error ...)
 template<typename T>
 inline Enable_Debug<Traits<T>::debugged && Traits<General>::debugged> db(void) {
-    return Enable_Debug<Traits<T>::debugged && Traits<General>::debugged>();
+    return Enable_Debug < Traits<T>::debugged && Traits<General>::debugged > ();
 }
 
 }  // namespace qlib

@@ -1,7 +1,9 @@
 #include <ostream.h>
 
 int main(void) {
-    qlib::cout << "Hello Bare Metal World!\n";
+    using namespace qlib;
+
+    cout << "Ḧello bare-metal world!\n";
 
     return 0;
 }

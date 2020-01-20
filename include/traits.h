@@ -9,7 +9,7 @@ struct Traits {};
 
 template<>
 struct Traits<General> {
-    static constexpr bool debugged = false;
+    static constexpr bool debugged = true;
 };
 
 // architecture hardware mediators
