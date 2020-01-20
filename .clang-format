@@ -1,99 +1,121 @@
-AccessModifierOffset: -3
-AlignAfterOpenBracket: DontAlign
+---
+Language:        Cpp
+# BasedOnStyle:  LLVM
+AccessModifierOffset: -2
+AlignAfterOpenBracket: Align
 AlignConsecutiveAssignments: false
 AlignConsecutiveDeclarations: false
-# AlignConsecutiveMacros: true
 AlignEscapedNewlines: Right
-AlignOperands: true
+AlignOperands:   true
 AlignTrailingComments: true
-# AllowAllArgumentsOnNextLine: false
-# AllowAllConstructorInitializersOnNextLine: false
 AllowAllParametersOfDeclarationOnNextLine: true
 AllowShortBlocksOnASingleLine: false
 AllowShortCaseLabelsOnASingleLine: false
-AllowShortFunctionsOnASingleLine: InlineOnly
-AllowShortIfStatementsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: All
+AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
+AlwaysBreakAfterDefinitionReturnType: None
 AlwaysBreakAfterReturnType: None
 AlwaysBreakBeforeMultilineStrings: false
-AlwaysBreakTemplateDeclarations: Yes
+AlwaysBreakTemplateDeclarations: MultiLine
 BinPackArguments: true
-BreakAfterJavaFieldAnnotations: true
-BreakBeforeBinaryOperators: None
-BreakBeforeBraces: Custom
-BraceWrapping:
-  AfterClass: true
+BinPackParameters: true
+BraceWrapping:   
+  AfterClass:      false
   AfterControlStatement: false
-  AfterEnum: false
-  AfterFunction: false
-  AfterNamespace: false
+  AfterEnum:       false
+  AfterFunction:   false
+  AfterNamespace:  false
   AfterObjCDeclaration: false
-  AfterStruct: false
-  AfterUnion: false
+  AfterStruct:     false
+  AfterUnion:      false
   AfterExternBlock: false
-  BeforeCatch: false
-  BeforeElse: false
-  # IndentBraces
-  SplitEmptyFunction: false
-  SplitEmptyRecord: false
-  SplitEmptyNamespace: false
-BreakBeforeTernaryOperators: false
-BreakConstructorInitializers: BeforeColon
+  BeforeCatch:     false
+  BeforeElse:      false
+  IndentBraces:    false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: true
+BreakBeforeBinaryOperators: None
+BreakBeforeBraces: Attach
+BreakBeforeInheritanceComma: false
 BreakInheritanceList: BeforeColon
-# should be true, but clang-format is retarded
-BreakStringLiterals: false
-# CommentPragmas
-ColumnLimit: 80
+BreakBeforeTernaryOperators: true
+BreakConstructorInitializersBeforeComma: false
+BreakConstructorInitializers: BeforeColon
+BreakAfterJavaFieldAnnotations: false
+BreakStringLiterals: true
+ColumnLimit:     80
+CommentPragmas:  '^ IWYU pragma:'
 CompactNamespaces: false
 ConstructorInitializerAllOnOneLineOrOnePerLine: false
 ConstructorInitializerIndentWidth: 4
 ContinuationIndentWidth: 4
 Cpp11BracedListStyle: true
 DerivePointerAlignment: false
-DisableFormat: false
+DisableFormat:   false
+ExperimentalAutoDetectBinPacking: false
 FixNamespaceComments: true
-IncludeBlocks: Regroup
-# extend in the future ...
-IncludeCategories:
-  - Regex: '(qlib)/'
-    Priority: 4
-# IncludeIsMainRegex
-IndentCaseLabels: true
-IndentPPDirectives: AfterHash
-IndentWidth: 4
-IndentWrappedFunctionNames: true
-KeepEmptyLinesAtTheStartOfBlocks: false
-Language:        Cpp
+ForEachMacros:   
+  - foreach
+  - Q_FOREACH
+  - BOOST_FOREACH
+IncludeBlocks:   Preserve
+IncludeCategories: 
+  - Regex:           '^"(llvm|llvm-c|clang|clang-c)/'
+    Priority:        2
+  - Regex:           '^(<|"(gtest|gmock|isl|json)/)'
+    Priority:        3
+  - Regex:           '.*'
+    Priority:        1
+IncludeIsMainRegex: '(Test)?$'
+IndentCaseLabels: false
+IndentPPDirectives: None
+IndentWidth:     2
+IndentWrappedFunctionNames: false
+JavaScriptQuotes: Leave
+JavaScriptWrapImports: true
+KeepEmptyLinesAtTheStartOfBlocks: true
+MacroBlockBegin: ''
+MacroBlockEnd:   ''
 MaxEmptyLinesToKeep: 1
-NamespaceIndentation: Inner
-# extend in the future ...
+NamespaceIndentation: None
+ObjCBinPackProtocolList: Auto
+ObjCBlockIndentWidth: 2
+ObjCSpaceAfterProperty: false
+ObjCSpaceBeforeProtocolList: true
 PenaltyBreakAssignment: 2
 PenaltyBreakBeforeFirstCallParameter: 19
 PenaltyBreakComment: 300
 PenaltyBreakFirstLessLess: 120
 PenaltyBreakString: 1000
+PenaltyBreakTemplateDeclaration: 10
 PenaltyExcessCharacter: 1000000
 PenaltyReturnTypeOnItsOwnLine: 60
-PointerAlignment: Middle
-ReflowComments: false
-SortIncludes: true
+PointerAlignment: Right
+ReflowComments:  true
+SortIncludes:    true
 SortUsingDeclarations: true
-SpaceAfterCStyleCast: true
-SpaceAfterTemplateKeyword: false
+SpaceAfterCStyleCast: false
+SpaceAfterTemplateKeyword: true
 SpaceBeforeAssignmentOperators: true
-SpaceBeforeCpp11BracedList: true
+SpaceBeforeCpp11BracedList: false
 SpaceBeforeCtorInitializerColon: true
 SpaceBeforeInheritanceColon: true
 SpaceBeforeParens: ControlStatements
 SpaceBeforeRangeBasedForLoopColon: true
 SpaceInEmptyParentheses: false
-SpacesBeforeTrailingComments: 2
-SpacesInAngles: false
+SpacesBeforeTrailingComments: 1
+SpacesInAngles:  false
+SpacesInContainerLiterals: true
 SpacesInCStyleCastParentheses: false
-SpacesInContainerLiterals: false
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
-Standard: Cpp11
-# StatementMacros
-TabWidth: 4
-UseTab: Never
+Standard:        Cpp11
+StatementMacros: 
+  - Q_UNUSED
+  - QT_REQUIRE_VERSION
+TabWidth:        8
+UseTab:          Never
+...
+

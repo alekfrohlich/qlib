@@ -25,4 +25,4 @@ using namespace qlib;
 // refactor into mediator header
 #include <debug.h>
 
-#endif  // _QLIB_H
+#endif // _QLIB_H

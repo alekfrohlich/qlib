@@ -6,5 +6,5 @@ class CPU;
 
 // machine hardware mediators
 class Display;
-class IC;  // IC not yet implemented!
-};         // namespace qlib::mediator
+class IC; // IC not yet implemented!
+};        // namespace qlib::mediator

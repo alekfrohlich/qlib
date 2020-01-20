@@ -4,7 +4,7 @@
 #include <qlib.h>
 
 #if defined(__DISPLAY_H) && !defined(__display_common_only)
-#    include __DISPLAY_H
+#include __DISPLAY_H
 #endif
 
-#endif  // _QLIB_MEDIATOR_DISPLAY_H
+#endif // _QLIB_MEDIATOR_DISPLAY_H
