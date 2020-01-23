@@ -20,9 +20,6 @@ _start:
 	# set-up stack pointer
 	mov $_ebss+16384, %esp
 
-	# set-up components
-	call _pre_lib_init
-
 	# call the global constructors
 	call _init
 

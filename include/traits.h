@@ -1,19 +1,22 @@
-#ifndef _QLIB_TRAITS_H
-#define _QLIB_TRAITS_H
+#ifndef __QLIB_TRAITS_H
+#define __QLIB_TRAITS_H
 
-#include <types.h>
-using namespace qlib::mediator;
+namespace qlib {
 
-template <typename T> struct Traits {};
+namespace mediator {
+    // architecture hardware mediators
+    class CPU;
 
-template <> struct Traits<General> { static constexpr bool debugged = true; };
+    // machine hardware mediators
+    class Display;
+    class IC;  // IC not yet implemented!
+};             // namespace mediator
 
-// architecture hardware mediators
-template <> struct Traits<CPU> { static constexpr bool debugged = false; };
+template<typename T>
+struct Traits {
+    static constexpr bool debugged = false;
+};
 
-// machine hardware mediators
-template <> struct Traits<Display> { static constexpr bool debugged = true; };
+};  // namespace qlib
 
-template <> struct Traits<IC> { static constexpr bool debugged = false; };
-
-#endif // _QLIB_TRAITS_H
+#endif  // __QLIB_TRAITS_H

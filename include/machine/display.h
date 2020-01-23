@@ -1,10 +1,12 @@
-#ifndef _QLIB_MEDIATOR_DISPLAY_H
-#define _QLIB_MEDIATOR_DISPLAY_H
+#ifndef __QLIB_MEDIATOR_DISPLAY_H
+#define __QLIB_MEDIATOR_DISPLAY_H
 
 #include <qlib.h>
 
+// This header exports the right implementation of the Display mediator based on
+// application traits.
 #if defined(__DISPLAY_H) && !defined(__display_common_only)
-#include __DISPLAY_H
+#    include __DISPLAY_H
 #endif
 
-#endif // _QLIB_MEDIATOR_DISPLAY_H
+#endif  // __QLIB_MEDIATOR_DISPLAY_H
