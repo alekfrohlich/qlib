@@ -6,9 +6,6 @@ include $(CURDIR)/makedefs
 .PHONY: release debug test_cli
 .SILENT: release debug test_cli
 
-# BUILD_DIR_TREE's recipe was not being executed as an order only pre-requisite
-# shouldnt be dependent on order of prereqs (-j)
-
 # strip debug symbols that came from libgcc
 release: test_cli install-dirs $(BINARY) $(IMAGE)
 	$(STRIP) -d $(BINARY)
@@ -21,23 +18,6 @@ test_cli:
 		echo "$$ make APPLICATION=<app_name>"; \
 		echo "" && exit 1; \
 	fi
-
-#________COMMON SOURCE CODE___________________________________________________#
-
-SRC_DIR_TREE   := $(shell find $(SRC) -type d)
-BUILD_DIR_TREE := $(subst $(SRC),$(BUILD),$(SRC_DIR_TREE))
-
-INCLUDES := $(foreach dir, $(SRC_DIR_TREE), $(addprefix -I, $(dir)))
-
-VPATH := $(SRC_DIR_TREE)
-
-CXX_SRC := $(foreach dir,$(SRC_DIR_TREE),$(wildcard $(dir)/*.cc))
-
-APP_CXX_SRC := $(wildcard $(APP)/$(APPLICATION).cc)
-APP_OBJS := $(APP_CXX_SRC:.cc=.o)
-
-OBJS := $(subst $(SRC),$(BUILD),$(CXX_SRC:.cc=.o))
-DEPS := $(OBJS:.o=.d)
 
 #________CRT-STUFF____________________________________________________________#
 
@@ -72,29 +52,12 @@ $(BINARY): $(OBJ_LINK_LIST)
 	cd $(BUILD)/architecture/$(TARGET) && $(LD) $(LDFLAGS) crt0.o crtend.o $(OBJS) \
 		$(APP_OBJS) crtbegin.o -lgcc -o $@
 
-#=============AUTOMAKE========================================================#
-# Since it's possible to include files within GNU make, this build system
-# relies on GCC preprocessor's flags (CPPFLAGS) -MD -MP to generate make
-# compliant target rules for each .c and .cc file. It does so by including
-# the generated .d files. GNU make is able to turn .cc and .c files into
-# dependency files, .d implicitly by using the aforementioned C-preprocessor.
-#
-# For more information on this technique please refer to the links:
-#  - http://make.mad-scientist.net/papers/advanced-auto-dependency-generation/
-#  - http://www.microhowto.info/howto/automatically_generate_makefile_
-# 	dependencies.html
-#=============================================================================#
-
 # avoid including compilation stuff when it's not needed
 ifeq (, $(filter $(OTHER_RULES),$(MAKECMDGOALS)))
 -include $(DEPS)
 endif
 
 #_______BOOTABLE GRUB IMAGE___________________________________________________#
-
-# the image depends on grub.cfg which in turn depends on it's menuentries
-# (BINARY). For some reason the rule executes every time if it depends on
-# BINARY so it's left depending on the objs.
 
 $(IMAGE): $(IMG)/boot/grub/grub.cfg $(OBJ_LINK_LIST)
 	grub-mkrescue -o $@ $(IMG)
@@ -123,8 +86,6 @@ preprocessor-output:
 
 .PHONY: format
 
-# clang-format-8 behaves awkwardly (when ran, always: No such file or
-# directory), but seems to work nonetheless.
 format:
 	find . -type d \( -name .git -o -name tools -o -name app \) \
 		-prune -o -regex '.*\.\(cc\|c\|h\)'\

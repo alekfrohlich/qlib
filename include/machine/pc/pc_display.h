@@ -87,10 +87,7 @@ class VGA
         CPU::out8(CRT_DATA, val);
     }
 
-    //========INITIALIZE=========================================================//
-    //
-    //===========================================================================//
-
+    // Configure hardware cursor.
     static void init(void);
 
     static void put(
@@ -125,7 +122,6 @@ class VGA
     static inline Cell * buffer = reinterpret_cast<Cell *>(TEXT_MODE_BASE);
 };
 
-// Display mediator
 class Display : public VGA
 {
  public:

@@ -1,0 +1,28 @@
+Document 10 - Build System
+
+Introduction:
+    Qlib's build system is based on GNUMake. It tracks down dependencies
+    automatically with the help of GCC (-MMD) and builds out-source in a
+    directory called build. The build system supports two build options
+    [release|debug]. The former it's optmized and has it's debug symbols
+    stripped, the latter does not.
+
+    The result of a [release|debug] build is the executable (containing the
+    app + the library) runnable_app.[release|debug] and a bootable ISO 9660
+    image (bootable_app.iso) that bootstraps that executable throguht the
+    use of grub.
+
+    The build system is comprised of two files: makefile and makedefs.
+    The former provides the rules and the latter provides the definitions.
+
+Bug-Track:
+    - clang-format-8: No such file or directory.
+    - Build will break if -j is used: Both build options depend on test_cli
+      running before $(BINARY) and $(IMAGE).
+
+References:
+    - http://make.mad-scientist.net/papers/advanced-auto-dependency-generation/
+    - http://www.microhowto.info/howto/automatically_generate_makefile_
+      dependencies.html
+
+Change-Log:

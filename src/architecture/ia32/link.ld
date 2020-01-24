@@ -28,6 +28,7 @@ SECTIONS
 
     .init_array		:
     {
+        /* global constructors */
         KEEP(crtbegin.o(.init_array))
         KEEP(*(.ctors))
         KEEP(crtend.o(.init_array))
@@ -35,6 +36,7 @@ SECTIONS
 
     .fini_array		:
     {
+        /* global destructors */
         KEEP(crtbegin.o(.fini_array))
         KEEP(*(.dtors))
         KEEP(crtend.o(.fini_array))
@@ -43,11 +45,15 @@ SECTIONS
     .data	:
     {
         *(.data)
+        /* collect inline variables */
+        *(.data.*)
     }
 
     .bss	:
     {
         *(.bss)
+        /* collect inline variables */
+        *(.bss.*)
     }
 
     . = 0x00108000;
@@ -58,6 +64,7 @@ SECTIONS
 
     /DISCARD/	:
     {
+        /* discard exception handling stuff */
         *(.comment)
         *(.eh_frame)
     }

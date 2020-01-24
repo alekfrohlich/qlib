@@ -101,12 +101,9 @@ class PIC
         SECONDARY_ATA_LINE = 1 << 15,
     };
 
-    //========INITIALIZE=========================================================//
     // Set up intel's 8259A without cascading in unbuffered, edge-triggered mode.
     // Also Configure interrupt vectors to first available offset (0x20 and
     // 0x28). No auto eoi and not specially fully nested.
-    //===========================================================================//
-
     static void init(void);
 
     static void imr(Reg16 mask) {
