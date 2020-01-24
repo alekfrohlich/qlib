@@ -6,9 +6,8 @@ void __Puts(const char * s) {
 
 namespace qlib::mediator {
 
-/*________INITIALIZE HARDWARE________________________________________________*/
-
 void VGA::init(void) {
+    cursor(true);
     db<Display>() << "Cursor Location = "
                   << ((crt_reg(CRT::CURSOR_LOCATION_HIGH) << 8) |
                          crt_reg(CRT::CURSOR_LOCATION_LOW))

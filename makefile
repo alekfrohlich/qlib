@@ -44,13 +44,13 @@ DEPS := $(OBJS:.o=.d)
 
 #________CRT-STUFF____________________________________________________________#
 
-$(BUILD)/arch/$(TARGET)/crt0.o: $(TRGT_ARCH)/crt0.S
+$(BUILD)/architecture/$(TARGET)/crt0.o: $(TRGT_ARCH)/crt0.S
 	$(AS) $(ASFLAGS) $< -o $@
 
-$(BUILD)/arch/$(TARGET)/crtbegin.o: $(TRGT_ARCH)/crtbegin.c
+$(BUILD)/architecture/$(TARGET)/crtbegin.o: $(TRGT_ARCH)/crtbegin.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(BUILD)/arch/$(TARGET)/crtend.o: $(TRGT_ARCH)/crtend.c
+$(BUILD)/architecture/$(TARGET)/crtend.o: $(TRGT_ARCH)/crtend.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 #________GENERATING RULES_____________________________________________________#
@@ -66,13 +66,13 @@ $(foreach targetdir, $(BUILD_DIRS), \
 #________LINKING______________________________________________________________#
 
 # the final executable must be linked in this exact order
-OBJ_LINK_LIST = $(addprefix $(BUILD)/arch/$(TARGET)/, crt0.o crtend.o) \
-	$(OBJS) $(APP_OBJS) $(addprefix $(BUILD)/arch/$(TARGET)/, crtbegin.o)
+OBJ_LINK_LIST = $(addprefix $(BUILD)/architecture/$(TARGET)/, crt0.o crtend.o) \
+	$(OBJS) $(APP_OBJS) $(addprefix $(BUILD)/architecture/$(TARGET)/, crtbegin.o)
 
 # if the path of crtend/begin.o is not specified correctly ld will try to
 # include it's own version of the files leading to strange errors
 $(BINARY): $(OBJ_LINK_LIST)
-	cd $(BUILD)/arch/$(TARGET) && $(LD) $(LDFLAGS) crt0.o crtend.o $(OBJS) \
+	cd $(BUILD)/architecture/$(TARGET) && $(LD) $(LDFLAGS) crt0.o crtend.o $(OBJS) \
 		$(APP_OBJS) crtbegin.o -lgcc -o $@
 
 #=============AUTOMAKE========================================================#

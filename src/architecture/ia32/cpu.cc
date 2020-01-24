@@ -1,4 +1,4 @@
-#include <arch/cpu.h>
+#include <architecture/cpu.h>
 #include <machine/ic.h>
 
 namespace qlib::mediator {
@@ -14,8 +14,6 @@ static GDT_Entry gdt[3] = {
         0, 0xfffff, GDT_Entry::PAGE_GR_AND_32BIT_SEL, GDT_Entry::DATA_SEG),
 };
 static IDT_Entry idt[256];
-
-/*________INITIALIZE CPU_____________________________________________________*/
 
 void CPU::init(void) {
     // load gdtr

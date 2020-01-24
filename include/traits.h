@@ -9,7 +9,7 @@ namespace mediator {
 
     // machine hardware mediators
     class Display;
-    class IC;  // IC not yet implemented!
+    class IC;
 };             // namespace mediator
 
 template<typename T>

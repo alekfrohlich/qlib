@@ -1,7 +1,8 @@
 #ifndef __QLIB_MEDIATOR_PC_DISPLAY_H
 #define __QLIB_MEDIATOR_PC_DISPLAY_H
 
-#include <arch/cpu.h>
+#include <architecture/cpu.h>
+#include <machine/display.h>
 
 namespace qlib::mediator {
 
@@ -9,6 +10,8 @@ namespace qlib::mediator {
 class VGA
 {
  public:
+    using Reg8 = CPU::Reg8;
+    using Reg16 = CPU::Reg16;
     using Cell = unsigned short;
 
     enum {
@@ -29,7 +32,6 @@ class VGA
     //    3. If writing, modify the value read in step 3, making sure to mask off
     //       bits not being modified.
     //    4. If writing, write the new value from step 4 to the Data register.
-    //===========================================================================//
 
     // CRT Ports could be at 0x3B4/5 depending on I/OAS Field
     enum {
@@ -70,9 +72,19 @@ class VGA
         CD = 1 << 5,  // Cursor Disable
     };
 
-    static CPU::Reg8 crt_reg(CRT reg) {
+    // Cursor Skew [6:5] | Cursor Scan Line End [4:0]
+    enum Cursor_End {
+        SKEW = 1 << 5,
+    };
+
+    static Reg8 crt_reg(CRT reg) {
         CPU::out8(CRT_ADDRESS, reg);
         return CPU::in8(CRT_DATA);
+    }
+
+    static void crt_reg(CRT reg, Reg8 val) {
+        CPU::out8(CRT_ADDRESS, reg);
+        CPU::out8(CRT_DATA, val);
     }
 
     //========INITIALIZE=========================================================//
@@ -87,16 +99,23 @@ class VGA
         buffer[pos] = c | (cell_color << 8);
     }
 
-    static void disable_cursor(void) {
-        CPU::out8(CRT_ADDRESS, CRT::CURSOR_START);
-        CPU::out8(CRT_DATA, Cursor_Start::CD);
+    static void cursor(bool enable) {
+        if (enable) {
+            crt_reg(CRT::CURSOR_START, 0x1);
+            crt_reg(CRT::CURSOR_END, 0x2);
+        } else {
+            crt_reg(CRT::CURSOR_START, Cursor_Start::CD);
+        }
     }
 
-    static void move_cursor(int pos) {
-        CPU::out8(CRT_ADDRESS, CRT::CURSOR_LOCATION_LOW);
-        CPU::out8(CRT_DATA, pos & 0xff);
-        CPU::out8(CRT_ADDRESS, CRT::CURSOR_LOCATION_HIGH);
-        CPU::out8(CRT_DATA, pos >> 8);
+    static void cursor(int pos) {
+        crt_reg(CRT::CURSOR_LOCATION_LOW, pos & 0xff);
+        crt_reg(CRT::CURSOR_LOCATION_HIGH, pos >> 8);
+    }
+
+    static Reg16 cursor() {
+        return crt_reg(CRT::CURSOR_LOCATION_LOW) |
+               (crt_reg(CRT::CURSOR_LOCATION_HIGH) >> 8);
     }
 
     static constexpr int HEIGHT = 25;
@@ -107,19 +126,19 @@ class VGA
 };
 
 // Display mediator
-class Display : VGA
+class Display : public VGA
 {
  public:
     static void print(const char * s) {
         for (unsigned i = 0; s[i]; i++)
             put(s[i]);
-        move_cursor(position);
+        cursor(position);
     }
 
     static void clear(void) {
         for (int pos = 0; pos < HEIGHT * WIDTH; pos++)
             VGA::put(' ', pos);
-        move_cursor(0);
+        cursor(0);
     }
 
     static void scroll(void) {

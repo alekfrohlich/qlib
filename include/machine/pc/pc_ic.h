@@ -1,8 +1,8 @@
 #ifndef __QLIB_MEDIATOR_PC_IC_H
 #define __QLIB_MEDIATOR_PC_IC_H
 
-#include <arch/cpu.h>
-#include <qlib.h>
+#include <architecture/cpu.h>
+#include <machine/ic.h>
 
 namespace qlib::mediator {
 
@@ -10,23 +10,16 @@ namespace qlib::mediator {
 class PIC
 {
  public:
+    using Reg8 = CPU::Reg8;
+    using Reg16 = CPU::Reg16;
     using Mask = unsigned char;
 
+    // IO ports
     enum {
-        MASK_ALL = 0xff,
-        MASK_NONE = 0x00,
-    };
-
-    enum Mode {
-        MASTER,
-        SLAVE,
-    };
-
-    enum {
-        PIC1_CMD = 0x20,
-        PIC1_DATA = 0x21,
-        PIC2_CMD = 0xA0,
-        PIC2_DATA = 0xA1,
+        MASTER_CMD = 0x20,
+        MASTER_DATA = 0x21,
+        SLAVE_CMD = 0xA0,
+        SLAVE_DATA = 0xA1,
     };
 
     // ICW1: Initialization. Sending ICW1 to the PIC's command port makes it wait
@@ -46,8 +39,7 @@ class PIC
     //       first 32 addresses are reserved by intel to be used for exception
     //       handlers
     enum ICW2 {
-        FIRST_AVAILABLE_PIC1 = 0x20,
-        FIRST_AVAILABLE_PIC2 = 0x28,
+        FIRST_AVAILABLE = 0x20,
     };
 
     // ICW3: Cascading, only read if there is more than one PIC in the system
@@ -68,6 +60,7 @@ class PIC
     };
 
     // OCW1: Set and clear the Interrupt Mask Register (IMR)
+    enum OCW1 {};
 
     // OCW2: Send specific/non-specific end of interrupts (EOI). Also configures
     //       automatic/specific rotation of interrupts from the same priority.
@@ -108,11 +101,6 @@ class PIC
         SECONDARY_ATA_LINE = 1 << 15,
     };
 
-    // software caches of both PIC's IMR register
-    static inline Mask pic1_mask = MASK_NONE;
-    static inline Mask pic2_mask = MASK_NONE;
-    static constexpr int LINES_PER_PIC = 8;
-
     //========INITIALIZE=========================================================//
     // Set up intel's 8259A without cascading in unbuffered, edge-triggered mode.
     // Also Configure interrupt vectors to first available offset (0x20 and
@@ -121,51 +109,53 @@ class PIC
 
     static void init(void);
 
-    static void eoi(Mode mode = MASTER) {
-        CPU::out8(mode == MASTER ? PIC1_CMD : PIC2_CMD, OCW2::NON_SPECIFIC_EOI);
+    static void imr(Reg16 mask) {
+        CPU::out8(MASTER_DATA, mask & 0xff);
+        CPU::out8(SLAVE_DATA, mask >> 8);
     }
 
-    static CPU::Reg8 imr(Mode mode = MASTER) {
-        return (mode == MASTER) ? pic1_mask : pic2_mask;
+    static Reg8 imr() {
+        return CPU::in8(MASTER_DATA) | (CPU::in8(SLAVE_DATA) << 8);
     }
 
-    static CPU::Reg8 irr(Mode mode = MASTER) {
-        CPU::out8((mode == MASTER) ? PIC1_CMD : PIC2_CMD, OCW3::READ_IRR);
-        return CPU::in8((mode == MASTER) ? PIC1_CMD : PIC2_CMD);
+    static Reg8 irr() {
+        CPU::out8(MASTER_CMD, OCW3::READ_IRR);
+        CPU::out8(SLAVE_CMD, OCW3::READ_IRR);
+        return CPU::in8(MASTER_DATA) | (CPU::in8(SLAVE_DATA) << 8);
     }
 
-    static CPU::Reg8 isr(Mode mode = MASTER) {
-        CPU::out8((mode == MASTER) ? PIC1_CMD : PIC2_CMD, OCW3::READ_ISR);
-        return CPU::in8((mode == MASTER) ? PIC1_CMD : PIC2_CMD);
+    static Reg8 isr() {
+        CPU::out8(MASTER_CMD, OCW3::READ_ISR);
+        CPU::out8(SLAVE_CMD, OCW3::READ_ISR);
+        return CPU::in8(MASTER_DATA) | (CPU::in8(SLAVE_DATA) << 8);
     }
 
-    static void mask(IRQ line) {
-        if (line < LINES_PER_PIC) {
-            pic1_mask |= line;
-            CPU::out8(PIC1_DATA, pic1_mask);
-        } else {
-            pic2_mask |= line;
-            CPU::out8(PIC2_DATA, pic2_mask);
+    static void eoi(IRQ line) {
+        if (!(isr() & line)) {         // spurious interrupt?
+            if (isr() & CASCADE_LINE)  // cascade?
+                CPU::out8(
+                    MASTER_CMD, OCW2::NON_SPECIFIC_EOI);  // send EOI to master
         }
+
+        if (line >= IRQ::LPT2_LINE)                        // slave interrupt?
+            CPU::out8(SLAVE_CMD, OCW2::NON_SPECIFIC_EOI);  // send EOI to slave
+        CPU::out8(
+            MASTER_CMD, OCW2::NON_SPECIFIC_EOI);  // always send EOI to master
+
+        CPU::out8(MASTER_CMD, OCW2::NON_SPECIFIC_EOI);
     }
 
-    static void mask(Mask mask, Mode mode = MASTER) {
-        if (mode == MASTER)
-            pic1_mask = mask;
-        else
-            pic2_mask = mask;
-    }
+    static void enable() { imr(CASCADE_LINE); }
 
-    static void unmask(IRQ line) {
-        if (line < LINES_PER_PIC) {
-            pic1_mask &= ~(line);
-            CPU::out8(PIC1_DATA, pic1_mask);
-        } else {
-            pic2_mask &= ~(line);
-            CPU::out8(PIC2_DATA, pic2_mask);
-        }
-    }
+    static void enable(IRQ line) { imr(imr() & ~(line)); }
+
+    static void disable() { imr(~(CASCADE_LINE)); }
+
+    static void disable(IRQ line) { imr(imr() | line); }
 };
+
+class IC : public PIC
+{};
 
 }  // namespace qlib::mediator
 

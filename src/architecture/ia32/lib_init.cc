@@ -1,4 +1,4 @@
-#include <arch/cpu.h>
+#include <architecture/cpu.h>
 #include <machine/display.h>
 #include <machine/ic.h>
 
@@ -17,9 +17,10 @@ void __cxa_guard_release(long long int *) {
 void _lib_init(void) {
     using namespace qlib::mediator;
 
+    // initialize hardware mediators
     CPU::init();
-    PIC::init();
-    VGA::init();
+    IC::init();
+    Display::init();
 
     main();
 }

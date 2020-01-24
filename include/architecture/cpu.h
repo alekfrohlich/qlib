@@ -1,7 +1,7 @@
 #ifndef __QLIB_MEDIATOR_CPU_H
 #define __QLIB_MEDIATOR_CPU_H
 
-#include <qlib.h>
+#include <mediator.h>
 
 // This header exports the right implementation of the CPU mediator based on
 // application traits.

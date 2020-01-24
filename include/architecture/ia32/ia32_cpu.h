@@ -1,7 +1,7 @@
 #ifndef __QLIB_MEDIATOR_PC_CPU_H
 #define __QLIB_MEDIATOR_PC_CPU_H
 
-#include <qlib.h>
+#include <architecture/cpu.h>
 
 namespace qlib::mediator {
 
@@ -15,7 +15,7 @@ class CPU
     using Log_Address = unsigned long;
     using Lin_Address = unsigned long;
     using Phy_Address = unsigned long;
-    using IOPort = unsigned short;
+    using IO_Port = unsigned short;
 
     struct [[gnu::packed]] GDT_Entry {
      public:
@@ -199,33 +199,33 @@ class CPU
         return ss;
     }
 
-    INTRIN Reg8 in8(IOPort port) {
+    INTRIN Reg8 in8(IO_Port port) {
         Reg8 value;
         ASM("inb %1,%0" : "=a"(value) : "d"(port));
         return value;
     }
 
-    INTRIN Reg16 in16(IOPort port) {
+    INTRIN Reg16 in16(IO_Port port) {
         Reg16 value;
         ASM("inw %1,%0" : "=a"(value) : "d"(port));
         return value;
     }
 
-    INTRIN Reg32 in32(IOPort port) {
+    INTRIN Reg32 in32(IO_Port port) {
         Reg32 value;
         ASM("inl %1,%0" : "=a"(value) : "d"(port));
         return value;
     }
 
-    INTRIN void out8(IOPort port, Reg8 value) {
+    INTRIN void out8(IO_Port port, Reg8 value) {
         ASM("outb %1,%0" : : "d"(port), "a"(value));
     }
 
-    INTRIN void out16(IOPort port, Reg16 value) {
+    INTRIN void out16(IO_Port port, Reg16 value) {
         ASM("outw %1,%0" : : "d"(port), "a"(value));
     }
 
-    INTRIN void out32(IOPort port, Reg32 value) {
+    INTRIN void out32(IO_Port port, Reg32 value) {
         ASM("outl %1,%0" : : "d"(port), "a"(value));
     }
 };
