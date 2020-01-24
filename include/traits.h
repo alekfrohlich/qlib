@@ -10,7 +10,7 @@ namespace mediator {
     // machine hardware mediators
     class Display;
     class IC;
-};             // namespace mediator
+};  // namespace mediator
 
 template<typename T>
 struct Traits {

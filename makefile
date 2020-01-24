@@ -1,42 +1,39 @@
 SHELL := /bin/bash
-
-#________INCLUDES_____________________________________________________________#
-
-export MAKEDEFS = $(CURDIR)/makedefs
-include $(MAKEDEFS)
+include $(CURDIR)/makedefs
 
 #________BUILD OPTIONS________________________________________________________#
 
-.PHONY: release debug
-.SILENT: release debug
+.PHONY: release debug test_cli
+.SILENT: release debug test_cli
 
-# BUILD_DIRS's recipe was not being executed as an order only pre-requisite
+# BUILD_DIR_TREE's recipe was not being executed as an order only pre-requisite
+# shouldnt be dependent on order of prereqs (-j)
 
-# release has to delete debug symbols that come from libgcc.a
-release: install-directories $(BINARY) $(IMAGE)
+# strip debug symbols that came from libgcc
+release: test_cli install-dirs $(BINARY) $(IMAGE)
 	$(STRIP) -d $(BINARY)
 
-debug: install-directories $(BINARY) $(IMAGE)
+debug: test_cli install-dirs $(BINARY) $(IMAGE)
+
+test_cli:
+	if [ "$(APPLICATION)" = "" ]; then \
+		echo "No value for 'APPLICATION', try:"; \
+		echo "$$ make APPLICATION=<app_name>"; \
+		echo "" && exit 1; \
+	fi
 
 #________COMMON SOURCE CODE___________________________________________________#
 
-CXX_SRC_DIRS_ABS := \
-	$(foreach dir, $(CXX_SRC_DIRS_REL), $(addprefix $(SRC)/, $(dir)))
-BUILD_DIRS := \
-	$(foreach dir, $(CXX_SRC_DIRS_REL), $(addprefix $(BUILD)/, $(dir)))
+SRC_DIR_TREE   := $(shell find $(SRC) -type d)
+BUILD_DIR_TREE := $(subst $(SRC),$(BUILD),$(SRC_DIR_TREE))
 
-INCLUDES := $(foreach dir, $(CXX_SRC_DIRS_ABS), $(addprefix -I, $(dir)))
+INCLUDES := $(foreach dir, $(SRC_DIR_TREE), $(addprefix -I, $(dir)))
 
-VPATH := $(CXX_SRC_DIRS_ABS)
+VPATH := $(SRC_DIR_TREE)
 
-CXX_SRC := $(foreach dir,$(CXX_SRC_DIRS_ABS),$(wildcard $(dir)/*.cc))
+CXX_SRC := $(foreach dir,$(SRC_DIR_TREE),$(wildcard $(dir)/*.cc))
 
-# better test variables
-ifdef APPLICATION
-	APP_CXX_SRC := $(wildcard $(APP)/$(APPLICATION))
-else
-	APP_CXX_SRC := $(wildcard $(APP)/hello.cc)
-endif
+APP_CXX_SRC := $(wildcard $(APP)/$(APPLICATION).cc)
 APP_OBJS := $(APP_CXX_SRC:.cc=.o)
 
 OBJS := $(subst $(SRC),$(BUILD),$(CXX_SRC:.cc=.o))
@@ -60,7 +57,7 @@ $(1)/%.o: %.cc
 	$(CXX) $$(CXXFLAGS) -c $$(INCLUDES) -o $$@ $$< -MMD
 endef
 
-$(foreach targetdir, $(BUILD_DIRS), \
+$(foreach targetdir, $(BUILD_DIR_TREE), \
 	$(eval $(call generate-rules, $(targetdir))))
 
 #________LINKING______________________________________________________________#
@@ -104,21 +101,27 @@ $(IMAGE): $(IMG)/boot/grub/grub.cfg $(OBJ_LINK_LIST)
 
 #_______SETUP ENVIRONMENT______________________________________________________#
 
-.PHONY:install-directories
+.PHONY:install-dirs
 
-install-directories:
-	@mkdir -p $(BUILD_DIRS)
+install-dirs:
+	@mkdir -p $(BUILD_DIR_TREE)
 
 #_______PREPROCESSOR OUTPUT___________________________________________________#
 
 .PHONY: preprocessor-output
+.SILENT: preprocessor-output
 
 preprocessor-output:
+	if [ "$(FILE)" = "" ]; then \
+		echo "No value for 'FILE', try:"; \
+		echo "$$ make preprocessor-output FILE=<file>"; \
+		echo "" && exit 1; \
+	fi
 	$(CXX) $(CXXFLAGS) -E $(FILE)
 
 #_______CLANG-FORMAT__________________________________________________________#
 
-PHONY: format
+.PHONY: format
 
 # clang-format-8 behaves awkwardly (when ran, always: No such file or
 # directory), but seems to work nonetheless.

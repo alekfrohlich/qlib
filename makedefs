@@ -28,10 +28,7 @@ TOOLS := $(TOP)/tools
 
 # source code directories
 ARCH  := $(SRC)/architecture
-BOOT  := $(SRC)/boot
 MACH  := $(SRC)/machine
-QLIB  := $(SRC)/qlib
-TEST  := $(SRC)/test
 
 # rename this
 TRGT_ARCH := $(ARCH)/$(TARGET)
@@ -71,9 +68,6 @@ IMAGE := bootable_app.iso
 
 #________BUILD________________________________________________________________#
 
-# refactor temp
-CXX_SRC_DIRS_REL := architecture architecture/ia32 machine/pc machine .
-
 # the path of included files changes based on the chosen target (release/debug)
 ifeq (, $(filter debug, $(MAKECMDGOALS)))
 	BUILD := $(TOP)/build/release
@@ -85,23 +79,5 @@ else
 	BINARY := $(GRUB)/runnable_app.debug
 endif
 
-#________ERROR CHECKING_______________________________________________________#
-
-# GNUMake is REALLY unsafe, so here's some help
-
-OTHER_RULES := format install-cross uninstall-cross install-directories clean \
-	veryclean
-
-ifneq (, $(filter release, $(MAKECMDGOALS)))
-ifneq (, $(filter debug, $(MAKECMDGOALS)))
-$(error relase and debug are orthogonal, choose only one of them)
-endif
-endif
-
-# # @TODO: add target 'all'
-# ifeq (, $(filter $(OTHER_RULES),$(MAKECMDGOALS)))
-# ifeq (, $(APPLICATION))
-# # ifndef APPLICATION
-# $(error no value for 'APPLICATION', try: make APPLICATION=<app_name>)
-# endif
-# endif
+OTHER_RULES := format install-cross uninstall-cross install-directories \
+	preprocessor-output clean veryclean
