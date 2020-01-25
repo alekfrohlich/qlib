@@ -3,16 +3,16 @@ include $(CURDIR)/makedefs
 
 #________BUILD OPTIONS________________________________________________________#
 
-.PHONY: release debug test_cli
-.SILENT: release debug test_cli
+.PHONY: release debug test_cli_arguments
+.SILENT: release debug test_cli_arguments
 
 # strip debug symbols that came from libgcc
-release: test_cli install-dirs $(BINARY) $(IMAGE)
+release: test_cli_arguments install-dirs $(BINARY) $(IMAGE)
 	$(STRIP) -d $(BINARY)
 
-debug: test_cli install-dirs $(BINARY) $(IMAGE)
+debug: test_cli_arguments install-dirs $(BINARY) $(IMAGE)
 
-test_cli:
+test_cli_arguments:
 	if [ "$(APPLICATION)" = "" ]; then \
 		echo "No value for 'APPLICATION', try:"; \
 		echo "$$ make APPLICATION=<app_name>"; \

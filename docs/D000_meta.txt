@@ -1,0 +1,64 @@
+Document 0 - Meta Document
+
+Introduction:
+    Qlib's feature and debug tracking should be done by writting and mantaining
+    documents. Documents are placed under the docs/ directory. A document looks
+    just like the current file and should be structered as follows:
+
+        Document XXX - Document Title
+
+        Introduction
+
+        Feature
+
+        Bug-Track
+
+        References
+
+        Change-Log
+
+    Documents should be formatted at a maximum of 80 columns and each level of
+    sectioning should be 4-column indented forward. Documents may follow their
+    own style on unspecified things. They may also add new sections as see fit.
+    All as long at it respects the guidelines provided here.
+
+    A brief introduction of each module's functionality (what it does) should be
+    placed under the Introduction section of the corresponding document.
+
+    Bugs should be placed under Bug-Track and should be formatted as an
+    enumeration. e.g:
+
+    Bug-Track:
+        = Mediator XXX's register YYY has a strange value: ... description ...
+
+    When writting code try to avoid lecturing the reader about the underlying
+    hardware (mostly talking about hardware mediators here). There are three
+    reasons for it:
+
+    - The programmer may already know all of it. Which means that the comments
+      only helped to bloat the code.
+    - The programmer does not know all of it. However, he is expected to search
+      for the appropriate document where he can find a extensive (as extensive
+      as it needs be) list of where to find good references/tutorials.
+    - The comments might be wrong, your just adding another level of
+      indirection to the real source of documentation: The hardware's
+      programming manual / specification / data-sheet.
+
+    Having said that, comments should be used to explain divergence from what's
+    common sense (or justify divergence from the manual). In the software case,
+    however, comments expected to be more common as they are the main source of
+    information the reader will expect to have about a given abstraction. In
+    either case, code should be descriptive (as not to need comments explaining
+    it!).
+
+    References:
+        - ref1
+        - ref2
+        ...
+
+    Git commit messages should be short and descriptive. The detailed
+    documentation should be placed in the Change-Log section of the
+    corresponding module.
+
+Bug-Track:
+    - Specify the structure of a change-log.
