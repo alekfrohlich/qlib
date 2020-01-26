@@ -19,6 +19,9 @@ Bug-Track:
     - clang-format-8: No such file or directory.
     - Build will break if -j is used: Both build options depend on
       test_cli_arguments running before $(BINARY) and $(IMAGE).
+    - Make BUILD_DIR_TREE a order-only pre-requisite (OOPR) of release
+      and debug.
+    - Add bootable_app.iso dependencies
 
 References:
     - http://make.mad-scientist.net/papers/advanced-auto-dependency-generation/

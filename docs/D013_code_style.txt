@@ -55,5 +55,5 @@ Small Comments:
 Avoid /**/
 
 Bug-Track:
-    - C++ idioms
-    - hardware mediators
+    - C++ idioms.
+    - Hardware mediators.
