@@ -1,0 +1,21 @@
+Document 4 - crt Stuff
+
+Introduction:
+    The C++ programming language relies on external help to produce runnable
+    executables that are conformant with the ISOC++ standard. For example, in
+    order to properly use objects with static lifetime (declared at namespace
+    scope) during program execution, one need's to construct such objects
+    before the execution begins.
+
+    This is also true with other features of the language, namely:
+
+    - RTTI
+    - Exceptions
+
+    Qlib allows for static objects, but not for RTTI and exceptions. It enables
+    such feature by linking crtbegin.o and crtend.o together with the user's app.
+    The exact linking order is:
+
+    crt0.o crtend.o [lib objs] [app objs] crtbegin.o
+
+    It prevents undefined symbol errors from dumb linkers.
