@@ -1,0 +1,59 @@
+Document 13 - Code-Style
+
+Introduction:
+    This document specifies general guidelines to follow when developing code
+    for Qlib. For git naming conventions and development practices, refer to
+    document 14 - Git-Style. Code formatting is handled by clang-format, to
+    run it:
+
+$ make format
+
+Naming Conventions:
+
+    - Variables and methods in lower_case.
+    - constexpr/const variables and enumeration values in ALL_CAPS
+      (unless boolean constant).
+    - Typenames in UpperCase.
+
+Code Width:
+
+    - 80 columns.
+
+Comments:
+
+    // @TODO: Something to be done.
+    // @FIXME: Something to be fixed.
+    // @OBS: Something to be noted.
+
+
+Scripts should begin with a header explaining their purpose:
+
+    #=======TOOL-CHAIN SETUP======================================================#
+    # This script installs gcc and binutils alognside their dependencies. It
+    # currently only works in ubuntu since it refers to apt package names.
+    # Adapting it to fit other Linux distributions should be an easy task.
+    # The script does not install the tools to $PATH.
+    #
+    # The script builds gcc version 7.3 and binutils version 2.30 to target
+    # i686-elf. For more information on how to build a cross tool-chain refer to:
+    # https://wiki.osdev.org/GCC_Cross-Compiler
+    #
+    # For more information on successful builds, refer to:
+    # https://wiki.osdev.org/Cross-Compiler_Successful_Builds
+    #
+    # And lastly, for more information on configuration parameters for building
+    # gcc, refer to:
+    # https://gcc.gnu.org/install/configure.html
+    #=============================================================================#
+
+Small Comments:
+
+    // mask interrupts
+    out8(0x21, 0xff);
+    out8(0xA1, 0xff);
+
+Avoid /**/
+
+Bug-Track:
+    - C++ idioms
+    - hardware mediators
