@@ -1,0 +1,13 @@
+Document 14: Git-style
+
+Introduction:
+    New features should be placed on branches of the same name. I.g: the development
+    of a keyboard device driver should happen in a branch named `keyboard`. In order
+    to commit such implementation into the master branch, all comits must be squashed
+    into one big PR commit with a descriptive commit message.
+
+    The PR message should describe what has been done. Details about changes to
+    existing modules should appear on the appropriate document.
+
+Bug-Track:
+    - Restart remote from release 0.1.
