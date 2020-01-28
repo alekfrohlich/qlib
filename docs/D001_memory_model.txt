@@ -2,5 +2,6 @@ Document 1: Memory Model
 
 Introduction:
     Qlib's memory model is flat (i.e: no virtual memory and no segmenetation).
-    Support for I/O weirdness is supossed to come from the machine model/cpu
-    hardware mediators.
+    Support for system-specific memory schemes (e.g: memory mapped registers
+    and bit-banding regions) comes from the appropriate machine hardware
+    mediator.

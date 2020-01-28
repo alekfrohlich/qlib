@@ -1,0 +1,12 @@
+Document 3 - Utils
+
+Introduction:
+    Qlib come's with a set of utilitary abstractions such as OStream and Debug.
+    The complete list is comprised of:
+
+    - OStream <ostream.h>: Character output stream for applications. cout is
+                           made globally available under qlib's namespace.
+    - Debug <debug.h>: Offers a output stream to aid the debugging process of
+                       hardware mediators. Can be turned on/off at mediator
+                       granularity. Incurs zero-overhead when turned off.
+    - Type Traits <traits.h>: Mediator traits and type information.

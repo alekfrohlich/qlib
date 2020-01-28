@@ -1,0 +1,7 @@
+Document 12 - Toolchain
+
+Introduction:
+    Qlib toolchain is currently comprised of a cross-compiler install script.
+    The script installs GCC10.x together with binutils 2.33.1 targetting i686-elf.
+
+    All tools are available under tools/

@@ -1,0 +1,9 @@
+Document 6 - Types and Traits
+
+Introduction:
+    Qlib offers applications the oportunity to express their system needs
+    through traits. Although the framework is still in it's infancy, it's
+    already possible to enable/disable debugging information for each
+    individual hardware mediator. As traits become more fine-grained, the
+    need for specific type information will arise and then Qlib will offer
+    it.

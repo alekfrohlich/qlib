@@ -1,0 +1,13 @@
+Document 5 - Linker Script
+
+Introduction:
+    Each target (currently only i686-elf) that Qlib supports has to have it's
+    own dedicated linker script because each system has different boot needs.
+    The legacy i386-PC system has to enable the A20 line, setup descriptor
+    tables and enter protected mode, whilst cortex-m3-cc2538 has to ...
+    Hence the need for different bootloaders. The linker script link.ld is thus
+    present at the target specific directory architecture/TARGET.
+
+Bug-Track:
+    - Specify cc2538 boot needs.
+    - multiboot section not appearing in the first 8k bytes of the executable.

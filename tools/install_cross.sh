@@ -6,8 +6,8 @@
 # Adapting it to fit other Linux distributions should be an easy task.
 # The script does not install the tools to $PATH.
 #
-# The script builds gcc version 7.3 and binutils version 2.30 to target
-# i686-elf. For more information on how to build a cross tool-chain refer to:
+# The script builds gcc version and binutils to target i686-elf. For more
+# information on how to build a cross tool-chain, refer to:
 # https://wiki.osdev.org/GCC_Cross-Compiler
 #
 # For more information on successful builds, refer to:

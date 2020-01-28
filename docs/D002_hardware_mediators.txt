@@ -1,0 +1,14 @@
+Document 2 - Hardware Mediators
+
+Introduction:
+    The hardware mediator concept was borrowed from the EPOS operating system.
+    Together they provide the same functionality as a Hardware Abstraction
+    Layer (HAL) or Virtual Machine (VM).
+
+Bug-Track:
+    - How to take advantage of Traits (AOP) information to determine machine,
+      architecture and build option [release|debug] without relying on external
+      parser?
+
+References:
+    - https://link.springer.com/chapter/10.1007/978-3-540-30121-9_26
