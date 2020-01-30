@@ -1,5 +1,6 @@
 #include <architecture/cpu.h>
 #include <machine/ic.h>
+#include <thread.h>
 
 namespace qlib::mediator {
 
@@ -40,8 +41,51 @@ void CPU::init(void) {
     // fill idt
     for (int i = 0; i < 256; i++)
         idt[i] = IDT_Entry(CPU::cs(), IDT_Entry::INTGATE_32, CPU::halt);
+}
 
-    int_enable();
+void CPU::switch_context(Context & o, Context & n) {
+    // save flags register (no need to move into)
+    ASM("pushf");
+
+    // save general purpose registers (no need to move into)
+    ASM("   mov %%ebx, %0" ::"m"(o.ebx));
+    ASM("   mov %%esi, %0" ::"m"(o.esi));
+    ASM("   mov %%edi, %0" ::"m"(o.edi));
+
+    // save stack registers
+    ASM("   mov 0x0(%%ebp), %%eax   \n"  // no need to move into
+        "   mov %%eax,      %0      \n" ::"m"(o.ebp)
+        : "eax");
+    ASM("   mov %%esp,      %0      \n" ::"m"(o.esp));
+
+    // save instruction pointer (no need to mov into)
+    ASM("   mov 0x4(%%ebp), %%eax   \n"
+        "   mov %%eax,     %0       \n" ::"m"(o.eip)
+        : "eax");
+
+    // restore stack pointer
+    ASM("mov %0, %%esp" : "=m"(n.esp) :);
+
+    // new thread? prepare landing stack
+    if (n.ebp == 0) {
+        // push exit so that the thread is automatically cleaned up after
+        // finishing executing
+        // ASM("push %0" : : "i"(reinterpret_cast<Log_Address>(Thread::exit)));
+        // @TODO: verfify inputs and outputs
+        ASM("push %0" : "=m"(n.eip) :);
+        ASM("push %0" : "=m"(n.ebp) :);
+        ASM("push %0" : "=m"(n.eflags) :);
+    }
+
+    // restore general purpose registers
+    ASM("   mov %0, %%ebx" : "=m"(n.ebx) :);
+    ASM("   mov %0, %%esi" : "=m"(n.esi) :);
+    ASM("   mov %0, %%edi" : "=m"(n.edi) :);
+
+    // restore flags
+    ASM("popf");
+
+    // calling convention garantees that ebp and eip are restored
 }
 
 }  // namespace qlib::mediator

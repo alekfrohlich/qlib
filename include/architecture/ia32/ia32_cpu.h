@@ -17,6 +17,12 @@ class CPU
     using Phy_Address = unsigned long;
     using IO_Port = unsigned short;
 
+    // [15:0]  CF | 1 | PF | | AF | | ZF | SF | TF | IF | DF | OF | IOPL | NT | |
+    // [31:16] RF | VM | AC | VIF | VIP | ID | ... |
+    enum EFlags {
+        DEFAULT = 1 << 1,
+    };
+
     struct [[gnu::packed]] GDT_Entry {
      public:
         // Pr | Privl | S | Ex | DC | RW | Ac
@@ -94,21 +100,48 @@ class CPU
         unsigned offset_high : 16;
     };
 
+    struct Context {
+        Context() = default;
+        Context(Log_Address entry, Log_Address stack)
+            : eflags(EFlags::DEFAULT), eip(entry), esp(stack) {}
+
+        void load();
+
+        Reg32 ebx = 0;
+        Reg32 esi = 0;
+        Reg32 edi = 0;
+        Reg32 ebp = 0;
+        Reg32 esp;
+        Reg32 eip;
+        Reg32 eflags;
+    };
+
     inline static GDT_Entry * gdt_ptr = nullptr;
     inline static IDT_Entry * idt_ptr = nullptr;
 
-    //========INITIALIZATION=====================================================//
     // Setup Global Descriptor Table (GDT) and Interrupt Descriptor Table (IDT).
-    //===========================================================================//
+    static void init();
 
-    static void init(void);
+    static void switch_context(Context & o, Context & n);
 
     // halt is used as a function for filling the idt
-    static void halt(void) { ASM("hlt"); }
+    static void halt() { ASM("hlt"); }
 
-    INTRIN void int_enable(void) { ASM("sti"); }
+    INTRIN void int_enable() { ASM("sti"); }
 
-    INTRIN void int_disable(void) { ASM("cli"); }
+    INTRIN void int_disable() { ASM("cli"); }
+
+    static Reg32 eflags() {
+        Reg32 value;
+        ASM("pushfl");
+        ASM("popl %0" : "=r"(value) :);
+        return value;
+    }
+
+    static void eflags(Reg32 value) {
+        ASM("pushl %0" : : "r"(value));
+        ASM("popfl");
+    }
 
     INTRIN void idtr(Reg16 limit, Reg32 base) {
         struct [[gnu::packed]] {

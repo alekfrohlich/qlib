@@ -1,6 +1,17 @@
 #include <architecture/cpu.h>
 #include <machine/display.h>
 #include <machine/ic.h>
+#include <thread.h>
+
+void other_entry_point() {
+    using namespace qlib;
+    using namespace qlib::mediator;
+
+    while(1) {
+        cout << "Other\n";
+        Thread::yield();
+    }
+}
 
 extern "C" {
 
@@ -15,6 +26,7 @@ void __cxa_guard_release(long long int *) {
 }
 
 void _lib_init(void) {
+    using namespace qlib;
     using namespace qlib::mediator;
 
     // initialize hardware mediators
@@ -22,6 +34,17 @@ void _lib_init(void) {
     IC::init();
     Display::init();
 
-    main();
+    // setup entry points (int still disabled)
+    Thread::init();
+
+    while (1) {
+        cout << "Main\n";
+        Thread::yield();
+    }
+
+    while (1)
+        ;
+
+    // main();
 }
 }

@@ -17,7 +17,7 @@
 .globl _start
 .type _start, @function
 _start:
-	# set-up stack pointer
+	# set-up stack pointer (fix this)
 	mov $_ebss+16384, %esp
 
 	# call the global constructors
