@@ -12,15 +12,15 @@ static char stack2[1 << 14];
 namespace qlib {
 
 struct Thread {
+    using Reg32 = mediator::CPU::Reg32;
     using Log_Address = mediator::CPU::Log_Address;
-    using Context = mediator::CPU::Context;
+    // using Context = mediator::CPU::Context;
     using Entry_Point = void (*)();
 
     Thread() = default;
     Thread(Entry_Point main, char * stack, Thread * next)
-        : context(Context(reinterpret_cast<Log_Address>(main),
-              reinterpret_cast<Log_Address>(stack))),
-          next(next) {}
+        : eip(reinterpret_cast<Log_Address>(main)),
+          esp(reinterpret_cast<Log_Address>(stack)), ebp(0), next(next) {}
 
     static void init() {
         static Thread main_thread;
@@ -32,10 +32,18 @@ struct Thread {
         running_thread = &main_thread;
     }
 
+    static void switch_to(Thread * from, Thread * to);
+
     static void yield() {
         Thread * last = running_thread;
         running_thread = running_thread->next;
-        mediator::CPU::switch_context(last->context, running_thread->context);
+
+        // bool is_spwaning = running_thread->spawning;
+        // if (is_spwaning)
+        //     running_thread->spawning = false;
+
+        // mediator::CPU::switch_context(last->context, running_thread->context, is_spwaning);
+        switch_to(last, running_thread);
     }
 
     // @TODO: remove thread from sched queue and make it a member function
@@ -43,8 +51,11 @@ struct Thread {
 
     static inline Thread * running_thread = nullptr;
 
+    Reg32 ebp;
+    Reg32 eip;
+    Reg32 esp;
     Thread * next;
-    Context context;
+    // Context context;
 };
 
 };  // namespace qlib

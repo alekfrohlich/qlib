@@ -43,49 +43,57 @@ void CPU::init(void) {
         idt[i] = IDT_Entry(CPU::cs(), IDT_Entry::INTGATE_32, CPU::halt);
 }
 
-void CPU::switch_context(Context & o, Context & n) {
-    // save flags register (no need to move into)
+}  // namespace qlib::mediator
+
+// this code depends on the function returning and popping the stack frame
+// so it cannot be inlined
+// void CPU::switch_context(Context & o, Context & n, bool spawning) {
+void __attribute__((noinline))
+qlib::Thread::switch_to(Thread * from, Thread * to) {
+    // save flags register
     ASM("pushf");
 
     // save general purpose registers (no need to move into)
-    ASM("   mov %%ebx, %0" ::"m"(o.ebx));
-    ASM("   mov %%esi, %0" ::"m"(o.esi));
-    ASM("   mov %%edi, %0" ::"m"(o.edi));
+    ASM("push %ebx");
+    ASM("push %esi");
+    ASM("push %edi");
 
     // save stack registers
-    ASM("   mov 0x0(%%ebp), %%eax   \n"  // no need to move into
-        "   mov %%eax,      %0      \n" ::"m"(o.ebp)
+    ASM("mov 0x0(%%ebp), %%eax   \n"  // no need to move into
+        "mov %%eax,      %0      \n" ::"m"(from->ebp)
         : "eax");
-    ASM("   mov %%esp,      %0      \n" ::"m"(o.esp));
+    ASM("mov %%esp,      %0      \n" ::"m"(from->esp));
 
     // save instruction pointer (no need to mov into)
     ASM("   mov 0x4(%%ebp), %%eax   \n"
-        "   mov %%eax,     %0       \n" ::"m"(o.eip)
+        "   mov %%eax,     %0       \n" ::"m"(from->eip)
         : "eax");
 
     // restore stack pointer
-    ASM("mov %0, %%esp" : "=m"(n.esp) :);
+    ASM("mov %0, %%esp" : "=m"(to->esp) :);
 
     // new thread? prepare landing stack
-    if (n.ebp == 0) {
-        // push exit so that the thread is automatically cleaned up after
-        // finishing executing
-        // ASM("push %0" : : "i"(reinterpret_cast<Log_Address>(Thread::exit)));
-        // @TODO: verfify inputs and outputs
-        ASM("push %0" : "=m"(n.eip) :);
-        ASM("push %0" : "=m"(n.ebp) :);
-        ASM("push %0" : "=m"(n.eflags) :);
+    if (to->ebp == 0) {
+        // push Thread::exit so that the thread is automatically cleaned up
+        // after finishing executing
+        ASM("push %0" : : "i"(reinterpret_cast<Log_Address>(Thread::exit)));
+
+        ASM("push %0" : : "m"(to->eip));
+        ASM("push %0" : : "m"(to->ebp));
+        ASM("push %0" : : "i"(mediator::CPU::EFlags::DEFAULT));
+        ASM("push %ebx");
+        ASM("push %esi");
+        ASM("push %edi");
     }
 
     // restore general purpose registers
-    ASM("   mov %0, %%ebx" : "=m"(n.ebx) :);
-    ASM("   mov %0, %%esi" : "=m"(n.esi) :);
-    ASM("   mov %0, %%edi" : "=m"(n.edi) :);
+    ASM("pop %edi");
+    ASM("pop %esi");
+    ASM("pop %ebx");
 
     // restore flags
     ASM("popf");
 
     // calling convention garantees that ebp and eip are restored
+    // before control is returned to caler
 }
-
-}  // namespace qlib::mediator

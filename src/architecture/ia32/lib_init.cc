@@ -7,10 +7,10 @@ void other_entry_point() {
     using namespace qlib;
     using namespace qlib::mediator;
 
-    while(1) {
-        cout << "Other\n";
-        Thread::yield();
-    }
+    // while (1) {
+    cout << "Other\n";
+    //     Thread::yield();
+    // }
 }
 
 extern "C" {
@@ -37,10 +37,11 @@ void _lib_init(void) {
     // setup entry points (int still disabled)
     Thread::init();
 
-    while (1) {
-        cout << "Main\n";
-        Thread::yield();
-    }
+    // while (1) {
+    cout << "Main\n";
+    Thread::yield();
+    // }
+    cout << "Back at Main!\n";
 
     while (1)
         ;
