@@ -3,7 +3,7 @@
 #include <machine/ic.h>
 #include <thread.h>
 
-void other_entry_point() {
+int other_entry_point() {
     using namespace qlib;
     using namespace qlib::mediator;
 
@@ -11,6 +11,7 @@ void other_entry_point() {
     cout << "Other\n";
     //     Thread::yield();
     // }
+    return 0;
 }
 
 extern "C" {

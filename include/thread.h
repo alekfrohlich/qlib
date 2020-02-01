@@ -1,10 +1,10 @@
 #ifndef __QLIB_THREAD_H
-#define __QLIB_THREAD_H
+#    define __QLIB_THREAD_H
 
-#include <architecture/cpu.h>
+#    include <architecture/cpu.h>
 
 // extern "C" switch_context(CPU::Context & o, CPU::Context & n);
-extern void other_entry_point();
+extern int other_entry_point();
 
 static char stack1[1 << 14];
 static char stack2[1 << 14];
@@ -16,40 +16,20 @@ struct Thread {
     using Reg32 = mediator::CPU::Reg32;
     using Log_Address = mediator::CPU::Log_Address;
     using Context = mediator::CPU::Context;
-    using Entry_Point = void (*)();
 
     Thread() = default;
     // change context creation to placement new
-    Thread(Entry_Point main, char * stack, Thread * next) : next(next) {
-        ASM("   push %%esi          \n"
-            "   mov  %%esp, %%esi   \n"
-            "   mov  %0,    %%esp   \n"
-            "   " ::"m"(reinterpret_cast<Log_Address>(stack))
-            : "esi");
-
-        // push Thread::exit so that the thread is automatically cleaned up
-        // after finishing executing
-        ASM("push %0" : : "g"(reinterpret_cast<Log_Address>(Thread::exit)));
-
-        // construct this->context
-        ASM("   push %0     " ::"m"(reinterpret_cast<Log_Address>(main)));
-        ASM("   push %ebp   ");  // value doesnt matter
-        ASM("   push %0     " :: "i"(EFlags::DEFAULT));
-        ASM("   pusha       ");
-
-        // update this->context
-        ASM("   mov %%esp, %0" : : "m"(this->context));
-
-        ASM("   mov  %esi, %esp    \n"
-            "   pop  %esi          \n");
+    Thread(char * stack, int (*entry)(), Thread * next) : next(next) {
+        context = mediator::CPU::init_stack(
+            reinterpret_cast<Log_Address>(stack), Thread::exit, entry);
     }
 
     static void init() {
         static Thread main_thread;
         static Thread other_thread;
 
-        main_thread = Thread(0x0, stack1, &other_thread);
-        other_thread = Thread(other_entry_point, stack2, &main_thread);
+        main_thread = Thread(stack1, 0, &other_thread);
+        other_thread = Thread(stack2, other_entry_point, &main_thread);
 
         running_thread = &main_thread;
     }

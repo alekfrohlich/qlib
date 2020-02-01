@@ -45,11 +45,11 @@ class CPU
 
         friend Debug & operator<<(Debug & db, const GDT_Entry & gdte) {
             db << "limit_low = " << gdte.limit_low << "\n"
-               << "limit_low = " << gdte.base_low << "\n"
-               << "limit_low = " << gdte.access << "\n"
-               << "limit_low = " << gdte.limit_high << "\n"
-               << "limit_low = " << gdte.flags << "\n"
-               << "limit_low = " << gdte.base_high << "\n";
+               << "base_low = " << gdte.base_low << "\n"
+               << "access = " << gdte.access << "\n"
+               << "limit_high = " << gdte.limit_high << "\n"
+               << "flags = " << gdte.flags << "\n"
+               << "base_high = " << gdte.base_high << "\n";
             return db;
         }
 
@@ -84,11 +84,11 @@ class CPU
         }
 
         friend Debug & operator<<(Debug & db, const IDT_Entry & idte) {
-            db << "limit_low = " << idte.offset_low << "\n"
-               << "limit_low = " << idte.selector << "\n"
-               << "limit_low = " << idte.zero << "\n"
-               << "limit_low = " << idte.type << "\n"
-               << "limit_low = " << idte.offset_high << "\n";
+            db << "offset_low = " << idte.offset_low << "\n"
+               << "selector = " << idte.selector << "\n"
+               << "zero = " << idte.zero << "\n"
+               << "type = " << idte.type << "\n"
+               << "offset_high = " << idte.offset_high << "\n";
             return db;
         }
 
@@ -102,6 +102,20 @@ class CPU
 
     struct [[gnu::packed]] Context {
         Context(Log_Address entry) : eflags(EFlags::DEFAULT), eip(entry) {}
+
+        friend Debug & operator<<(Debug & db, const Context & c) {
+            db << "esp (=this) = " << &c << "\n"
+               << "edi = " << c.edi << "\n"
+               << "esi = " << c.esi << "\n"
+               << "ebx = " << c.ebx << "\n"
+               << "edx = " << c.edx << "\n"
+               << "ecx = " << c.ecx << "\n"
+               << "eax = " << c.eax << "\n"
+               << "eflags = " << c.eflags << "\n"
+               << "ebp = " << c.ebp << "\n"
+               << "eip = " << c.eip << "\n";
+            return db;
+        }
 
         Reg32 edi;
         Reg32 esi;
@@ -121,6 +135,35 @@ class CPU
 
     // Setup Global Descriptor Table (GDT) and Interrupt Descriptor Table (IDT).
     static void init();
+
+    // make variadic
+    static Context * init_stack(
+        Log_Address stack, void (*exit)(), int (*entry)()) {
+        Context * context;
+
+        ASM("   push %%esi          \n"
+            "   mov  %%esp, %%esi   \n"
+            "   mov  %0,    %%esp   \n"
+            "   " ::"m"(reinterpret_cast<Log_Address>(stack))
+            : "esi");
+
+        // push exit so that the thread is automatically cleaned up
+        // after it finishes executing
+        ASM("push %0" : : "g"(reinterpret_cast<Log_Address>(exit)));
+
+        // construct this->context
+        ASM("   push %0     " ::"m"(reinterpret_cast<Log_Address>(entry)));
+        ASM("   push %ebp   ");  // value doesnt matter
+        ASM("   push %0     " ::"i"(EFlags::DEFAULT));
+        ASM("   pusha       ");
+
+        // update this->context
+        ASM("   mov %%esp, %0" : : "m"(context));
+
+        ASM("   mov  %esi, %esp    \n"
+            "   pop  %esi          \n");
+        return context;
+    }
 
     static void switch_context(
         Context * volatile * from, volatile Context * to);
