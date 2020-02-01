@@ -100,21 +100,21 @@ class CPU
         unsigned offset_high : 16;
     };
 
-    // struct Context {
-    //     Context() = default;
-    //     Context(Log_Address entry, Log_Address stack)
-    //         : eflags(EFlags::DEFAULT), eip(entry), esp(stack) {}
+    struct [[gnu::packed]] Context {
+        Context(Log_Address entry) : eflags(EFlags::DEFAULT), eip(entry) {}
 
-    //     // void load();
-
-    //     // Reg32 ebx = 0;
-    //     // Reg32 esi = 0;
-    //     // Reg32 edi = 0;
-    //     Reg32 ebp = 0;
-    //     Reg32 esp;
-    //     Reg32 eip;
-    //     Reg32 eflags;
-    // };
+        Reg32 edi;
+        Reg32 esi;
+        Reg32 _ebp;  // redundant (ebp is already saved by calling convention)
+        Reg32 _esp;  // redundant (esp == this)
+        Reg32 ebx;
+        Reg32 edx;
+        Reg32 ecx;
+        Reg32 eax;
+        Reg32 eflags;
+        Reg32 ebp;
+        Reg32 eip;
+    };
 
     inline static GDT_Entry * gdt_ptr = nullptr;
     inline static IDT_Entry * idt_ptr = nullptr;
@@ -122,7 +122,8 @@ class CPU
     // Setup Global Descriptor Table (GDT) and Interrupt Descriptor Table (IDT).
     static void init();
 
-    // static void switch_context(Context & o, Context & n, bool spawning);
+    static void switch_context(
+        Context * volatile * from, volatile Context * to);
 
     // halt is used as a function for filling the idt
     static void halt() { ASM("hlt"); }

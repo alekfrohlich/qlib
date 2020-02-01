@@ -63,7 +63,7 @@ ifeq (, $(filter debug, $(MAKECMDGOALS)))
 	BINARY := $(GRUB)/runnable_app.release
 else
 	BUILD := $(TOP)/build/debug
-	CXXFLAGS += -g -O2
+	CXXFLAGS += -g
 	BINARY := $(GRUB)/runnable_app.debug
 endif
 
