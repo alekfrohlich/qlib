@@ -3,7 +3,7 @@
 #include <machine/ic.h>
 #include <thread.h>
 
-int other_entry_point() {
+void other_entry_point() {
     using namespace qlib;
     using namespace qlib::mediator;
 
@@ -11,20 +11,14 @@ int other_entry_point() {
     cout << "Other\n";
     //     Thread::yield();
     // }
-    return 0;
 }
 
 extern "C" {
 
 extern void main(void);
 
-// make gcc happy
-void * __cxa_pure_virtual = 0;
-int __cxa_guard_acquire(long long int *) {
-    return 1;
-}
-void __cxa_guard_release(long long int *) {
-}
+qlib::Thread main_thread;
+qlib::Thread other_thread;
 
 void _lib_init(void) {
     using namespace qlib;
@@ -36,7 +30,10 @@ void _lib_init(void) {
     Display::init();
 
     // setup entry points (int still disabled)
-    Thread::init();
+    main_thread = Thread(stack1, 0, &other_thread);
+    other_thread = Thread(stack2, other_entry_point, &main_thread);
+
+    Thread::running_thread = &main_thread;
 
     // while (1) {
     cout << "Main\n";

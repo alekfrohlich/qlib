@@ -136,33 +136,16 @@ class CPU
     // Setup Global Descriptor Table (GDT) and Interrupt Descriptor Table (IDT).
     static void init();
 
-    // make variadic
-    static Context * init_stack(
-        Log_Address stack, void (*exit)(), int (*entry)()) {
-        Context * context;
-
-        ASM("   push %%esi          \n"
-            "   mov  %%esp, %%esi   \n"
-            "   mov  %0,    %%esp   \n"
-            "   " ::"m"(reinterpret_cast<Log_Address>(stack))
-            : "esi");
-
+    // make variadic?
+    static Context * init_stack(char * stack, void (*exit)(), void (*entry)()) {
         // push exit so that the thread is automatically cleaned up
         // after it finishes executing
-        ASM("push %0" : : "g"(reinterpret_cast<Log_Address>(exit)));
+        new (stack - sizeof(Log_Address))
+            Log_Address(reinterpret_cast<Log_Address>(exit));
+        stack -= sizeof(Log_Address);
 
-        // construct this->context
-        ASM("   push %0     " ::"m"(reinterpret_cast<Log_Address>(entry)));
-        ASM("   push %ebp   ");  // value doesnt matter
-        ASM("   push %0     " ::"i"(EFlags::DEFAULT));
-        ASM("   pusha       ");
-
-        // update this->context
-        ASM("   mov %%esp, %0" : : "m"(context));
-
-        ASM("   mov  %esi, %esp    \n"
-            "   pop  %esi          \n");
-        return context;
+        return new (stack - sizeof(Context))
+            Context(reinterpret_cast<Log_Address>(entry));
     }
 
     static void switch_context(

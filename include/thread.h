@@ -1,13 +1,14 @@
 #ifndef __QLIB_THREAD_H
-#    define __QLIB_THREAD_H
+#define __QLIB_THREAD_H
 
-#    include <architecture/cpu.h>
+#include <architecture/cpu.h>
 
-// extern "C" switch_context(CPU::Context & o, CPU::Context & n);
-extern int other_entry_point();
+extern void other_entry_point();
 
-static char stack1[1 << 14];
-static char stack2[1 << 14];
+// wrong but should work
+static char _stack_space[1 << 16];
+static char * stack1 = &_stack_space[1 << 14];
+static char * stack2 = &_stack_space[1 << 15];
 
 namespace qlib {
 
@@ -18,20 +19,8 @@ struct Thread {
     using Context = mediator::CPU::Context;
 
     Thread() = default;
-    // change context creation to placement new
-    Thread(char * stack, int (*entry)(), Thread * next) : next(next) {
-        context = mediator::CPU::init_stack(
-            reinterpret_cast<Log_Address>(stack), Thread::exit, entry);
-    }
-
-    static void init() {
-        static Thread main_thread;
-        static Thread other_thread;
-
-        main_thread = Thread(stack1, 0, &other_thread);
-        other_thread = Thread(stack2, other_entry_point, &main_thread);
-
-        running_thread = &main_thread;
+    Thread(char * stack, void (*entry)(), Thread * next) : next(next) {
+        context = mediator::CPU::init_stack(stack, Thread::exit, entry);
     }
 
     // static void switch_to(Thread * from, Thread * to);

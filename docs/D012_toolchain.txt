@@ -5,3 +5,35 @@ Introduction:
     The script installs GCC10.x together with binutils 2.33.1 targetting i686-elf.
 
     All tools are available under tools/
+
+    GCC emits calls to cxxabi functions, namely:
+
+    extern "C" void __cxa_pure_virtual():
+        Is the default entry of pure virtual functions in vtables. If the function
+        is not overridden and it's called, then __cxa_pure_virtual should terminate
+        the program with an error message.
+
+    extern "C" int __cxa_guard_acquire(__int64_t *guard_object):
+        Returns 1 if initialization is not yet complete, 0 otherwise. This function
+        is called before initialization takes place. If this function returns 1, either
+        __cxa_guard_release or __cxa_guard_abort must be called with the same argument.
+        The first byte of the guard_object is not modified by this function.
+
+        A thread-safe implementation will probably guard access to the first byte of the
+        guard_object with a mutex. If this function returns 1, the mutex will have been
+        acquired by the calling thread.
+
+    extern "C" void __cxa_guard_release (__int64_t *guard_object):
+        Sets the first byte of the guard object to a non-zero value. This function is
+        called after initialization is complete.
+
+        A thread-safe implementation will release the mutex acquired by
+        __cxa_guard_acquire after setting the first byte of the guard object.
+
+    extern "C" void __cxa_guard_abort ( __int64_t *guard_object );
+        This function is called if the initialization terminates by throwing an exception.
+
+        A thread-safe implementation will release the mutex acquired by __cxa_guard_acquire.
+
+<b>NOTE</b>:
+Bug-Track:
