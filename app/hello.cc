@@ -1,4 +1,4 @@
-#include <ostream.h>
+#include <utility/ostream.h>
 
 int main(void) {
     using namespace qlib;

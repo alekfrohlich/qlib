@@ -1,8 +1,8 @@
 #ifndef __QLIB_DEBUG_H
 #define __QLIB_DEBUG_H
 
-#include <ostream.h>
-#include <traits.h>
+#include <utility/ostream.h>
+#include <system/traits.h>
 
 namespace qlib {
 
