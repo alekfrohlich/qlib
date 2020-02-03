@@ -137,7 +137,7 @@ class CPU
     static void init();
 
     // make variadic?
-    static Context * init_stack(char * stack, void (*exit)(), void (*entry)()) {
+    static Context * init_stack(char * stack, void (*exit)(), int (*entry)()) {
         // push exit so that the thread is automatically cleaned up
         // after it finishes executing
         new (stack - sizeof(Log_Address))
