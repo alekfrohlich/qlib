@@ -21,6 +21,8 @@ SECTIONS
         *(.text.*)
     }
 
+    PROVIDE(_etext = .);
+
     .fini	 :
     {
         KEEP(*(SORT_NONE(.fini)))
@@ -49,6 +51,8 @@ SECTIONS
         *(.data.*)
     }
 
+    PROVIDE(_edata = .);
+
     .bss	:
     {
         *(.bss)
@@ -56,11 +60,7 @@ SECTIONS
         *(.bss.*)
     }
 
-    . = 0x00108000;
-    PROVIDE(_ebss = .);
-
-    . = 0xc0000000;
-    PROVIDE(_eapp = .);
+    PROVIDE(_end = .);
 
     /DISCARD/	:
     {

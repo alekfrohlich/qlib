@@ -15,6 +15,8 @@ struct Thread {
     static void yield();
     static void exit();
 
+    static void init() {}
+
     static Thread * running_thread;
 
     Thread * next;

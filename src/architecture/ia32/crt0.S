@@ -12,20 +12,23 @@
 .long FLAGS
 .long CHECKSUM
 
-# entry point
 .section .text
 .globl _start
 .type _start, @function
 _start:
-	# set-up stack pointer (fix this)
-	mov $_ebss+16384, %esp
+	# set-up stack pointer
+	# @TODO: use first thread's stack pointer instead
+	mov $_end+16384, %esp
 
 	# call the global constructors
 	call _init
 
+.globl __app_entry
+.type __app_entry, @function
+__app_entry:
 	# transfer control to operating system
-	call _lib_init
-
+	# call _lib_init
+	call main
 	# call global destructors
 	call _fini
 

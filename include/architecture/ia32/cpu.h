@@ -136,27 +136,25 @@ class CPU
     // Setup Global Descriptor Table (GDT) and Interrupt Descriptor Table (IDT).
     static void init();
 
-    // make variadic?
+    // @TODO: allow entry to have any user-defined params
     static Context * init_stack(char * stack, void (*exit)(), int (*entry)()) {
         // push exit so that the thread is automatically cleaned up
         // after it finishes executing
-        new (stack - sizeof(Log_Address))
-            Log_Address(reinterpret_cast<Log_Address>(exit));
         stack -= sizeof(Log_Address);
+        new (stack) Log_Address(reinterpret_cast<Log_Address>(exit));
 
-        return new (stack - sizeof(Context))
-            Context(reinterpret_cast<Log_Address>(entry));
+        stack -= sizeof(Context);
+        return new (stack) Context(reinterpret_cast<Log_Address>(entry));
     }
 
     static void switch_context(
         Context * volatile * from, volatile Context * to);
 
-    // halt is used as a function for filling the idt
     static void halt() { ASM("hlt"); }
 
-    INTRIN void int_enable() { ASM("sti"); }
+    static void int_enable() { ASM("sti"); }
 
-    INTRIN void int_disable() { ASM("cli"); }
+    static void int_disable() { ASM("cli"); }
 
     static Reg32 eflags() {
         Reg32 value;
@@ -170,7 +168,7 @@ class CPU
         ASM("popfl");
     }
 
-    INTRIN void idtr(Reg16 limit, Reg32 base) {
+    static void idtr(Reg16 limit, Reg32 base) {
         struct [[gnu::packed]] {
             unsigned limit : 16;
             unsigned base : 32;
@@ -180,7 +178,7 @@ class CPU
         ASM("lidt %0" : : "m"(idtptr));
     }
 
-    INTRIN void idtr(Reg16 * limit, Reg32 * base) {
+    static void idtr(Reg16 * limit, Reg32 * base) {
         struct [[gnu::packed]] {
             unsigned limit : 16;
             unsigned base : 32;
@@ -192,7 +190,7 @@ class CPU
         *base = idtr.base;
     }
 
-    INTRIN void gdtr(Reg16 size, Reg32 limit) {
+    static void gdtr(Reg16 size, Reg32 limit) {
         struct [[gnu::packed]] {
             unsigned limit : 16;
             unsigned base : 32;
@@ -202,7 +200,7 @@ class CPU
         ASM("lgdt %0" : : "m"(gdtr));
     }
 
-    INTRIN void gdtr(Reg16 * limit, Reg32 * base) {
+    static void gdtr(Reg16 * limit, Reg32 * base) {
         struct [[gnu::packed]] {
             unsigned limit : 16;
             unsigned base : 32;
@@ -214,78 +212,79 @@ class CPU
         *base = gdtr.base;
     }
 
-    INTRIN void cs(const Reg16 val) {
+    [[gnu::always_inline, gnu::artificial]] static inline void cs(
+        const Reg16 val) {
         ASM("ljmp %0, $1f   \n"
             "1: nop"
             :
             : "i"(val));
     }
 
-    INTRIN Reg16 cs() {
+    static Reg16 cs() {
         Reg16 cs;
         ASM("movw %%cs, %0" : "=r"(cs) :);
         return cs;
     }
 
-    INTRIN void ds(Reg16 val) { ASM("movw %0, %%ds" : : "im"(val)); }
+    static void ds(Reg16 val) { ASM("movw %0, %%ds" : : "im"(val)); }
 
-    INTRIN Reg16 ds() {
+    static Reg16 ds() {
         Reg16 ds;
         ASM("movw %%ds, %0" : "=r"(ds) :);
         return ds;
     }
 
-    INTRIN Reg16 es() {
+    static Reg16 es() {
         Reg16 es;
         ASM("movw %%es, %0" : "=r"(es) :);
         return es;
     }
 
-    INTRIN Reg16 fs() {
+    static Reg16 fs() {
         Reg16 value;
         ASM("mov %%cs,%0" : "=r"(value) :);
         return value;
     }
 
-    INTRIN Reg16 gs() {
+    static Reg16 gs() {
         Reg16 gs;
         ASM("movw %%gs, %0" : "=r"(gs) :);
         return gs;
     }
 
-    INTRIN Reg16 ss() {
+    static Reg16 ss() {
         Reg16 ss;
         ASM("movw %%ss, %0" : "=r"(ss) :);
         return ss;
     }
 
-    INTRIN Reg8 in8(IO_Port port) {
+    static Reg8 in8(IO_Port port) {
         Reg8 value;
         ASM("inb %1,%0" : "=a"(value) : "d"(port));
         return value;
     }
 
-    INTRIN Reg16 in16(IO_Port port) {
+    static Reg16 in16(IO_Port port) {
         Reg16 value;
         ASM("inw %1,%0" : "=a"(value) : "d"(port));
         return value;
     }
 
-    INTRIN Reg32 in32(IO_Port port) {
+    static Reg32 in32(IO_Port port) {
         Reg32 value;
         ASM("inl %1,%0" : "=a"(value) : "d"(port));
         return value;
     }
 
-    INTRIN void out8(IO_Port port, Reg8 value) {
+    static void out8(IO_Port port, Reg8 value) {
         ASM("outb %1,%0" : : "d"(port), "a"(value));
     }
 
-    INTRIN void out16(IO_Port port, Reg16 value) {
+    static void out16(IO_Port port, Reg16 value) {
         ASM("outw %1,%0" : : "d"(port), "a"(value));
     }
 
-    INTRIN void out32(IO_Port port, Reg32 value) {
+    static void out32(IO_Port port, Reg32 value) {
         ASM("outl %1,%0" : : "d"(port), "a"(value));
     }
 };
