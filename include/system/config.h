@@ -16,6 +16,7 @@
 #define __DISPLAY_H __MACH_HEADER(display, MACH)
 #define __IC_H __MACH_HEADER(ic, MACH)
 #define __MACHINE_H __MACH_HEADER(machine, MACH)
+#define __MEMORY_MAP_H __MACH_HEADER(memory_map, MACH)
 
 #include <system/traits.h>
 #include <system/types.h>

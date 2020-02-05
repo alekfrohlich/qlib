@@ -26,7 +26,7 @@ inline void * operator new(size_t bytes, System_Allocator allocator) {
     auto old = System::heap.brk;
     System::heap.brk += bytes;
     return reinterpret_cast<void *>(
-        (allocator == SYSTEM_STACK) ? old : System::heap.brk);
+        (allocator == SYSTEM) ? old : System::heap.brk);
 }
 
 inline void * operator new[](size_t bytes, System_Allocator allocator) {
@@ -34,7 +34,7 @@ inline void * operator new[](size_t bytes, System_Allocator allocator) {
     auto old = System::heap.brk;
     System::heap.brk += bytes;
     return reinterpret_cast<void *>(
-        (allocator == SYSTEM_STACK) ? old : System::heap.brk);
+        (allocator == SYSTEM) ? old : System::heap.brk);
 }
 
 #endif  // __QLIB_SYSTEM_H

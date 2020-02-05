@@ -8,7 +8,6 @@ namespace qlib {
 struct Thread {
     using Context = CPU::Context;
 
-    Thread() = default;
     Thread(int (*entry)());
 
     static void dispatch(Thread * prev, Thread * next);
