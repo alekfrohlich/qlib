@@ -1,7 +1,7 @@
 #include <architecture/cpu.h>
 #include <machine/ic.h>
 
-namespace qlib::mediator {
+namespace qlib {
 
 void PIC::init(void) {
     // ICW1
@@ -28,4 +28,4 @@ void PIC::init(void) {
              << "Interrupt Status Register = " << PIC::isr() << "\n";
 }
 
-}  // namespace qlib::mediator
+}  // namespace qlib

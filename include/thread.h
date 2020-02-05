@@ -6,7 +6,7 @@
 namespace qlib {
 
 struct Thread {
-    using Context = mediator::CPU::Context;
+    using Context = CPU::Context;
 
     Thread() = default;
     Thread(int (*entry)());

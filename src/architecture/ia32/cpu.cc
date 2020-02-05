@@ -1,6 +1,6 @@
 #include <architecture/cpu.h>
 
-namespace qlib::mediator {
+namespace qlib {
 void __attribute__((noinline)) CPU::Context::load() volatile {
     ASM("mov %0, %%esp" : : "g"(this));
 
@@ -41,4 +41,4 @@ CPU::switch_context(Context * volatile * from, volatile Context * to) {
 
     // calling convention pops ebp/eip
 }
-};  // namespace qlib::mediator
+};  // namespace qlib

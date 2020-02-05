@@ -1,7 +1,7 @@
 #include <system.h>
 #include <thread.h>
 
-namespace qlib::mediator {
+namespace qlib {
 
 extern "C" void _pre_main() {
     Thread * first_thread = Thread::running_thread;
@@ -14,4 +14,4 @@ void System::init() {
         Thread::init();
 }
 
-};  // namespace qlib::mediator
+};  // namespace qlib

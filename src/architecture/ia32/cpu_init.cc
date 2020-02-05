@@ -1,7 +1,8 @@
 #include <architecture/cpu.h>
 #include <machine/ic.h>
+#include <system.h>
 
-namespace qlib::mediator {
+namespace qlib {
 
 void CPU::init(void) {
     // load gdtr
@@ -35,4 +36,4 @@ void CPU::init(void) {
     for (int i = 0; i < 256; i++)
         idt[i] = IDT_Entry(CPU::cs(), IDT_Entry::INTGATE_32, CPU::halt);
 }
-};  // namespace qlib::mediator
+};  // namespace qlib

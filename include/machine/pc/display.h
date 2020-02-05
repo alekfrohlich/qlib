@@ -4,7 +4,7 @@
 #include <architecture/cpu.h>
 #include <machine/display.h>
 
-namespace qlib::mediator {
+namespace qlib {
 
 // IBM's VGA Controller (Text Mode)
 class VGA
@@ -179,6 +179,6 @@ class Display : public VGA
     static inline int position = 0;
 };
 
-}  // namespace qlib::mediator
+}  // namespace qlib
 
 #endif  // __QLIB_MEDIATOR_PC_DISPLAY_H

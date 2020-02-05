@@ -1,4 +1,4 @@
-#include <system/config.h>
+#include <system.h>
 #include <thread.h>
 
 namespace qlib {
@@ -6,13 +6,14 @@ namespace qlib {
 Thread * Thread::running_thread = nullptr;
 
 Thread::Thread(int (*entry)()) {
-    char * stack = new (SYSTEM) char[1 << 15];
-    context = mediator::CPU::init_stack(&stack[1 << 15], Thread::exit, entry);
+    context =
+        CPU::init_stack(new (SYSTEM_STACK) char[Traits<System>::STACK_SIZE],
+            Thread::exit, entry);
 }
 
 void Thread::dispatch(Thread * prev, Thread * next) {
     // @TODO: add trace info here
-    mediator::CPU::switch_context(
+    CPU::switch_context(
         const_cast<Context * volatile *>(&prev->context), next->context);
 }
 

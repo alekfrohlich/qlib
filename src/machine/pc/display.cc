@@ -1,8 +1,8 @@
 #include <machine/display.h>
 
-void __Puts(const char * s) { qlib::mediator::Display::print(s); };
+void __Puts(const char * s) { qlib::Display::print(s); };
 
-namespace qlib::mediator {
+namespace qlib {
 
 void VGA::init(void) {
     cursor(true);
@@ -18,4 +18,4 @@ void VGA::init(void) {
                   << "\n";
 }
 
-}  // namespace qlib::mediator
+}  // namespace qlib

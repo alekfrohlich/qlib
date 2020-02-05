@@ -2,7 +2,7 @@
 #include <machine.h>
 #include <system.h>
 
-namespace qlib::mediator {
+namespace qlib {
 
 class Init_System
 {
@@ -29,4 +29,4 @@ class Init_System
 
 Init_System init_system;
 
-};  // namespace qlib::mediator
+};  // namespace qlib

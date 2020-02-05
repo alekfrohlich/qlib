@@ -4,7 +4,7 @@
 #include <architecture/cpu.h>
 #include <machine/ic.h>
 
-namespace qlib::mediator {
+namespace qlib {
 
 // Intel's 8259A Programmable Interrupt Controller
 class PIC
@@ -154,6 +154,6 @@ class PIC
 class IC : public PIC
 {};
 
-}  // namespace qlib::mediator
+}  // namespace qlib
 
 #endif  // __QLIB_MEDIATOR_PC_IC_H

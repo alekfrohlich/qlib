@@ -1,6 +1,6 @@
 #include <machine.h>
 
-namespace qlib::mediator {
+namespace qlib {
 void Machine::init() {
     db<Init>() << "Machine::init()\n";
 
@@ -11,4 +11,4 @@ void Machine::init() {
         Display::init();
 }
 
-}  // namespace qlib::mediator
+}  // namespace qlib

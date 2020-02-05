@@ -2,10 +2,8 @@
 #define __QLIB_MEDIATOR_PC_CPU_H
 
 #include <architecture/cpu.h>
-// @TODO: how to provide new for everyone?
-#include <system.h>
 
-namespace qlib::mediator {
+namespace qlib {
 
 class CPU
 {
@@ -293,6 +291,6 @@ class CPU
     }
 };
 
-}  // namespace qlib::mediator
+}  // namespace qlib
 
 #endif  // __QLIB_MEDIATOR_PC_CPU_H
