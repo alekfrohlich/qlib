@@ -156,7 +156,8 @@ class Display : public VGA
 
  private:
     static void put(char c) {
-        if (position == HEIGHT * WIDTH) scroll();
+        if (position == HEIGHT * WIDTH)
+            scroll();
 
         switch (c) {
             case '\n':

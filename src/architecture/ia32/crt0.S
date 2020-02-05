@@ -26,9 +26,12 @@ _start:
 .globl __app_entry
 .type __app_entry, @function
 __app_entry:
-	# transfer control to operating system
-	# call _lib_init
+	# load context
+	call _pre_main
+
+	# transfer control to application
 	call main
+
 	# call global destructors
 	call _fini
 

@@ -17,13 +17,10 @@
 #define __IC_H __MACH_HEADER(ic, MACH)
 #define __MACHINE_H __MACH_HEADER(machine, MACH)
 
-#include <utility/debug.h>
-
-using size_t = __SIZE_TYPE__;
-inline void * operator new(size_t count, void * ptr) {
-    return ptr;
-}
-
 #include <system/traits.h>
+
+// everyone needs
+#include <utility/debug.h>
+#include <utility/ostream.h>
 
 #endif  // __QLIB_H

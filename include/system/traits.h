@@ -19,9 +19,7 @@ namespace mediator {
     class Display;
     class IC;
 
-
 };  // namespace mediator
-
 
 template<>
 struct Traits<mediator::Init> {

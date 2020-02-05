@@ -1,6 +1,20 @@
 #include <architecture/cpu.h>
 
 namespace qlib::mediator {
+void CPU::Context::load() volatile {
+    volatile Context * context = this;
+    ASM("mov %0, %%esp" : "=m"(context) :);
+
+    // restore general purpose registers
+    ASM("popa");
+
+    // restore flags
+    ASM("popf");
+
+    ASM("pop %ebp");
+
+    ASM("ret");
+}
 
 // this code depends on the function returning and popping the stack frame
 // so it cannot be inlined

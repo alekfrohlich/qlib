@@ -2,6 +2,8 @@
 #define __QLIB_MEDIATOR_PC_CPU_H
 
 #include <architecture/cpu.h>
+// @TODO: how to provide new for everyone?
+#include <system.h>
 
 namespace qlib::mediator {
 
@@ -102,6 +104,8 @@ class CPU
 
     struct [[gnu::packed]] Context {
         Context(Log_Address entry) : eflags(EFlags::DEFAULT), eip(entry) {}
+
+        void load() volatile;
 
         friend Debug & operator<<(Debug & db, const Context & c) {
             db << "esp (=this) = " << &c << "\n"
