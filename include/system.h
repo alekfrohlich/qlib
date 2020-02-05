@@ -1,20 +1,35 @@
 #ifndef __QLIB_SYSTEM_H
 #define __QLIB_SYSTEM_H
 
-using size_t = __SIZE_TYPE__;
+#include <system/types.h>
+
 namespace qlib::mediator {
 
 class System
 {
-    // friend void * ::operator new(size_t, void *);
  public:
+    friend void * ::operator new(size_t, System_Allocator);
+    friend void * ::operator new[](size_t, System_Allocator);
     static void init();
+
+ private:
+    static inline struct { unsigned long brk; } heap {0x50000000};
 };
 
 };  // namespace qlib::mediator
 
-inline void * operator new(size_t count, void *ptr) {
-    return ptr;
+inline void * operator new(size_t bytes, System_Allocator allocator) {
+    using namespace qlib::mediator;
+    void * old = reinterpret_cast<void *>(System::heap.brk);
+    System::heap.brk += bytes;
+    return old;
+}
+
+inline void * operator new[](size_t bytes, System_Allocator allocator) {
+    using namespace qlib::mediator;
+    void * old = reinterpret_cast<void *>(System::heap.brk);
+    System::heap.brk += bytes;
+    return old;
 }
 
 #endif  // __QLIB_SYSTEM_H

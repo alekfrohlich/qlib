@@ -1,8 +1,6 @@
 #include <machine/display.h>
 
-void __Puts(const char * s) {
-    qlib::mediator::Display::print(s);
-};
+void __Puts(const char * s) { qlib::mediator::Display::print(s); };
 
 namespace qlib::mediator {
 

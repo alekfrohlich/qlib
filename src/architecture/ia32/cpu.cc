@@ -1,9 +1,9 @@
 #include <architecture/cpu.h>
 
 namespace qlib::mediator {
-void CPU::Context::load() volatile {
-    volatile Context * context = this;
-    ASM("mov %0, %%esp" : "=m"(context) :);
+void __attribute__((noinline))
+CPU::Context::load() volatile {
+    ASM("mov %0, %%esp" :  :"g"(this));
 
     // restore general purpose registers
     ASM("popa");
@@ -11,9 +11,7 @@ void CPU::Context::load() volatile {
     // restore flags
     ASM("popf");
 
-    ASM("pop %ebp");
-
-    ASM("ret");
+    // calling convention pops ebp/eip
 }
 
 // this code depends on the function returning and popping the stack frame
@@ -34,7 +32,7 @@ CPU::switch_context(Context * volatile * from, volatile Context * to) {
         : "eax");
 
     // restore stack pointer
-    ASM("mov %0, %%esp" : "=m"(to) :);
+    ASM("mov %0, %%esp" :  :"m"(to));
 
     // restore general purpose registers
     ASM("popa");

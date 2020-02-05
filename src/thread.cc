@@ -21,9 +21,7 @@ void Thread::yield() {
     dispatch(last, running_thread);
 }
 
-void Thread::exit() {
-    yield();
-};
+void Thread::exit() { yield(); };
 
 int Thread::idle() {
     cout << "Idle\n";

@@ -18,6 +18,7 @@
 #define __MACHINE_H __MACH_HEADER(machine, MACH)
 
 #include <system/traits.h>
+#include <system/types.h>
 
 // everyone needs
 #include <utility/debug.h>

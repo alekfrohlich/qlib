@@ -13,6 +13,4 @@ static void __do_global_ctors_aux() {
         (*p)();
 }
 
-void _init() {
-    __do_global_ctors_aux();
-}
+void _init() { __do_global_ctors_aux(); }
