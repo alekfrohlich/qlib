@@ -9,7 +9,7 @@ struct Thread {
     using Context = mediator::CPU::Context;
 
     Thread() = default;
-    Thread(char * stack, int (*entry)());
+    Thread(int (*entry)());
 
     static void dispatch(Thread * prev, Thread * next);
     static void yield();

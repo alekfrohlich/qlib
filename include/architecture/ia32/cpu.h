@@ -134,8 +134,8 @@ class CPU
         Reg32 eip;
     };
 
-    inline static GDT_Entry * gdt_ptr = nullptr;
-    inline static IDT_Entry * idt_ptr = nullptr;
+    inline static GDT_Entry * gdt = nullptr;
+    inline static IDT_Entry * idt = nullptr;
 
     // Setup Global Descriptor Table (GDT) and Interrupt Descriptor Table (IDT).
     static void init();

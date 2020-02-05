@@ -5,8 +5,9 @@ namespace qlib {
 
 Thread * Thread::running_thread = nullptr;
 
-Thread::Thread(char * stack, int (*entry)()) {
-    context = mediator::CPU::init_stack(stack, Thread::exit, entry);
+Thread::Thread(int (*entry)()) {
+    char * stack = new (SYSTEM) char[1 << 15];
+    context = mediator::CPU::init_stack(&stack[1 << 15], Thread::exit, entry);
 }
 
 void Thread::dispatch(Thread * prev, Thread * next) {

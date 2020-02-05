@@ -13,7 +13,10 @@ class System
     static void init();
 
  private:
-    static inline struct { unsigned long brk; } heap {0x50000000};
+    static inline char _pre_heap[1 << 18];
+    static inline struct {
+        unsigned long brk;
+    } heap {reinterpret_cast<unsigned long>(_pre_heap)};
 };
 
 };  // namespace qlib::mediator
