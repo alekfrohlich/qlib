@@ -17,13 +17,6 @@ int main(void) {
     Thread pop_up(pop_up_thread);
     Thread::yield();
 
-    List<int> list;
-    for (int i = 0; i < 5; i++)
-        list.push_back(new (SYSTEM) int(i));
-
-    for (int i = 0; i < 5; i++)
-        cout << "i = " << *list.pop_back() << "\n";
-
     while(1);
 
     return 0;

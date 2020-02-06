@@ -6,9 +6,6 @@
 
 namespace qlib {
 
-class Scheduler
-{};
-
 class Thread
 {
  public:
@@ -23,16 +20,26 @@ class Thread
     static int idle();
 
     static void init();
-    static Thread * running();
+    static Thread * running() { return scheduler.chosen(); }
 
     void load_context() const { context->load(); }
 
  private:
-    // refactor it (and it's horrible performance) into Scheduler class
-    static Thread * choose();
-    static inline List<Thread> sched_list;
+    class Scheduler
+    {
+     public:
+        static Thread * choose();
+        static Thread * chosen();
+        static void insert(Thread * thread);
+        static Thread * drop_chosen();
+
+     private:
+        static inline RR_List<Thread> schedulables;
+    };
+    static inline Scheduler scheduler;
 
     volatile Context * context;
+    char * stack;
 };
 
 };  // namespace qlib

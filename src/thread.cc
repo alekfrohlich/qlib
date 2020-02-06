@@ -4,10 +4,9 @@
 namespace qlib {
 
 Thread::Thread(int (*entry)()) {
-    context =
-        CPU::init_stack(new (SYSTEM_STACK) char[Traits<System>::STACK_SIZE],
-            Thread::exit, entry);
-    sched_list.push_front(this);
+    stack = new (SYSTEM_STACK) char[Traits<System>::STACK_SIZE];
+    context = CPU::init_stack(stack, Thread::exit, entry);
+    scheduler.insert(this);
 }
 
 void Thread::dispatch(Thread * prev, Thread * next) {
@@ -18,14 +17,13 @@ void Thread::dispatch(Thread * prev, Thread * next) {
 
 void Thread::yield() {
     Thread * prev = running();
-    Thread * next = choose();
+    Thread * next = scheduler.choose();
     dispatch(prev, next);
 }
 
 void Thread::exit() {
-    Thread * dying = running();
-    Thread * next = choose();
-    sched_list.pop_front();
+    Thread * dying = scheduler.drop_chosen();
+    Thread * next = scheduler.chosen();
     dispatch(dying, next);
 };
 
@@ -34,11 +32,12 @@ int Thread::idle() {
     return 0;
 }
 
-Thread * Thread::running() { return sched_list.back(); }
+Thread * Thread::Scheduler::choose() { return schedulables.choose(); }
 
-Thread * Thread::choose() {
-    sched_list.push_front(sched_list.pop_back());
-    return sched_list.back();
-}
+Thread * Thread::Scheduler::chosen() { return schedulables.chosen(); }
+
+void Thread::Scheduler::insert(Thread * thread) { schedulables.insert(thread); }
+
+Thread * Thread::Scheduler::drop_chosen() { return schedulables.drop_chosen(); }
 
 };  // namespace qlib
