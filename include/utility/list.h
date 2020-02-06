@@ -7,11 +7,42 @@
 template<typename T>
 class List
 {
-public:
+ public:
+    // member functions
     List() : _size(0), head(nullptr) {}
 
+    // element access
+    T * front() {
+        if (size() == 0)
+            return nullptr;
+
+        auto it = head;
+        while (it->next)
+            it = it->next;
+        return it->data;
+    }
+
+    T * back() {
+        if (size() == 0)
+            return nullptr;
+        return head->data;
+    }
+
+    // modifiers
     void push_back(T * data) {
         head = new (SYSTEM) Node(data, head);
+        _size++;
+    }
+
+    void push_front(T * data) {
+        if (size() == 0)
+            return push_back(data);
+
+        auto it = head;
+        while (it->next)
+            it = it->next;
+
+        it->next = new (SYSTEM) Node(data, nullptr);
         _size++;
     }
 
@@ -35,7 +66,7 @@ public:
         }
 
         auto it = head;
-        while(it->next->next)
+        while (it->next->next)
             it = it->next;
 
         _size--;
@@ -44,9 +75,12 @@ public:
         return dead;
     }
 
-    int size() { return _size; }
+    // capacity
+    bool empty() const;
+    int size() const { return _size; }
+    int max_size() const;
 
-private:
+ private:
     struct Node {
         Node(T * data, Node * next) : data(data), next(next) {}
         T * data;

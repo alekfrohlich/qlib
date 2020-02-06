@@ -4,9 +4,9 @@
 namespace qlib {
 
 extern "C" void _pre_main() {
-    Thread * first_thread = Thread::running_thread;
+    Thread * first_thread = Thread::running();
 
-    first_thread->context->load();
+    first_thread->load_context();
 }
 
 void System::init() {

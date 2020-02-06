@@ -3,12 +3,11 @@
 
 namespace qlib {
 
-Thread * Thread::running_thread = nullptr;
-
 Thread::Thread(int (*entry)()) {
     context =
         CPU::init_stack(new (SYSTEM_STACK) char[Traits<System>::STACK_SIZE],
             Thread::exit, entry);
+    sched_list.push_front(this);
 }
 
 void Thread::dispatch(Thread * prev, Thread * next) {
@@ -18,16 +17,28 @@ void Thread::dispatch(Thread * prev, Thread * next) {
 }
 
 void Thread::yield() {
-    Thread * last = running_thread;
-    running_thread = running_thread->next;
-    dispatch(last, running_thread);
+    Thread * prev = running();
+    Thread * next = choose();
+    dispatch(prev, next);
 }
 
-void Thread::exit() { yield(); };
+void Thread::exit() {
+    Thread * dying = running();
+    Thread * next = choose();
+    sched_list.pop_front();
+    dispatch(dying, next);
+};
 
 int Thread::idle() {
     cout << "Idle\n";
     return 0;
+}
+
+Thread * Thread::running() { return sched_list.back(); }
+
+Thread * Thread::choose() {
+    sched_list.push_front(sched_list.pop_back());
+    return sched_list.back();
 }
 
 };  // namespace qlib

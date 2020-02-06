@@ -2,10 +2,16 @@
 #define __QLIB_THREAD_H
 
 #include <architecture/cpu.h>
+#include <utility/list.h>
 
 namespace qlib {
 
-struct Thread {
+class Scheduler
+{};
+
+class Thread
+{
+ public:
     using Context = CPU::Context;
 
     Thread(int (*entry)());
@@ -17,10 +23,15 @@ struct Thread {
     static int idle();
 
     static void init();
+    static Thread * running();
 
-    static Thread * running_thread;
+    void load_context() const { context->load(); }
 
-    Thread * next;
+ private:
+    // refactor it (and it's horrible performance) into Scheduler class
+    static Thread * choose();
+    static inline List<Thread> sched_list;
+
     volatile Context * context;
 };
 
